@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Strategy Advisor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .modal-transition {
+      transition: opacity 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-gray-800 text-white p-6 shadow-md flex flex-col justify-between">
+      <div>
+        <h1 class="text-2xl font-bold mb-6">📈 Strategy Advisor</h1>
+        <nav class="space-y-4">
+          <a href="/" class="block py-2 px-3 rounded hover:bg-gray-700">🏠 Home</a>
+          <a href="/sp500" class="block py-2 px-3 rounded hover:bg-gray-700">📊 Top S&P</a>
+          <a href="/portfolio" class="block py-2 px-3 rounded hover:bg-gray-700">📁 Simulated Portfolio</a>
+        </nav>
+      </div>
+      <p class="text-sm text-gray-400 mt-10 hidden md:block">&copy; 2025</p>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 space-y-10 overflow-y-auto">
+
+    <!-- Drawer: Search & Predictions -->
+    <section class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 space-y-6">
+      <!-- Search Form -->
+      <div>
+        <h2 class="text-xl font-semibold mb-4 text-center">🔍 Search a Stock Symbol</h2>
+        <form method="POST" action="/" class="flex flex-col md:flex-row items-center justify-center gap-4">
+          <div class="relative w-full md:w-64">
+            <input
+              id="symbol-input"
+              type="text"
+              name="symbol"
+              placeholder="e.g. AAPL, TSLA"
+              autocomplete="off"
+              required
+              class="border border-gray-300 rounded px-4 py-2 w-full dark:bg-gray-700 dark:border-gray-600"
+            />
+            <ul id="suggestions" class="absolute left-0 right-0 bg-white border border-gray-300 rounded mt-1 z-50 hidden"></ul>
+          </div>
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow">
+            Analyze
+          </button>
+        </form>
+        {% if error %}
+          <p class="text-red-600 mt-2 text-center">{{ error }}</p>
+        {% endif %}
+      </div>
+  {% if symbol %}
+        {% if symbol %}
+        
+          <!-- Predictions Table -->
+          <div>
+            <center><h2 class="text-xl font-semibold mb-4">📊 Latest Predictions</h2>
+            {% if predictions %} </center>
+              <div class="overflow-x-auto">
+                <table class="min-w-full border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+                  <thead class="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                      <th class="px-4 py-2 text-left">Timestamp</th>
+                      <th class="px-4 py-2 text-left">Symbol</th>
+                      <th class="px-4 py-2 text-left">Probability</th>
+                      <th class="px-4 py-2 text-left">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for p in predictions %}
+                      <tr class="border-t border-gray-200 dark:border-gray-600">
+                        <td class="px-4 py-2">{{ p.timestamp }}</td>
+                        <td class="px-4 py-2 font-semibold">{{ p.symbol }}</td>
+                        <td class="px-4 py-2">
+                          {{ "%.4f"|format(p.value) }}
+                        </td>
+                        <td class="px-4 py-2">{{ p.source }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <center> <p>No predictions available yet.</p> </center>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      <!-- Drawer: Recommendation -->
+        {% if recommendation %}
+        <section class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+          <!--<h2 class="text-xl font-bold mb-4 text-center 
+            {% if 'BUY' in recommendation %}text-green-600
+            {% elif 'WATCHLIST' in recommendation %}text-yellow-500
+            {% else %}text-red-600{% endif %}">
+            {{ recommendation }}
+          </h2> -->
+
+          {% if top_reasons %}
+          <div class="mt-4">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">📌 Top Reasons:</h3>
+            <ul class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 text-sm">
+              {% for reason in top_reasons %}
+              <li class="flex items-start bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-sm">
+                <span class="text-green-500 dark:text-green-400 mt-1 mr-2">✔️</span>
+                <span class="text-gray-800 dark:text-gray-100">{{ reason }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </section>
+        {% endif %}
+
+      <!-- Drawer: Graphs (Responsive Grid) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {% if growth_summary %}
+          <div class="p-4 bg-white rounded shadow h-full min-h-[400px] flex flex-col">
+            <h2 class="text-xl font-semibold mb-4">Projected Annual Growth</h2>
+            <div class="flex-1 relative w-full">
+              <canvas id="growthChart" class="w-full h-full"></canvas>
+            </div>
+          </div>
+
+          <script>
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            const growthChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Projected Price', 'Dividend'],
+                datasets: [{
+                  label: 'Growth %',
+                  data: [
+                    {{ growth_summary.projected_price or 0 }},
+                    {{ growth_summary.dividend_growth or 0 }},
+                  ],
+                  backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)'
+                  ],
+                  borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                  padding: 20
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: 'Percentage Growth'
+                    },
+                    ticks: {
+                      callback: function(value) {
+                        return value + '%';
+                      }
+                    }
+                  }
+                },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return context.dataset.label + ': ' + context.parsed.y + '%';
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          </script>
+
+        {% if candlestick_data %}
+        <div class="p-4 bg-white dark:bg-gray-800 rounded shadow h-full min-h-[400px] flex flex-col">
+          <h2 class="text-xl font-semibold mb-4">🕯 Candlestick Chart</h2>
+          <canvas id="candlestickChart" class="w-full h-96"></canvas>
+        </div>
+
+        <script>
+        const ctxCandle = document.getElementById('candlestickChart').getContext('2d');
+
+        const candlestickData = {
+          datasets: [{
+            label: '{{ symbol }}',
+            data: {{ candlestick_data | tojson }},
+            color: {
+              up: '#16a34a',    // green for bullish
+              down: '#dc2626',  // red for bearish
+              unchanged: '#9ca3af'
+            }
+          }]
+        };
+
+        new Chart(ctxCandle, {
+          type: 'candlestick',
+          data: candlestickData,
+          options: {
+            responsive: true,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const d = context.raw;
+                    return `O: ${d.o} H: ${d.h} L: ${d.l} C: ${d.c}`;
+                  }
+                }
+              },
+              legend: { display: false }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Date' }},
+              y: { title: { display: true, text: 'Price ($)' }}
+            }
+          }
+        });
+        </script>
+        {% endif %}
+
+
+        {% endif %}
+          {% if pattern_results is not none and not pattern_results.empty %}
+            <section class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <h2 class="text-xl font-semibold mb-4">🕯 Candlestick Patterns</h2>
+              <table class="w-full border-collapse">
+                <thead class="bg-gray-200 dark:bg-gray-700">
+                  <tr>
+                    <th class="px-4 py-2 border">Date</th>
+                    <th class="px-4 py-2 border">Hammer</th>
+                    <th class="px-4 py-2 border">Doji</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for date, row in pattern_results.iterrows() %}
+                    <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <td class="border px-4 py-2">{{ date.strftime('%Y-%m-%d') }}</td>
+                      <td class="border px-4 py-2">{{ '✅' if row.Hammer else '' }}</td>
+                      <td class="border px-4 py-2">{{ '✅' if row.Doji else '' }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </section>
+          {% endif %}
+        </section>
+
+          {% if price_history and price_history.dates %}
+          <div class="bg-white rounded-xl shadow-md p-6 w-full">
+            <!-- Timeframe selector -->
+            <form method="POST" class="mb-4 flex items-center gap-2">
+              <input type="hidden" name="symbol" value="{{ symbol }}">
+              <select name="timeframe" class="border px-2 py-1 rounded">
+                <option value="1M" {% if timeframe == "1M" %}selected{% endif %}>1M</option>
+                <option value="6M" {% if timeframe == "6M" %}selected{% endif %}>6M</option>
+                <option value="1Y" {% if timeframe == "1Y" %}selected{% endif %}>1Y</option>
+                <option value="2Y" {% if timeframe == "2Y" %}selected{% endif %}>2Y</option>
+              </select>
+              <button type="submit" class="ml-2 bg-blue-600 text-white px-3 py-1 rounded">Update</button>
+            </form>
+
+            <canvas id="priceChart" height="300"></canvas>
+
+            <script>
+              const priceCtx = document.getElementById('priceChart').getContext('2d');
+
+              const priceLabels = {{ dates | tojson }};
+              const priceData = {{ closes | tojson }};
+              const hammerFlags = {{ hammer | tojson }};
+              const dojiFlags = {{ doji | tojson }};
+
+              const pointColors = priceData.map((_, i) => {
+                if (hammerFlags[i]) return 'green';
+                if (dojiFlags[i]) return 'orange';
+                return 'rgba(75, 192, 192, 1)';
+              });
+
+              const pointSizes = priceData.map((_, i) => (hammerFlags[i] || dojiFlags[i]) ? 7 : 3);
+
+              new Chart(priceCtx, {
+                type: 'line',
+                data: {
+                  labels: priceLabels,
+                  datasets: [{
+                    label: '{{ symbol }} Closing Price',
+                    data: priceData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: pointSizes,
+                    pointBackgroundColor: pointColors
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  scales: {
+                    x: { title: { display: true, text: 'Date' }},
+                    y: { title: { display: true, text: 'Price ($)' }, beginAtZero: false }
+                  },
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(ctx) {
+                          const i = ctx.dataIndex;
+                          let label = `Price: $${ctx.parsed.y.toFixed(2)}`;
+                          if (hammerFlags[i]) label += " (Hammer)";
+                          if (dojiFlags[i]) label += " (Doji)";
+                          return label;
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+            </script>
+          </div>
+          
+          {% endif %} 
+        <!-- Drawer: Stock Details -->
+        {% if stock_data %}
+        <section class="bg-white rounded-xl shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4">📋 Stock Details for {{ stock_data.get('shortName', symbol) }}</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead class="bg-gray-200">
+                <tr>
+                  <th class="text-left py-2 px-4 border">Field</th>
+                  <th class="text-left py-2 px-4 border">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, value in stock_data.items() %}
+                <tr class="hover:bg-gray-100">
+                  <td class="py-2 px-4 border">{{ key }}</td>
+                  <td class="py-2 px-4 border">{{ value | default('N/A') }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% endif %}
+
+      <script>
+      const candlestickCtx = document.getElementById('candlestickChart').getContext('2d');
+
+      const candlestickData = {
+        datasets: [{
+          label: '{{ symbol }} OHLC',
+          data: [
+            {% for i in range(ohlc_data.dates | length) %}
+            {
+              x: new Date("{{ ohlc_data.dates[i] }}"),
+              o: {{ ohlc_data.opens[i] }},
+              h: {{ ohlc_data.highs[i] }},
+              l: {{ ohlc_data.lows[i] }},
+              c: {{ ohlc_data.closes[i] }}
+            },
+            {% endfor %}
+          ],
+          color: {
+            up: 'rgba(33, 150, 243, 1)',
+            down: 'rgba(244, 67, 54, 1)',
+            unchanged: '#999'
+          }
+        }]
+      };
+
+      const candlestickChart = new Chart(candlestickCtx, {
+        type: 'candlestick',
+        data: candlestickData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              time: {
+                unit: 'day'
+              },
+              ticks: { source: 'data' }
+            },
+            y: {
+              beginAtZero: false,
+              title: { display: true, text: 'Price ($)' }
+            }
+          }
+        }
+      });
+      </script>
+
+      <!-- Drawer: Error -->
+      {% if error %}
+      <section class="bg-red-100 border border-red-300 text-red-700 p-4 rounded shadow-md">
+        <p>{{ error }}</p>
+      </section>
+      {% endif %}
+    {% endif %}
+    </main>
+  </div>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("symbol-input");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim();
+      if (!query) {
+        suggestionsBox.classList.add("hidden");
+        suggestionsBox.innerHTML = "";
+        return;
+      }
+
+      fetch(`/autocomplete?q=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          suggestionsBox.innerHTML = "";
+          if (data.length > 0) {
+            suggestionsBox.classList.remove("hidden");
+            data.forEach(symbol => {
+              const li = document.createElement("li");
+              li.textContent = symbol;
+              li.className = "px-4 py-2 cursor-pointer hover:bg-gray-200";
+              li.addEventListener("click", () => {
+                input.value = symbol;
+                suggestionsBox.classList.add("hidden");
+                suggestionsBox.innerHTML = "";
+              });
+              suggestionsBox.appendChild(li);
+            });
+          } else {
+            suggestionsBox.classList.add("hidden");
+          }
+        });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!suggestionsBox.contains(e.target) && e.target !== input) {
+        suggestionsBox.classList.add("hidden");
+      }
+    });
+  });
+  </script>
+{% if candlestick_data %}
+<script>
+const ctxCandle = document.getElementById('candlestickChart').getContext('2d');
+const candlestickData = {
+  datasets: [{
+    label: 'Candlestick',
+    data: {{ candlestick_data | tojson }},
+    color: {
+      up: '#16a34a',    // green for bullish
+      down: '#dc2626',  // red for bearish
+      unchanged: '#9ca3af'
+    }
+  }]
+};
+
+new Chart(ctxCandle, {
+  type: 'candlestick',
+  data: candlestickData,
+  options: {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: context => {
+            const o = context.raw.o;
+            const h = context.raw.h;
+            const l = context.raw.l;
+            const c = context.raw.c;
+            return O: ${o} H: ${h} L: ${l} C: ${c};
+          }
+        }
+      },
+      legend: { display: false }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Date' }},
+      y: { title: { display: true, text: 'Price ($)' }}
+    }
+  }
+});
+</script>
+{% endif %}
+
+</body>
+</html>
