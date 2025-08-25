@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>S&P 500 Stock List - Stock Strategy Advisor</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 p-6">
+  <!-- Loading overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+  <div class="text-center space-y-4">
+    <svg class="animate-spin h-12 w-12 text-blue-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 100 16v-4l-3.5 3.5L12 24v-4a8 8 0 01-8-8z"></path>
+    </svg>
+    <p class="text-gray-600">Analyzing all S&P 500 stocks... Please wait</p>
+  </div>
+</div>
+
+  <h1 class="text-3xl font-bold mb-6 text-center">S&P 500 Stock Evaluation</h1>
+<p class="text-center text-gray-600 mb-4">
+  Found {{ stocks|length }} stock(s) in the S&P 500 with a perfect strategy score (12/12).
+</p>
+
+  <div class="overflow-x-auto max-w-7xl mx-auto">
+    <table class="min-w-full bg-white rounded-lg shadow-lg">
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="py-3 px-6">Symbol</th>
+          <th class="py-3 px-6">Name</th>
+          <th class="py-3 px-6">Recommendation</th>
+          <th class="py-3 px-6">Score %</th>
+        </tr>
+      </thead>
+      <script>
+  window.addEventListener("load", function () {
+    const overlay = document.getElementById("loadingOverlay");
+    if (overlay) overlay.style.display = "none";
+  });
+</script>
+
+        <tbody>
+        {% for stock in stocks %}
+        <tr class="border-b hover:bg-gray-100">
+            <td class="py-2 px-6 font-mono">{{ stock.symbol }}</td>
+            <td class="py-2 px-6">{{ stock.shortName }}</td>
+            <td class="py-2 px-6">{{ stock.recommendation }}</td>
+            <td class="py-2 px-6 font-bold">{{ stock.score }}/12</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+  </div>
+</body>
+</html>
