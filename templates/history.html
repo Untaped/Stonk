@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stock History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-7xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold mb-6">📈 Historical Stock Data</h1>
+
+    <div class="overflow-auto rounded-lg shadow border border-gray-300">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Date</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Symbol</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Name</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Price</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Score</th>
+            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Recommendation</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          {% for stock in stocks %}
+          <tr class="hover:bg-gray-100">
+            <td class="px-4 py-2 text-sm">{{ stock.date }}</td>
+            <td class="px-4 py-2 text-sm font-medium text-blue-600">{{ stock.symbol }}</td>
+            <td class="px-4 py-2 text-sm">{{ stock.name or "—" }}</td>
+            <td class="px-4 py-2 text-sm">${{ '%.2f'|format(stock.price or 0) }}</td>
+            <td class="px-4 py-2 text-sm">{{ '%.1f'|format(stock.score or 0) }}</td>
+            <td class="px-4 py-2 text-sm">{{ stock.recommendation or "N/A" }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center py-4 text-gray-500">No stock data available.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
