@@ -116,6 +116,12 @@ def index():
         price_history=None
     )
 
+@app.route('/api/stocks')
+def api_stocks():
+    preds = load_predictions(PREDICTIONS_CSV)
+    # This sends raw data that your Android app can "consume"
+    return jsonify(preds)
+
 @app.route('/manifest.json')
 def serve_manifest():
     return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
