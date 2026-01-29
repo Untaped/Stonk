@@ -1,10 +1,7 @@
-// static/sw.js
 const CACHE_NAME = 'litlguy-v1';
 const urlsToCache = [
   '/',
-  '/static/icon-192.png',
-  '/static/icon-512.png'
-  // Add other static CSS/JS files here if you have them
+  '/static/manifest.json'
 ];
 
 self.addEventListener('install', event => {
@@ -16,7 +13,6 @@ self.addEventListener('install', event => {
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });

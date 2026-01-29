@@ -5,6 +5,7 @@
   "display": "standalone",
   "background_color": "#1a202c",
   "theme_color": "#1a202c",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/static/icon-192.png",
