@@ -1,15 +1,27 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, session, redirect, url_for, flash
 from datetime import datetime
 import pandas as pd
 import os
 import sys
 from dotenv import load_dotenv
 from flask import send_from_directory
+from datetime import timedelta
+import requests
+from io import StringIO
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+
+# --- CONFIGURATION ---
+# 1. Secret Key is REQUIRED for sessions. 
+# On Render, set this as an environment variable 'SECRET_KEY'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev_default_key_change_this_in_prod')
+
+# 2. Set your Access Code
+# On Render, set 'SP500_ACCESS_CODE' in your Environment Variables
+ACCESS_CODE = os.environ.get('SP500_ACCESS_CODE', '12345') # Default is 12345
+
 
 # Configuration
 # We only care about the predictions file now.
@@ -31,6 +43,53 @@ def load_predictions(file_path):
     except Exception as e:
         print(f"⚠️ Error reading {file_path}: {e}")
         return []
+
+# Add to app.py if you strictly need to support the old collector script
+def get_sp500_symbols():
+    """Scrape S&P 500 symbols from Wikipedia with a User-Agent"""
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status() # Check for errors
+        table = pd.read_html(StringIO(response.text))
+        df = table[0]
+        return df['Symbol'].tolist()
+    except Exception as e:
+        print(f"Error fetching S&P 500 symbols: {e}")
+        return []
+
+def evaluate_stock_criteria(fundamentals):
+    """
+    Evaluates stock fundamentals and returns a score, recommendation, and list of reasons.
+    """
+    score = 0
+    reasons = []
+    
+    # Example logic: Add points for positive growth
+    rev_growth = fundamentals.get('revenueGrowth')
+    if rev_growth and rev_growth > 0:
+        score += 20
+        reasons.append("Positive Revenue Growth")
+        
+    # Example logic: Add points for reasonable PE ratio
+    pe = fundamentals.get('forwardPE')
+    if pe and 0 < pe < 25:
+        score += 20
+        reasons.append("Healthy Forward PE")
+
+    # Determine recommendation based on score
+    if score >= 40:
+        recommendation = "BUY"
+    elif score >= 20:
+        recommendation = "HOLD"
+    else:
+        recommendation = "SELL"
+        reasons.append("Weak Fundamentals")
+
+    return score, recommendation, reasons
 
 def get_latest_prediction(symbol, file_path=PREDICTIONS_CSV):
     """Find specific symbol in the CSV"""
@@ -130,8 +189,35 @@ def serve_manifest():
 def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None  # <--- Add this line to define the variable
+    if request.method == 'POST':
+        if request.form.get('code') == ACCESS_CODE:
+            session.permanent = True
+            session['sp500_unlocked'] = True
+            return redirect(url_for('sp500_list'))
+        else:
+            # You can set the error message here for the template
+            error = "Invalid access code. Please try again." 
+            flash(error, "danger")
+            return redirect(url_for('login'))
+    
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('sp500_unlocked', None)
+    flash("You have been logged out safely.", "info") # Add this
+    return redirect(url_for('index'))
+
 @app.route('/sp500')
 def sp500_list():
+    # --- SECURITY CHECK ---
+    if not session.get('sp500_unlocked'):
+        return redirect(url_for('login'))
+    # ----------------------
+
     """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
     
