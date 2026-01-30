@@ -715,17 +715,53 @@
                 <h1 class="text-3xl font-black mb-8 gradient-text">
                     <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
                 </h1>
-                <nav class="space-y-3">
-                    <a href="/" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
-                        <i class="fas fa-home mr-3"></i>Dashboard
+            <nav class="mt-8 flex-1 flex flex-col justify-between">
+                
+                <div class="flex flex-col space-y-1"> 
+                    <a href="/" class="flex items-center w-full px-6 py-5 text-gray-300 hover:bg-gray-700/40 hover:text-white transition-all duration-200 group border-l-4 border-transparent hover:border-blue-500">
+                        <span class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:bg-blue-500/20 transition-colors mr-4 text-xl">
+                            <i class="fas fa-search-dollar"></i>
+                        </span>
+                        <span class="font-bold tracking-tight text-lg">Dashboard</span>
                     </a>
-                    <a href="/sp500" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
-                        <i class="fas fa-chart-bar mr-3"></i>Top S&P 500
-                    </a>
-                    <a href="/" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
-                        <i class="fas fa-chart-bar mr-3"></i>Under Consutruction
-                    </a>
-                </nav>
+                        </div>
+
+                        <div class="mt-auto pb-10">
+                            <div class="px-6 mb-4 flex items-center justify-between">
+                                <span class="text-[11px] font-black text-gray-500 uppercase tracking-[0.3em]">Premium Suite</span>
+                                <i class="fas fa-crown text-sm text-yellow-500"></i>
+                            </div>
+
+                            <div class="bg-gray-800/40 border-y border-gray-700/50">
+                                
+                                <a href="/sp500" class="flex items-center w-full px-6 py-6 text-white hover:bg-emerald-500/10 transition-all duration-300 group border-l-4 border-emerald-500">
+                                    <div class="flex items-center flex-1">
+                                        <span class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform mr-4 text-2xl">
+                                            <i class="fas fa-layer-group"></i>
+                                        </span>
+                                        <div>
+                                            <span class="font-black block text-lg tracking-tight leading-none">Top S&P 500</span>
+                                            <span class="text-[9px] font-medium uppercase tracking-tighter text-gray-700">Locked</span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-lock text-emerald-500/40 group-hover:text-emerald-400 transition-colors text-sm ml-4"></i>
+                                </a>
+
+                                <a href="/" class="flex items-center w-full px-6 py-5 text-gray-500 cursor-not-allowed group border-l-4 border-transparent">
+                                    <div class="flex items-center flex-1">
+                                        <span class="w-10 h-10 rounded-xl bg-gray-900/50 flex items-center justify-center text-gray-700 mr-4 text-xl">
+                                            <i class="fas fa-hard-hat"></i>
+                                        </span>
+                                        <div>
+                                            <span class="font-bold block text-sm opacity-60">Under Development</span>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-lock text-gray-800 text-xs ml-4"></i>
+                                </a>
+
+                    </div>
+                </div>
+            </nav>
             </div>
             <div class="mt-10">
                 <div class="glass-card rounded-xl p-4 mb-4 popup-trigger">
