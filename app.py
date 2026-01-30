@@ -191,17 +191,18 @@ def serve_sw():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None  # <--- Add this line to define the variable
+    error = None
     if request.method == 'POST':
+        # Check if the code matches
         if request.form.get('code') == ACCESS_CODE:
             session.permanent = True
             session['sp500_unlocked'] = True
             return redirect(url_for('sp500_list'))
         else:
-            # You can set the error message here for the template
-            error = "Invalid access code. Please try again." 
+            error = "Invalid access code. Please try again."
+            # We don't redirect here; we just fall through to render_template
+            # This ensures the 'error' variable actually makes it to the page
             flash(error, "danger")
-            return redirect(url_for('login'))
     
     return render_template('login.html', error=error)
 
