@@ -722,6 +722,9 @@
                     <a href="/sp500" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
                         <i class="fas fa-chart-bar mr-3"></i>Top S&P 500
                     </a>
+                    <a href="/" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
+                        <i class="fas fa-chart-bar mr-3"></i>Under Consutruction
+                    </a>
                 </nav>
             </div>
             <div class="mt-10">
@@ -800,7 +803,7 @@
                             <div class="px-8 py-3 rounded-xl border backdrop-blur-md shadow-lg flex items-center gap-3
                                 {% if prediction.recommendation == 'BUY' %} 
                                     bg-green-500/10 border-green-500/30 text-green-400 shadow-green-500/20
-                                {% elif prediction.recommendation == 'SELL' %} 
+                                {% elif prediction.recommendation == 'AVOID' %} 
                                     bg-red-500/10 border-red-500/30 text-red-400 shadow-red-500/20
                                 {% else %} 
                                     bg-yellow-500/10 border-yellow-500/30 text-yellow-400 shadow-yellow-500/20
@@ -808,7 +811,7 @@
                                 
                                 <i class="fas 
                                     {% if prediction.recommendation == 'BUY' %} fa-arrow-trend-up
-                                    {% elif prediction.recommendation == 'SELL' %} fa-arrow-trend-down
+                                    {% elif prediction.recommendation == 'AVOID' %} fa-arrow-trend-down
                                     {% else %} fa-minus {% endif %} text-xl"></i>
                                 <span class="text-3xl font-black tracking-wider">{{ prediction.recommendation }}</span>
                             </div>

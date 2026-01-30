@@ -259,7 +259,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xl font-semibold text-white mb-2">Running ML Predictions</p>
+                <p class="text-xl font-semibold text-white mb-2">Running Confidence Predictions</p>
                 <p class="text-gray-300">Analyzing all S&P 500 stocks... Please wait</p>
                 <p class="text-sm text-gray-400 mt-2">This may take several minutes</p>
             </div>
@@ -285,6 +285,9 @@
                         <i class="fas fa-lock mr-3 text-gray-400 group-hover:text-red-400 transition-colors"></i>
                         <span class="group-hover:text-red-200">Lock View</span>
                     </a>
+                    <a href="/sp500" class="nav-item block py-4 px-4 rounded-xl transition-all duration-300 hover:text-white relative z-10 popup-trigger">
+                        <i class="fas fa-chart-bar mr-3"></i>Under Construction
+                    </a>
                 </nav>
                 </nav>
             </div>
@@ -307,7 +310,7 @@
             <!-- Header -->
             <div class="glass-card rounded-2xl p-8 text-center">
                 <h2 class="text-4xl font-black mb-4 gradient-text">
-                    <i class="fas fa-brain mr-3"></i>S&P 500 ML Predictions
+                    <i class="fas fa-brain mr-3"></i>S&P 500 Confidence Predictions
                 </h2>
                 <p class="text-xl text-gray-200 mb-4 max-w-3xl mx-auto">
                     Advanced machine learning analysis of all S&P 500 stocks with real-time predictions
@@ -340,20 +343,20 @@
                     </div>
                     <div class="metric-card rounded-xl p-6 text-center">
                         <div class="text-4xl font-black mb-3">
-                            {% set hold_count = stocks | selectattr('recommendation', 'equalto', 'HOLD') | list | length %}
+                            {% set hold_count = stocks | selectattr('recommendation', 'equalto', 'CONSIDER') | list | length %}
                             <span class="text-yellow-400">{{ hold_count }}</span>
                         </div>
                         <p class="text-sm text-gray-300 uppercase tracking-wide font-medium flex items-center justify-center">
-                            <i class="fas fa-pause mr-2 text-yellow-400"></i>HOLD Signals
+                            <i class="fas fa-pause mr-2 text-yellow-400"></i>CONSIDER Signals
                         </p>
                     </div>
                     <div class="metric-card rounded-xl p-6 text-center">
                         <div class="text-4xl font-black mb-3">
-                            {% set sell_count = stocks | selectattr('recommendation', 'equalto', 'SELL') | list | length %}
+                            {% set sell_count = stocks | selectattr('recommendation', 'equalto', 'AVOID') | list | length %}
                             <span class="text-red-400">{{ sell_count }}</span>
                         </div>
                         <p class="text-sm text-gray-300 uppercase tracking-wide font-medium flex items-center justify-center">
-                            <i class="fas fa-arrow-down mr-2 text-red-400"></i>SELL Signals
+                            <i class="fas fa-arrow-down mr-2 text-red-400"></i>AVOID Signals
                         </p>
                     </div>
                     <div class="metric-card rounded-xl p-6 text-center">
@@ -362,7 +365,7 @@
                             {{ "%.3f" | format(avg_prob) }}
                         </div>
                         <p class="text-sm text-gray-300 uppercase tracking-wide font-medium flex items-center justify-center">
-                            <i class="fas fa-chart-line mr-2 text-gray-400"></i>Avg ML Score
+                            <i class="fas fa-chart-line mr-2 text-gray-400"></i>Avg Confidence Score
                         </p>
                     </div>
                 </div>
@@ -370,10 +373,10 @@
                 <div class="glass-card rounded-xl p-6 text-center">
                     <p class="text-gray-300 mb-2">
                         <i class="fas fa-database mr-2"></i>
-                        Found <span class="font-semibold text-white">{{ stocks|length }}</span> stocks analyzed with ML algorithm
+                        Found <span class="font-semibold text-white">{{ stocks|length }}</span> stocks analyzed with Confidence algorithm
                     </p>
                     <p class="text-sm text-gray-400">
-                        Sorted by ML probability (highest first)
+                        Sorted by Confidence probability (highest first)
                     </p>
                 </div>
 
@@ -396,7 +399,7 @@
                                         <i class="fas fa-industry mr-2"></i>Sector
                                     </th>
                                     <th class="py-4 px-6 text-center text-sm font-semibold text-gray-200 uppercase tracking-wider">
-                                        <i class="fas fa-brain mr-2"></i>ML Score
+                                        <i class="fas fa-brain mr-2"></i>Confidence Score
                                     </th>
                                     <th class="py-4 px-6 text-center text-sm font-semibold text-gray-200 uppercase tracking-wider">
                                         <i class="fas fa-thumbs-up mr-2"></i>Recommendation
@@ -420,9 +423,9 @@
                                         <span class="text-sm text-gray-300">{{ stock.sector }}</span>
                                     </td>
                                     <td class="py-4 px-6 text-center">
-                                        {% if stock.probability > 0.7 %}
+                                        {% if stock.probability > 0.75 %}
                                             <span class="text-green-400 font-bold text-lg">{{ stock.score_percent }}</span>
-                                        {% elif stock.probability > 0.5 %}
+                                        {% elif stock.probability > 0.35 %}
                                             <span class="text-yellow-400 font-semibold text-lg">{{ stock.score_percent }}</span>
                                         {% else %}
                                             <span class="text-red-400 text-lg">{{ stock.score_percent }}</span>
@@ -433,13 +436,13 @@
                                             <span class="buy-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold">
                                                 <i class="fas fa-arrow-up mr-1"></i>BUY
                                             </span>
-                                        {% elif stock.recommendation == 'HOLD' %}
+                                        {% elif stock.recommendation == 'CONSIDER' %}
                                             <span class="hold-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold">
-                                                <i class="fas fa-pause mr-1"></i>HOLD
+                                                <i class="fas fa-pause mr-1"></i>CONSIDER
                                             </span>
                                         {% else %}
                                             <span class="sell-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold">
-                                                <i class="fas fa-arrow-down mr-1"></i>SELL
+                                                <i class="fas fa-arrow-down mr-1"></i>AVOID
                                             </span>
                                         {% endif %}
                                     </td>
@@ -472,7 +475,7 @@
                 </p>
                 <p class="text-sm text-gray-400">
                     <i class="fas fa-robot mr-2"></i>
-                    ML predictions based on technical analysis and market data
+                    Confidence predictions based on technical analysis and market data
                 </p>
                 <p class="text-xs text-gray-500 mt-3 border-t border-gray-600 pt-3">
                     <i class="fas fa-exclamation-triangle mr-1"></i>
