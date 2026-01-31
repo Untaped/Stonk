@@ -180,22 +180,24 @@
 
     <div class="flex flex-col md:flex-row min-h-screen">
         
-        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10">
+        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
             <div>
                 <h1 class="text-3xl font-black mb-8 gradient-text">
                     <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
                 </h1>
-                <div class="space-y-2">
+                <nav class="space-y-2">
                     <a href="/" class="flex items-center px-4 py-3 bg-blue-500/10 rounded-xl text-blue-400 font-bold border-l-4 border-blue-500">
-                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
+                        <i class="fas fa-layer-group mr-3"></i> Dashboard
                     </a>
                     <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-layer-group mr-3"></i> Top S&P
-                        <i class="fas fa-lock text-emerald-500/40 group-hover:text-emerald-400 transition-colors text-sm ml-4"></i>
+                        <i class="fas fa-search-dollar mr-3"></i> Top S&P
                     </a>
-                </div>
+                </nav>
             </div>
             <div class="mt-10">
+                <div class="px-4 py-2 bg-gray-800/30 rounded-lg border border-gray-700/30 flex items-center justify-between">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Updates for Open Bell</span>
+                </div>
                 <div class="glass-card rounded-xl p-4">
                     <div class="flex items-center mb-2">
                         <i class="fas fa-robot text-green-400 mr-2"></i>
@@ -295,6 +297,7 @@
             <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-emerald-400 transition-colors">
                 <i class="fas fa-layer-group text-xl mb-1"></i>
                 <span class="text-[10px] font-medium tracking-wide">Top S&P</span>
+
             </a>
             
             <a href="/logout" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
@@ -316,22 +319,44 @@
             welcomeOverlay.style.zIndex = '20000';
             
             welcomeOverlay.innerHTML = `
-                <div class="popup-container" style="transform: scale(1) translateY(0);">
-                    <div class="flex items-center gap-3 mb-4">
+                <div class="popup-container" style="transform: scale(1) translateY(0); max-height: 90vh; overflow-y: auto;">
+                    <div class="flex items-center gap-3 mb-4 sticky top-0 bg-[#1a202c] py-2 z-10">
                         <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
                             <i class="fas fa-shield-alt text-yellow-400"></i>
                         </div>
-                        <h3 class="text-xl font-bold">Disclaimer</h3>
+                        <h3 class="text-xl font-bold">Financial Disclaimer</h3>
                     </div>
-                    <div class="text-gray-300 mb-6 text-sm leading-relaxed">
-                        <p class="mb-2"><strong>Educational Purpose Only:</strong> Predictions are based on historical data and AI probabilities.</p>
-                        <p>This is not financial advice. Always do your own research.</p>
+                    
+                    <div class="text-gray-300 mb-6 text-sm leading-relaxed space-y-4">
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">1. Not Financial Advice</p>
+                            <p>The information provided by LitlGuy, including stock predictions and confidence scores, is for <strong>educational and informational purposes only</strong>. This website may be out of date and only updates for Open Bell following the NSADEQ trading day. It should not be considered professional financial investment advice.</p>
+                        </section>
+
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">2. AI & Market Risk</p>
+                            <p>Stock markets are inherently volatile. Models analyze historical patterns which do not guarantee future results. Algorithms can fail, and "Confidence Levels" represent mathematical probability, not certainty.</p>
+                        </section>
+
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">3. Data Accuracy</p>
+                            <p>While we strive for accuracy, market data may be delayed or contain errors. LitlGuy is not responsible for any trading losses incurred through the use of this tool.</p>
+                        </section>
+
+                        <div class="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <p class="text-[11px] text-yellow-200">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> 
+                                <strong>Warning:</strong> Never invest money you cannot afford to lose. Always consult with a licensed financial advisor before making investment decisions.
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex justify-center">
-                        <button class="popup-btn popup-btn-primary w-full" id="welcomeUnderstand">
-                            I Understand
+
+                    <div class="flex justify-center sticky bottom-0 bg-[#1a202c] pt-2">
+                        <button class="popup-btn popup-btn-primary w-full py-4 rounded-xl font-black tracking-widest uppercase text-xs shadow-lg shadow-blue-500/20" id="welcomeUnderstand">
+                            Accept & Continue
                         </button>
                     </div>
+                </div>
                 </div>
             `;
             
