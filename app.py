@@ -193,15 +193,20 @@ def serve_sw():
 def login():
     error = None
     if request.method == 'POST':
-        # Check if the code matches
         if request.form.get('code') == ACCESS_CODE:
             session.permanent = True
             session['sp500_unlocked'] = True
+            
+            # Check if there is a saved destination in the session
+            next_page = session.pop('next_page', None) # .pop retrieves and deletes it
+            
+            if next_page == 'phone':
+                return redirect(url_for('sp500_list_phone'))
+            
+            # Default to desktop if no specific destination was set
             return redirect(url_for('sp500_list'))
         else:
             error = "Invalid access code. Please try again."
-            # We don't redirect here; we just fall through to render_template
-            # This ensures the 'error' variable actually makes it to the page
             flash(error, "danger")
     
     return render_template('login.html', error=error)
@@ -216,12 +221,15 @@ def logout():
 def sp500_list():
     # --- SECURITY CHECK ---
     if not session.get('sp500_unlocked'):
+        # Clear the next_page just in case, so they go to desktop default
+        session.pop('next_page', None) 
         return redirect(url_for('login'))
     # ----------------------
 
+    # ... (Rest of your existing sp500_list code stays the same) ...
     """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
-    
+    # ... etc ...
     try:
         preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
     except:
@@ -233,14 +241,91 @@ def sp500_list():
         formatted_stocks.append({
             'symbol': p.get('symbol'),
             'score_percent': f"{prob*100:.1f}%",
-            'probability': prob,  # <--- ADD THIS LINE
+            'probability': prob,
             'recommendation': p.get('recommendation', 'N/A'),
             'currentPrice': p.get('price', 'N/A'),
-            'shortName': p.get('name', p.get('symbol')), # Ensure name exists for table
-            'sector': p.get('sector', 'Unknown')        # Ensure sector exists for table
+            'shortName': p.get('name', p.get('symbol')),
+            'sector': p.get('sector', 'Unknown')
         })
 
     return render_template("SP500.html", stocks=formatted_stocks, last_updated="Static Data")
+
+# --- PHONE ROUTES ---
+
+@app.route('/indexphone', methods=['GET', 'POST'])
+def index_phone():
+    """Phone version of the Dashboard"""
+    symbol = ""
+    prediction = None
+    stock_data = None
+    error = None
+
+    if request.method == 'POST':
+        symbol = request.form.get('symbol', '').upper().strip()
+        
+        # Look up prediction (Same logic as desktop)
+        raw_data = get_latest_prediction(symbol)
+        
+        if raw_data:
+            prediction = {
+                'symbol': raw_data.get('symbol'),
+                'recommendation': raw_data.get('recommendation', 'HOLD'),
+                'probability': raw_data.get('probability', 0),
+                '1pct': raw_data.get('prob_1pct', 0),   
+                '3pct': raw_data.get('prob_3pct', 0),
+                '5pct': raw_data.get('prob_5pct', 0),
+                '10pct': raw_data.get('prob_10pct', 0),
+                '1mo': raw_data.get('prob_1mo', 0),
+            }
+            stock_data = get_fundamentals(symbol)
+        else:
+            error = f"No prediction found for {symbol}."
+
+    return render_template(
+        'indexphone.html',
+        symbol=symbol,
+        prediction=prediction,
+        stock_data=stock_data,
+        error=error,
+        ohlc_data=[],
+        closes=[],
+        dates=[],
+        growth_summary=None,
+        price_history=None
+    )
+
+@app.route('/sp500phone')
+def sp500_list_phone():
+    # --- SECURITY CHECK ---
+    if not session.get('sp500_unlocked'):
+        # Save 'phone' as the intended destination before kicking them to login
+        session['next_page'] = 'phone'
+        return redirect(url_for('login'))
+    # ----------------------
+
+    # ... (Rest of your existing sp500_list_phone code stays the same) ...
+    """Show top predictions from CSV for Phone"""
+    preds = load_predictions(PREDICTIONS_CSV)
+    # ... etc ...
+    try:
+        preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
+    except:
+        pass
+
+    formatted_stocks = []
+    for p in preds:
+        prob = float(p.get('probability', 0))
+        formatted_stocks.append({
+            'symbol': p.get('symbol'),
+            'score_percent': f"{prob*100:.1f}%",
+            'probability': prob,
+            'recommendation': p.get('recommendation', 'N/A'),
+            'currentPrice': p.get('price', 'N/A'),
+            'shortName': p.get('name', p.get('symbol')),
+            'sector': p.get('sector', 'Unknown')
+        })
+
+    return render_template("SP500phone.html", stocks=formatted_stocks, last_updated="Static Data")
 
 @app.route('/autocomplete')
 def autocomplete():
