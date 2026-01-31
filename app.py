@@ -8,6 +8,7 @@ from flask import send_from_directory
 from datetime import timedelta
 import requests
 from io import StringIO
+from datetime import datetime
 
 load_dotenv()
 
@@ -15,19 +16,23 @@ app = Flask(__name__)
 
 # --- CONFIGURATION ---
 # 1. Secret Key is REQUIRED for sessions. 
-# On Render, set this as an environment variable 'SECRET_KEY'
 app.secret_key = os.environ.get('SECRET_KEY', 'dev_default_key_change_this_in_prod')
 
 # 2. Set your Access Code
-# On Render, set 'SP500_ACCESS_CODE' in your Environment Variables
-ACCESS_CODE = os.environ.get('SP500_ACCESS_CODE', '12345') # Default is 12345
+ACCESS_CODE = os.environ.get('SP500_ACCESS_CODE', '12345')
 
 
 # Configuration
-# We only care about the predictions file now.
-# This file is small and contains the results of your local training.
 PREDICTIONS_CSV = "stonk_download/predictions.csv"
 PREDICTIONS_5PCT_CSV = "stonk_download/predictions_5pct.csv"
+
+def get_last_update_time():
+    path = "stonk_download/predictions.csv"
+    if os.path.exists(path):
+        # Get file modification time
+        mtime = os.path.getmtime(path)
+        return datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M')
+    return "No Data"
 
 # --- Helper Functions ---
 
@@ -44,7 +49,6 @@ def load_predictions(file_path):
         print(f"⚠️ Error reading {file_path}: {e}")
         return []
 
-# Add to app.py if you strictly need to support the old collector script
 def get_sp500_symbols():
     """Scrape S&P 500 symbols from Wikipedia with a User-Agent"""
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
@@ -68,7 +72,6 @@ def evaluate_stock_criteria(fundamentals):
     score = 0
     reasons = []
     
-    # Example logic: Add points for positive growth
     rev_growth = fundamentals.get('revenueGrowth')
     if rev_growth and rev_growth > 0:
         score += 20
@@ -324,16 +327,6 @@ def autocomplete():
     preds = load_predictions(PREDICTIONS_CSV)
     symbols = [p.get('symbol') for p in preds if p.get('symbol') and query in p.get('symbol')]
     return jsonify(symbols[:10])
-
-# Dummy routes to prevent 404s if links exist
-@app.route('/portfolio')
-def portfolio():
-    return render_template("portfolio.html", results=[], error="Portfolio disabled in lightweight mode")
-
-@app.route('/predict_5pct', methods=['GET', 'POST'])
-def predict_5pct():
-    # Redirects to main page logic or simplistic 5% viewer
-    return index() 
 
 if __name__ == '__main__':
     app.run(debug=True)
