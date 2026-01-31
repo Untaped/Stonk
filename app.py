@@ -193,20 +193,15 @@ def serve_sw():
 def login():
     error = None
     if request.method == 'POST':
+        # Check if the code matches
         if request.form.get('code') == ACCESS_CODE:
             session.permanent = True
             session['sp500_unlocked'] = True
-            
-            # Check if there is a saved destination in the session
-            next_page = session.pop('next_page', None) # .pop retrieves and deletes it
-            
-            if next_page == 'phone':
-                return redirect(url_for('sp500_list_phone'))
-            
-            # Default to desktop if no specific destination was set
             return redirect(url_for('sp500_list'))
         else:
             error = "Invalid access code. Please try again."
+            # We don't redirect here; we just fall through to render_template
+            # This ensures the 'error' variable actually makes it to the page
             flash(error, "danger")
     
     return render_template('login.html', error=error)
@@ -221,15 +216,12 @@ def logout():
 def sp500_list():
     # --- SECURITY CHECK ---
     if not session.get('sp500_unlocked'):
-        # Clear the next_page just in case, so they go to desktop default
-        session.pop('next_page', None) 
         return redirect(url_for('login'))
     # ----------------------
 
-    # ... (Rest of your existing sp500_list code stays the same) ...
     """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
-    # ... etc ...
+    
     try:
         preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
     except:
@@ -241,11 +233,11 @@ def sp500_list():
         formatted_stocks.append({
             'symbol': p.get('symbol'),
             'score_percent': f"{prob*100:.1f}%",
-            'probability': prob,
+            'probability': prob,  # <--- ADD THIS LINE
             'recommendation': p.get('recommendation', 'N/A'),
             'currentPrice': p.get('price', 'N/A'),
-            'shortName': p.get('name', p.get('symbol')),
-            'sector': p.get('sector', 'Unknown')
+            'shortName': p.get('name', p.get('symbol')), # Ensure name exists for table
+            'sector': p.get('sector', 'Unknown')        # Ensure sector exists for table
         })
 
     return render_template("SP500.html", stocks=formatted_stocks, last_updated="Static Data")
@@ -297,16 +289,14 @@ def index_phone():
 @app.route('/sp500phone')
 def sp500_list_phone():
     # --- SECURITY CHECK ---
+    # This ensures they must be logged in to view the phone page
     if not session.get('sp500_unlocked'):
-        # Save 'phone' as the intended destination before kicking them to login
-        session['next_page'] = 'phone'
         return redirect(url_for('login'))
     # ----------------------
 
-    # ... (Rest of your existing sp500_list_phone code stays the same) ...
     """Show top predictions from CSV for Phone"""
     preds = load_predictions(PREDICTIONS_CSV)
-    # ... etc ...
+    
     try:
         preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
     except:
