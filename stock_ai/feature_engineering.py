@@ -274,7 +274,6 @@ def add_features(df, sector_map=None):
         """
         g = g.copy()
 
-        # Forward fill and backward fill ONLY within the same symbol
         # This prevents information leakage across symbols
         g.fillna(method='ffill', inplace=True)
         g.fillna(method='bfill', inplace=True)
@@ -344,7 +343,7 @@ def add_features(df, sector_map=None):
         avg_loss = loss.rolling(14).mean()
         rs = avg_gain / avg_loss
         rsi = 100 - (100 / (1 + rs))
-        g["rsi_14"] = rsi  # <--- REMOVED .shift(1)
+        g["rsi_14"] = rsi
 
         # --- ATR 14 (LAGGED) ---
         high_low = g["high"] - g["low"]
@@ -353,8 +352,7 @@ def add_features(df, sector_map=None):
         tr = pd.concat([high_low, high_close_prev, low_close_prev], axis=1).max(axis=1)
         g["atr_14"] = tr.rolling(14).mean().shift(1)
 
-        # --- CANDLESTICK PATTERNS (FIXED: NOW PROPERLY LAGGED) ---
-        # CRITICAL FIX: Candlestick patterns must use lagged OHLC data
+        # --- CANDLESTICK PATTERNS ---
         open_lag = g["open"].shift(1)
         high_lag = g["high"].shift(1)
         low_lag = g["low"].shift(1) 
@@ -544,7 +542,6 @@ def add_cross_sectional_features(df):
         return beta.fillna(1.0)
 
     # 2. Apply and ensure alignment
-    # By using transform, we force pandas to map the results back to the original index length
     try:
         df['rolling_beta'] = df.groupby('symbol')['return_1d'].transform(
             lambda x: calculate_rolling_beta(df.loc[x.index])
@@ -563,7 +560,6 @@ def neutralize_features(df, feature_cols, target_col='market_ret'):
     print(f"Neutralizing {len(feature_cols)} features against Market Return...")
     
     # Simple linear regression residual: Feature = Beta * Market + Alpha
-    # We want the Alpha (Residual)
     for feat in feature_cols:
         if feat in df.columns and pd.api.types.is_numeric_dtype(df[feat]):
             # Calculate correlation to see if neutralization is needed
@@ -590,12 +586,10 @@ def add_risk_features(df):
     df = df.sort_values(['symbol', 'date'])
     
     # 1. Volatility-Normalized Return
-    # How many 'units of risk' did the stock move yesterday?
     if 'atr_14' in df.columns:
         df['vol_adj_return_1d'] = (df['return_1d'] / (df['atr_14'] / df['close']))
     
     # 2. Rolling Beta (Market Sensitivity)
-    # Market return proxy = cross-sectional average of all stocks in the dataset
     market_ret = df.groupby('date')['return_1d'].transform('mean')
     
     def _compute_beta(g):
@@ -631,10 +625,6 @@ def add_regime_features(df):
     df['bear_market'] = (df['market_trend'] < -0.005).astype(int)
     
     return df
-
-# Add this to the end of stock_ai/feature_engineering.py
-
-# Add this to the bottom of stock_ai/feature_engineering.py
 
 class FeatureEngineer:
     def __init__(self):
