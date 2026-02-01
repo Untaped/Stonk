@@ -43,7 +43,7 @@ def load_predictions(file_path):
         return []
     try:
         df = pd.read_csv(file_path)
-        # Ensure standard column names
+        # Ensure standard@a column names
         df.columns = [c.lower() for c in df.columns]
         return df.to_dict(orient="records")
     except Exception as e:
@@ -261,32 +261,41 @@ def sp500_list():
 
 @app.route('/nasdaq')
 def nasdaq_list():
-    # Security check (reuse your login logic)
-    # if not session.get('sp500_unlocked'): return redirect(url_for('login'))
-
-    """Show top NASDAQ predictions"""
     preds = load_predictions(NASDAQ_PREDICTIONS_CSV)
     
+    formatted_stocks = []
+    for p in preds:
+        # 1. Normalize 'probability' (Handle different column names)
+        # Some CSVs use 'combined_score', others 'probability'
+        raw_score = p.get('combined_score', p.get('probability', 0))
+        try:
+            prob = float(raw_score)
+        except:
+            prob = 0.0
+
+        # 2. Create the display variables
+        p['probability'] = prob
+        p['score_percent'] = f"{prob*100:.1f}%"
+        
+        # 3. Ensure other required fields exist
+        if 'shortName' not in p:
+            p['shortName'] = p.get('name', p.get('symbol', 'N/A'))
+            
+        if 'currentPrice' not in p:
+            p['currentPrice'] = p.get('price', 0)
+            
+        if 'sector' not in p:
+            p['sector'] = "Unknown"
+
+        formatted_stocks.append(p)
+
+    # Sort by high confidence
     try:
-        preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
+        formatted_stocks.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
     except:
         pass
 
-    formatted_stocks = []
-    for p in preds:
-        prob = float(p.get('probability', 0))
-        formatted_stocks.append({
-            'symbol': p.get('symbol'),
-            'score_percent': f"{prob*100:.1f}%",
-            'probability': prob,
-            'recommendation': p.get('recommendation', 'N/A'),
-            'currentPrice': float(p.get('price', 0)),
-            'shortName': p.get('name', p.get('symbol')),
-            'sector': p.get('sector', 'Unknown')
-        })
-
-    return render_template("NASDAQ.html", stocks=formatted_stocks, last_updated="Static Data")
-
+    return render_template("NASDAQ.html", stocks=formatted_stocks[:100], last_updated="Live")
 # --- PHONE ROUTES ---
 
 @app.route('/indexphone', methods=['GET', 'POST'])
