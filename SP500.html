@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>S&P 500 ML Predictions - Strategy AI</title>
+    
+    <meta name="theme-color" content="#1a202c">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            --secondary-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            --card-bg: rgba(26, 32, 44, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Animations */
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .floating-orb:nth-child(1) { width: 80px; height: 80px; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); top: 10%; left: 10%; }
+        .floating-orb:nth-child(2) { width: 120px; height: 120px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); top: 70%; right: 10%; animation-delay: 2s; }
+        .floating-orb:nth-child(3) { width: 60px; height: 60px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); top: 40%; left: 70%; animation-delay: 4s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+        .loading-overlay {
+            background: rgba(26, 32, 44, 0.95);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Mobile Optimization for Data */
+        .mobile-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        @media (max-width: 768px) {
+            .floating-orb { display: none; }
+            /* Hide the big table on mobile */
+            .desktop-table { display: none; }
+        }
+        @media (min-width: 769px) {
+            /* Hide mobile cards on desktop */
+            .mobile-list { display: none; }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+
+    <div id="loadingOverlay" class="loading-overlay fixed inset-0 flex items-center justify-center z-[99999]">
+        <div class="text-center space-y-6 p-8 glass-card rounded-2xl mx-4">
+            <div class="flex justify-center">
+                <i class="fas fa-circle-notch fa-spin text-4xl text-blue-400"></i>
+            </div>
+            <div>
+                <p class="text-xl font-semibold text-white mb-2">Analyzing S&P 500</p>
+                <p class="text-gray-300 text-sm">Processing signals...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
+            <div>
+                <h1 class="text-3xl font-black mb-8 gradient-text">
+                    <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
+                </h1>
+                <nav class="space-y-2">
+                    <a href="/" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
+                    </a>
+                    <a href="/sp500" class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold border-l-4 border-emerald-500">
+                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
+                        <i class="fas fa-lock text-yellow-500/40 group-hover:text-yellow-500 transition-colors text-sm ml-4"></i>
+                    </a>
+                    <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-university mr-3"></i> TOP NASDAQ
+                        <i class="fas fa-lock text-yellow-600/40 group-hover:text-yellow-600 transition-colors text-sm ml-4"></i>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-10">
+                <div class="px-4 py-2 bg-gray-800/30 rounded-lg border border-gray-700/30 flex items-center justify-between">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Updates for Open Bell</span>
+                </div>
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-robot text-green-400 mr-2"></i>
+                        <span class="text-sm font-medium">AI Status</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                        <span class="text-xs text-gray-300">Online & Learning</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto relative z-10 pb-28 md:pb-6">
+
+            <div class="md:hidden flex justify-between items-center mb-2">
+                <h1 class="text-xl font-black text-white-400"><i class="fas fa-layer-group mr-2"></i>Top S&P 500</h1>
+                 <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">PREMIUM</span>
+            </div>
+
+            {% if error %}
+                <div class="glass-card rounded-xl p-4 border-l-4 border-red-500 flex items-center gap-3">
+                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                    <span class="text-sm text-gray-300">{{ error }}</span>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+                <div class="glass-card rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-4xl font-black mb-1 text-blue-400">
+                        {% set avg_prob = (stocks | sum(attribute='probability')) / (stocks | length) %}
+                        {{ "%.0f" | format(avg_prob * 100) }}%
+                    </div>
+                    <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Avg Confidence</p>
+                </div>
+                <div class="glass-card rounded-xl p-4 text-center">
+                    <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">
+                        {{ stocks | selectattr('recommendation', 'equalto', 'BUY') | list | length }}
+                    </div>
+                    <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Buy Signals</p>
+                </div>
+                <div class="hidden md:block glass-card rounded-xl p-4 text-center">
+                    <div class="text-4xl font-black mb-1 text-yellow-400">
+                        {{ stocks | selectattr('recommendation', 'equalto', 'CONSIDER') | list | length }}
+                    </div>
+                    <p class="text-sm text-gray-400 uppercase tracking-wide font-bold">Consider</p>
+                </div>
+                <div class="hidden md:block glass-card rounded-xl p-4 text-center">
+                    <div class="text-4xl font-black mb-1 text-red-400">
+                        {{ stocks | selectattr('recommendation', 'equalto', 'AVOID') | list | length }}
+                    </div>
+                    <p class="text-sm text-gray-400 uppercase tracking-wide font-bold">Avoid</p>
+                </div>
+            </div>
+
+            {% if stocks %}
+                <div class="mobile-list space-y-3">
+                    {% for stock in stocks[:100] %}
+                    <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
+                        {% if stock.recommendation == 'BUY' %} border-green-500
+                        {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
+                        {% else %} border-red-500 {% endif %}">
+                        
+                        <div class="flex-1 min-w-0 pr-4">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
+                            </div>
+                            <div class="text-xs text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
+                        </div>
+
+                        <div class="text-right flex flex-col items-end">
+                             {% if stock.probability > 0.70 %}
+                                <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
+                            {% elif stock.probability > 0.40 %}
+                                <div class="text-yellow-400 font-bold text-xl">{{ stock.score_percent }}</div>
+                            {% else %}
+                                <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
+                            {% endif %}
+                            
+                            <div class="text-[10px] font-bold mt-1 px-2 py-0.5 rounded-full bg-gray-800
+                                {% if stock.recommendation == 'BUY' %} text-green-400
+                                {% elif stock.recommendation == 'CONSIDER' %} text-yellow-400
+                                {% else %} text-red-400 {% endif %}">
+                                {{ stock.recommendation }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="desktop-table glass-card rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-900/50">
+                                <tr>
+                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Rank</th>
+                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Symbol</th>
+                                    <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Confidence</th>
+                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Company</th>
+                                    <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Action</th>
+                                    <th class="py-4 px-6 text-right text-sm font-semibold text-gray-400 uppercase">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700/50">
+                                {% for stock in stocks[:100] %}
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
+                                    <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
+                                    <td class="py-4 px-6 text-center">
+                                        {% if stock.probability > 0.70 %}
+                                            <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
+                                        {% elif stock.probability > 0.40 %}
+                                            <span class="text-yellow-400 font-bold">{{ stock.score_percent }}</span>
+                                        {% else %}
+                                            <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-6 text-gray-300 text-sm">{{ stock.shortName[:30] }}</td>
+                                    <td class="py-4 px-6 text-center">
+                                        <span class="px-3 py-1 rounded-full text-xs font-bold
+                                            {% if stock.recommendation == 'BUY' %} bg-green-500/20 text-green-400
+                                            {% elif stock.recommendation == 'CONSIDER' %} bg-yellow-500/20 text-yellow-400
+                                            {% else %} bg-red-500/20 text-red-400 {% endif %}">
+                                            {{ stock.recommendation }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6 text-right font-mono text-gray-300">
+                                        {% if stock.currentPrice > 0 %}${{ "%.2f" | format(stock.currentPrice) }}{% else %}N/A{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="glass-card rounded-2xl p-12 text-center">
+                    <i class="fas fa-chart-bar text-6xl text-gray-600 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-400">No Data Available</h3>
+                </div>
+            {% endif %}
+
+        </main>
+    </div>
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
+        <div class="flex justify-around items-center h-16">
+            <a href="/" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-400 transition-colors">
+                <i class="fas fa-search-dollar text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
+            </a>
+
+            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-emerald-400">
+                <i class="fas fa-layer-group text-xl mb-1"></i>
+                <span class="text-[10px] font-bold tracking-wide">Top S&P 500</span>
+                <span class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-lg shadow-[0_0_10px_#10b981]"></span>
+            </a>
+            
+            <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
+                <i class="fas fa-university text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">TOP NASDAQ</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        window.addEventListener("load", function () {
+            const overlay = document.getElementById("loadingOverlay");
+            if (overlay) {
+                // Fade out effect
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
