@@ -257,7 +257,7 @@ def sp500_list():
             'sector': p.get('sector', 'Unknown')        # Ensure sector exists for table
         })
 
-    return render_template("SP500.html", stocks=formatted_stocks, last_updated="Static Data")
+    return render_template("SP500.html", stocks=formatted_stocks[:100], last_updated="Static Data")
 
 @app.route('/nasdaq')
 def nasdaq_list():
