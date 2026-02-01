@@ -187,13 +187,13 @@
                 </h1>
                 <nav class="space-y-2">
                     <a href="/" class="flex items-center px-4 py-3 bg-blue-500/10 rounded-xl text-blue-400 font-bold border-l-4 border-blue-500">
-                        <i class="fas fa-layer-group mr-3"></i> Dashboard
+                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
                     </a>
                     <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-search-dollar mr-3"></i> Top S&P
+                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
                     <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-search-dollar mr-3"></i> Top NASDAQ
+                        <i class="fas fa-university mr-3"></i> Top NASDAQ
                     </a>
                 </nav>
             </div>
@@ -274,13 +274,13 @@
                                 </div>
                             </div>
                         {% endmacro %}
-                        {{ probability_card('1% (2d)', '1pct', 'emerald') }}
-                        {{ probability_card('3% (3d)', '3pct', 'teal') }}
-                        {{ probability_card('5% (5d)', '5pct', 'blue') }}
-                        {{ probability_card('10% (10d)', '10pct', 'indigo') }}
+                        {{ probability_card('+1% in 2 days', '1pct', 'emerald') }}
+                        {{ probability_card('+3% in 3 days', '3pct', 'teal') }}
+                        {{ probability_card('+5% in 5 days', '5pct', 'blue') }}
+                        {{ probability_card('+10% in 10 days', '10pct', 'indigo') }}
                     </div>
                     <div class="mt-3">
-                         {{ probability_card('1 Mo (>15%)', '1mo', 'purple') }}
+                         {{ probability_card('+15% in 30 days', '1mo', 'purple') }}
                     </div>
                 </div>
             </div>
@@ -299,12 +299,12 @@
 
             <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-emerald-400 transition-colors">
                 <i class="fas fa-layer-group text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Top S&P</span>
+                <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
             </a>
             
             <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-power-off text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">NASDAQ</span>
+                <i class="fas fa-university text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Top NASDAQ</span>
             </a>
         </div>
     </nav>
