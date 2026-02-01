@@ -148,7 +148,7 @@
                  <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">PREMIUM</span>
             </div>
 
-            {% if error %}
+             {% if error %}
                 <div class="glass-card rounded-xl p-4 border-l-4 border-red-500 flex items-center gap-3">
                     <i class="fas fa-exclamation-triangle text-red-400"></i>
                     <span class="text-sm text-gray-300">{{ error }}</span>
@@ -158,14 +158,10 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                 <div class="glass-card rounded-xl p-4 text-center">
                     <div class="text-2xl md:text-4xl font-black mb-1 text-blue-400">
-                        {% set valid_stocks = stocks | selectattr('probability', 'defined') | list %}
-                        {% if valid_stocks | length > 0 %}
-                            {% set avg_prob = (valid_stocks | sum(attribute='probability')) / (valid_stocks | length) %}
-                        {% else %}
-                            {% set avg_prob = 0 %}
-                        {% endif %}
+                        {% set avg_prob = (stocks | sum(attribute='probability')) / (stocks | length) %}
                         {{ "%.0f" | format(avg_prob * 100) }}%
                     </div>
+                    <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Avg Confidence</p>
                 </div>
                 <div class="glass-card rounded-xl p-4 text-center">
                     <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">
@@ -189,7 +185,7 @@
 
             {% if stocks %}
                 <div class="mobile-list space-y-3">
-                    {% for stock in stocks %}
+                    {% for stock in stocks[:100] %}
                     <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
                         {% if stock.recommendation == 'BUY' %} border-green-500
                         {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
@@ -200,15 +196,11 @@
                                 <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
                                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
                             </div>
-                            <div class="text-xs text-gray-400 truncate">
-                                {{ (stock.shortName | default(stock.symbol) | default('N/A'))[:25] }}
-                            </div>
+                            <div class="text-xs text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
                         </div>
 
                         <div class="text-right flex flex-col items-end">
-                            <div class="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5 font-bold">Confidence</div>
-
-                            {% if stock.probability > 0.70 %}
+                             {% if stock.probability > 0.70 %}
                                 <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
                             {% elif stock.probability > 0.40 %}
                                 <div class="text-yellow-400 font-bold text-xl">{{ stock.score_percent }}</div>
@@ -226,7 +218,6 @@
                     </div>
                     {% endfor %}
                 </div>
-
                 <div class="desktop-table glass-card rounded-2xl shadow-2xl overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
@@ -241,7 +232,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-700/50">
-                                {% for stock in stocks %}
+                                {% for stock in stocks[:100] %}
                                 <tr class="hover:bg-white/5 transition-colors">
                                     <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
                                     <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
