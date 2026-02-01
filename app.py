@@ -25,6 +25,7 @@ ACCESS_CODE = os.environ.get('SP500_ACCESS_CODE', '12345')
 # Configuration
 PREDICTIONS_CSV = "stonk_download/predictions.csv"
 PREDICTIONS_5PCT_CSV = "stonk_download/predictions_5pct.csv"
+NASDAQ_PREDICTIONS_CSV = "stonk_download/nasdaq_predictions.csv"
 
 def get_last_update_time():
     path = "stonk_download/predictions.csv"
@@ -94,15 +95,22 @@ def evaluate_stock_criteria(fundamentals):
 
     return score, recommendation, reasons
 
-def get_latest_prediction(symbol, file_path=PREDICTIONS_CSV):
-    """Find specific symbol in the CSV"""
-    preds = load_predictions(file_path)
+def get_latest_prediction(symbol):
+    """Find specific symbol in S&P 500 OR NASDAQ"""
     symbol_clean = symbol.strip().upper()
     
-    # Search for the symbol
-    for row in preds:
+    # 1. Search S&P 500
+    sp500_preds = load_predictions(PREDICTIONS_CSV)
+    for row in sp500_preds:
         if row.get('symbol', '').strip().upper() == symbol_clean:
             return row
+            
+    # 2. Search NASDAQ
+    nasdaq_preds = load_predictions(NASDAQ_PREDICTIONS_CSV)
+    for row in nasdaq_preds:
+        if row.get('symbol', '').strip().upper() == symbol_clean:
+            return row
+            
     return None
 
 def get_fundamentals(symbol):
@@ -130,38 +138,44 @@ def get_fundamentals(symbol):
 def health_check():
     return jsonify({'status': 'healthy', 'mode': 'lightweight_viewer'})
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    """Main dashboard - VIEWER ONLY"""
-    symbol = ""
+@app.route('/')
+def index(): # Changed to GET-only for cleaner initial load, form submits to same URL
+    return render_template('index.html')
+
+@app.route('/', methods=['POST'])
+def index_post():
+    symbol = request.form.get('symbol', '').upper().strip()
     prediction = None
     stock_data = None
     error = None
 
-    if request.method == 'POST':
-        symbol = request.form.get('symbol', '').upper().strip()
-        
-        # 1. Look up prediction in the CSV
+    if symbol:
+        # Now searches BOTH databases
         raw_data = get_latest_prediction(symbol)
         
         if raw_data:
-            # Format data for the HTML template
             prediction = {
                 'symbol': raw_data.get('symbol'),
                 'recommendation': raw_data.get('recommendation', 'HOLD'),
                 'probability': raw_data.get('probability', 0),
-                # Map CSV columns to template variables
                 '1pct': raw_data.get('prob_1pct', 0),   
                 '3pct': raw_data.get('prob_3pct', 0),
                 '5pct': raw_data.get('prob_5pct', 0),
                 '10pct': raw_data.get('prob_10pct', 0),
                 '1mo': raw_data.get('prob_1mo', 0),
             }
-            
-            # 2. Get basic info (Optional)
             stock_data = get_fundamentals(symbol)
         else:
-            error = f"No prediction found for {symbol}. (This is a lightweight viewer: data must be uploaded first)."
+            error = f"No prediction found for {symbol} in S&P 500 or NASDAQ databases."
+
+    return render_template(
+        'index.html',
+        symbol=symbol,
+        prediction=prediction,
+        stock_data=stock_data,
+        error=error,
+        ohlc_data=[], closes=[], dates=[]
+    )
 
     # We pass empty lists for charts to disable them without breaking HTML
     return render_template(
@@ -192,8 +206,8 @@ def serve_manifest():
 def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+#@app.route('/login', methods=['GET', 'POST'])
+#def login():
     error = None
     if request.method == 'POST':
         # Check if the code matches
@@ -218,8 +232,8 @@ def logout():
 @app.route('/sp500')
 def sp500_list():
     # --- SECURITY CHECK ---
-    if not session.get('sp500_unlocked'):
-        return redirect(url_for('login'))
+    #if not session.get('sp500_unlocked'):
+        #return redirect(url_for('login'))
     # ----------------------
 
     """Show top predictions from CSV"""
@@ -244,6 +258,34 @@ def sp500_list():
         })
 
     return render_template("SP500.html", stocks=formatted_stocks, last_updated="Static Data")
+
+@app.route('/nasdaq')
+def nasdaq_list():
+    # Security check (reuse your login logic)
+    # if not session.get('sp500_unlocked'): return redirect(url_for('login'))
+
+    """Show top NASDAQ predictions"""
+    preds = load_predictions(NASDAQ_PREDICTIONS_CSV)
+    
+    try:
+        preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
+    except:
+        pass
+
+    formatted_stocks = []
+    for p in preds:
+        prob = float(p.get('probability', 0))
+        formatted_stocks.append({
+            'symbol': p.get('symbol'),
+            'score_percent': f"{prob*100:.1f}%",
+            'probability': prob,
+            'recommendation': p.get('recommendation', 'N/A'),
+            'currentPrice': float(p.get('price', 0)),
+            'shortName': p.get('name', p.get('symbol')),
+            'sector': p.get('sector', 'Unknown')
+        })
+
+    return render_template("NASDAQ.html", stocks=formatted_stocks, last_updated="Static Data")
 
 # --- PHONE ROUTES ---
 
@@ -293,8 +335,8 @@ def index_phone():
 def sp500_list_phone():
     # --- SECURITY CHECK ---
     # This ensures they must be logged in to view the phone page
-    if not session.get('sp500_unlocked'):
-        return redirect(url_for('login'))
+    #if not session.get('sp500_unlocked'):
+        #return redirect(url_for('login'))
     # ----------------------
 
     """Show top predictions from CSV for Phone"""
@@ -322,11 +364,25 @@ def sp500_list_phone():
 
 @app.route('/autocomplete')
 def autocomplete():
-    """Simple autocomplete based on what is in the CSV"""
+    """Autocomplete merging both S&P 500 and NASDAQ"""
     query = request.args.get('q', '').upper()
-    preds = load_predictions(PREDICTIONS_CSV)
-    symbols = [p.get('symbol') for p in preds if p.get('symbol') and query in p.get('symbol')]
-    return jsonify(symbols[:10])
+    
+    # Load both lists
+    sp500 = load_predictions(PREDICTIONS_CSV)
+    nasdaq = load_predictions(NASDAQ_PREDICTIONS_CSV)
+    
+    # Create a set of all symbols to avoid duplicates
+    all_symbols = set()
+    for p in sp500:
+        if p.get('symbol'): all_symbols.add(p['symbol'])
+    for p in nasdaq:
+        if p.get('symbol'): all_symbols.add(p['symbol'])
+        
+    # Filter matches
+    matches = [s for s in all_symbols if query in s]
+    matches.sort()
+    
+    return jsonify(matches[:10])
 
 if __name__ == '__main__':
     app.run(debug=True)
