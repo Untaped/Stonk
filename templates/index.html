@@ -53,7 +53,7 @@
         .animate-spin-reverse { animation: spin-reverse 2s linear infinite; }
         @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
         .loading-text-fade { animation: textFade 0.5s ease-in-out; }
-        @keyframes textFade { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes textFade { 0% { opacity: 0; transform: translateY(5px); } 80% { opacity: 1; transform: translateY(0); } }
 
         /* --- Glass Cards --- */
         .glass-card {
@@ -193,7 +193,7 @@
                         <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
                     <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-university mr-3"></i> Top NASDAQ
+                        <i class="fas fa-university mr-3"></i> S&P 500 (Experimental)
                     </a>
                 </nav>
             </div>
@@ -226,7 +226,6 @@
 
             <div class="glass-card rounded-2xl p-6 md:p-8 text-center popup-trigger">
                 <h2 class="text-3xl md:text-4xl font-black mb-4 gradient-text">Stock Tool</h2>
-                
                 <form method="POST" action="/" class="max-w-md mx-auto relative z-20">
                     <div class="relative mb-6">
                         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -274,10 +273,10 @@
                                 </div>
                             </div>
                         {% endmacro %}
-                        {{ probability_card('+1% in 2 days', '1pct', 'emerald') }}
-                        {{ probability_card('+3% in 3 days', '3pct', 'teal') }}
-                        {{ probability_card('+5% in 5 days', '5pct', 'blue') }}
-                        {{ probability_card('+10% in 10 days', '10pct', 'indigo') }}
+                        {{ probability_card('+3% in 3 days', '3pct', 'emerald') }}
+                        {{ probability_card('+5% in 5 days', '5pct', 'teal') }}
+                        {{ probability_card('+10% in 10 days', '10pct', 'blue') }}
+                        {{ probability_card('+15% in 30 days', '1mo', 'indigo') }}
                     </div>
                     <div class="mt-3">
                          {{ probability_card('+15% in 30 days', '1mo', 'purple') }}
@@ -285,7 +284,19 @@
                 </div>
             </div>
             {% endif %}
-
+                <center><div class="w-full max-w-2xl mb-6">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="bg-blue-500/20 p-1.5 rounded-lg">
+                                <i class="fas fa-code text-blue-400 text-sm"></i>
+                            </div>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes:</h3>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            This website is still in beta and as such will have glitches and innacuracies, I am always working on it and I hope to launch soon. If you are an OG email me at preuploadediting@gmail.com so when paid services start to come out I'll try and give you a pass.
+                        </p>
+                    </div>
+                </div></center>
         </main>
     </div>
 
@@ -304,7 +315,7 @@
             
             <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
                 <i class="fas fa-university text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Top NASDAQ</span>
+                <span class="text-[10px] font-medium tracking-wide">Experimental</span>
             </a>
         </div>
     </nav>
@@ -332,7 +343,7 @@
                     <div class="text-gray-300 mb-6 text-sm leading-relaxed space-y-4">
                         <section>
                             <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">1. Not Financial Advice</p>
-                            <p>The information provided by LitlGuy, including stock predictions and confidence scores, is for <strong>educational and informational purposes only</strong>. This website may be out of date and only updates for Open Bell following the NSADEQ trading day. It should not be considered professional financial investment advice.</p>
+                            <p>The information provided by LitlGuy, including stock predictions and confidence scores, is for <strong>educational and informational purposes only</strong>. This website may be out of date and only may update for Open Bell following the NSADEQ trading day. It should not be considered professional financial investment advice.</p>
                         </section>
 
                         <section>

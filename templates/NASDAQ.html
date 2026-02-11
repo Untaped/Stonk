@@ -97,7 +97,7 @@
                 <i class="fas fa-circle-notch fa-spin text-4xl text-blue-400"></i>
             </div>
             <div>
-                <p class="text-xl font-semibold text-white mb-2">Analyzing NASDAQ</p>
+                <p class="text-xl font-semibold text-white mb-2">Analyzing S&P 500</p>
                 <p class="text-gray-300 text-sm">Processing signals...</p>
             </div>
         </div>
@@ -114,12 +114,12 @@
                     <a href="/" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-search-dollar mr-3"></i> Dashboard
                     </a>
-                    <a href="sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
+                    <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-university mr-3"></i> Top S&P 500
                         <i class="fas fa-lock text-yellow-600/40 group-hover:text-yellow-600 transition-colors text-sm ml-4"></i>
                     </a>
-                    <a href="NASDAQ" class="flex items-center px-4 py-3 bg-gray-500/10 rounded-xl text-red-400 font-bold border-l-4 border-red-500">
-                        <i class="fas fa-university mr-3"></i> Top NASDAQ
+                    <a href="/nasdaq" class="flex items-center px-4 py-3 bg-red-500/10 rounded-xl text-red-400 font-bold border-l-4 border-red-500">
+                        <i class="fas fa-layer-group mr-3"></i> S&P 500 (Experimental)
                         <i class="fas fa-lock text-yellow-500/40 group-hover:text-yellow-500 transition-colors text-sm ml-4"></i>
                     </a>
                 </nav>
@@ -142,13 +142,25 @@
         </aside>
 
         <main class="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto relative z-10 pb-28 md:pb-6">
-
             <div class="md:hidden flex justify-between items-center mb-2">
-                <h1 class="text-xl font-black text-white-400"><i class="fas fa-layer-group mr-2"></i>Top NASDAQ</h1>
+                <h1 class="text-xl font-black text-white-400"><i class="fas fa-layer-group mr-2"></i>Top S&P 500</h1>
                  <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded border border-emerald-500/30">PREMIUM</span>
             </div>
+                <center><div class="w-full max-w-2xl mb-6">
+                    <div class="bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="bg-blue-500/20 p-1.5 rounded-lg">
+                                <i class="fas fa-code text-blue-400 text-sm"></i>
+                            </div>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes:</h3>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            This is an experimental algorithn that is heavliy reliant on the performance of the market as a whole, this should be used with extreme caution only in very bulish markets.
+                        </p>
+                    </div>
+                </div></center>
 
-             {% if error %}
+            {% if error %}
                 <div class="glass-card rounded-xl p-4 border-l-4 border-red-500 flex items-center gap-3">
                     <i class="fas fa-exclamation-triangle text-red-400"></i>
                     <span class="text-sm text-gray-300">{{ error }}</span>
@@ -158,7 +170,11 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                 <div class="glass-card rounded-xl p-4 text-center">
                     <div class="text-2xl md:text-4xl font-black mb-1 text-blue-400">
-                        {% set avg_prob = (stocks | sum(attribute='probability')) / (stocks | length) %}
+                        {% if stocks|length > 0 %}
+                            {% set avg_prob = (stocks | sum(attribute='probability')) / (stocks | length) %}
+                        {% else %}
+                            {% set avg_prob = 0 %}
+                        {% endif %}
                         {{ "%.0f" | format(avg_prob * 100) }}%
                     </div>
                     <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Avg Confidence</p>
@@ -177,15 +193,15 @@
                 </div>
                 <div class="hidden md:block glass-card rounded-xl p-4 text-center">
                     <div class="text-4xl font-black mb-1 text-red-400">
-                        {{ stocks | selectattr('recommendation', 'equalto', 'AVOID') | list | length }}
+                        {{ stocks | selectattr('recommendation', 'equalto', 'DISREGARD') | list | length }}
                     </div>
-                    <p class="text-sm text-gray-400 uppercase tracking-wide font-bold">Avoid</p>
+                    <p class="text-sm text-gray-400 uppercase tracking-wide font-bold">DISREGARD</p>
                 </div>
             </div>
 
             {% if stocks %}
                 <div class="mobile-list space-y-3">
-                    {% for stock in stocks[:100] %}
+                    {% for stock in stocks %}
                     <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
                         {% if stock.recommendation == 'BUY' %} border-green-500
                         {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
@@ -196,13 +212,13 @@
                                 <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
                                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
                             </div>
-                            <div class="text-xs text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
+                            <div class="text-xs d text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
                         </div>
 
                         <div class="text-right flex flex-col items-end">
-                             {% if stock.probability > 0.70 %}
+                             {% if stock.probability > 0.80 %}
                                 <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
-                            {% elif stock.probability > 0.40 %}
+                            {% elif stock.probability > 0.75 %}
                                 <div class="text-yellow-400 font-bold text-xl">{{ stock.score_percent }}</div>
                             {% else %}
                                 <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
@@ -218,6 +234,7 @@
                     </div>
                     {% endfor %}
                 </div>
+
                 <div class="desktop-table glass-card rounded-2xl shadow-2xl overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
@@ -232,14 +249,14 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-700/50">
-                                {% for stock in stocks[:100] %}
+                                {% for stock in stocks %}
                                 <tr class="hover:bg-white/5 transition-colors">
                                     <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
                                     <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
                                     <td class="py-4 px-6 text-center">
-                                        {% if stock.probability > 0.70 %}
+                                        {% if stock.probability > 0.80 %}
                                             <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                        {% elif stock.probability > 0.40 %}
+                                        {% elif stock.probability > 0.75 %}
                                             <span class="text-yellow-400 font-bold">{{ stock.score_percent }}</span>
                                         {% else %}
                                             <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
@@ -281,13 +298,12 @@
             </a>
 
             <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-emerald-400 transition-colors">
-                <i class="fas fa-layer-group text-xl mb-1"></i>
-                <span class="text-[10px] font-bold tracking-wide">Top S&P 500</span>
+                <i class="fas fa-university text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">TOP S&P 500</span>
             </a>
-            
             <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-red-400">
-                <i class="fas fa-power-off text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Top NASDAQ</span>
+                <i class="fas fa-layer-group text-xl mb-1"></i>
+                <span class="text-[10px] font-bold tracking-wide">Experimental</span>
                 <span class="absolute top-0 w-12 h-1 bg-red-500 rounded-b-lg shadow-[0_0_10px_#10b981]"></span>
             </a>
         </div>
