@@ -14,16 +14,9 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# --- CONFIGURATION ---
-# 1. Secret Key is REQUIRED for sessions. 
-app.secret_key = os.environ.get('SECRET_KEY', 'dev_default_key_change_this_in_prod')
-
-# 2. Set your Access Code
-ACCESS_CODE = os.environ.get('SP500_ACCESS_CODE', '12345')
-
-
 # Configuration
 PREDICTIONS_CSV = "stonk_download/predictions.csv"
+FUNDAMENTALS_CSV = "stonk_download/fundamentals.csv"
 PREDICTIONS_5PCT_CSV = "stonk_download/predictions_5pct.csv"
 NASDAQ_PREDICTIONS_CSV = "stonk_download/nasdaq_predictions.csv"
 
@@ -34,6 +27,33 @@ def get_last_update_time():
         mtime = os.path.getmtime(path)
         return datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M')
     return "No Data"
+
+MARKET_DATA_DIR = os.getenv('DATA_DIR', "market_data")
+MARKET_FUNDAMENTALS_CSV = os.path.join(MARKET_DATA_DIR, "market_sp500_fundamentals.csv")
+MARKET_PRICE_HISTORY_CSV = os.path.join(MARKET_DATA_DIR, "market_sp500_price_history.csv")
+
+# Use relative paths consistently to avoid Mac absolute path errors
+MARKET_PREDICTIONS_CSV = "stonk_download/market_predictions_multi_threshold.csv"
+MARKET_PREDICTIONS_SCAN_CSV = "stonk_download/market_predictions.csv"
+
+MARKET_PREDICTIONS_5PCT_CSV = os.getenv('MARKET_PREDICTIONS_5PCT_CSV', "stonk_download/market_predictions_5pct.csv")
+MARKET_MODEL_PATHS = {
+    '1pct': 'stock_ai/market_lightgbm_model_1pct.pkl',
+    '3pct': 'stock_ai/market_lightgbm_model_3pct.pkl',
+    '5pct': 'stock_ai/market_lightgbm_model_5pct.pkl',
+    '10pct': 'stock_ai/market_lightgbm_model_10pct.pkl'
+}
+MARKET_FEATURE_PATHS = {
+    '1pct': 'stock_ai/market_feature_names_1pct.pkl',
+    '3pct': 'stock_ai/market_feature_names_3pct.pkl',
+    '5pct': 'stock_ai/market_feature_names_5pct.pkl',
+    '10pct': 'stock_ai/fmarket_eature_names_10pct.pkl'
+}
+MARKET_MODEL_5PCT_PATH = "stock_ai/market_lightgbm_model_5pct.pkl"
+MARKET_FEATURE_NAMES_5PCT_PATH = "stock_ai/market_feature_names_5pct.pkl"
+MARKET_PREDICTIONS_5PCT_CSV = "stonk_download/market_predictions_5pct.csv"
+
+PMARKET_REDICTIONS_SCAN_CSV = "stonk_download/market_predictions.csv"
 
 # --- Helper Functions ---
 
@@ -85,12 +105,10 @@ def evaluate_stock_criteria(fundamentals):
         reasons.append("Healthy Forward PE")
 
     # Determine recommendation based on score
-    if score >= 40:
+    if score >= 38:
         recommendation = "BUY"
-    elif score >= 20:
-        recommendation = "HOLD"
     else:
-        recommendation = "SELL"
+        recommendation = "DISREGARD"
         reasons.append("Weak Fundamentals")
 
     return score, recommendation, reasons
@@ -157,8 +175,7 @@ def index_post():
             prediction = {
                 'symbol': raw_data.get('symbol'),
                 'recommendation': raw_data.get('recommendation', 'HOLD'),
-                'probability': raw_data.get('probability', 0),
-                '1pct': raw_data.get('prob_1pct', 0),   
+                'probability': raw_data.get('probability', 0), 
                 '3pct': raw_data.get('prob_3pct', 0),
                 '5pct': raw_data.get('prob_5pct', 0),
                 '10pct': raw_data.get('prob_10pct', 0),
@@ -168,14 +185,14 @@ def index_post():
         else:
             error = f"No prediction found for {symbol} in S&P 500 or NASDAQ databases."
 
-    return render_template(
-        'index.html',
-        symbol=symbol,
-        prediction=prediction,
-        stock_data=stock_data,
-        error=error,
-        ohlc_data=[], closes=[], dates=[]
-    )
+    #return render_template(
+        #'index.html',
+        #symbol=symbol,
+        #prediction=prediction,
+        #stock_data=stock_data,
+        #error=error,
+        #ohlc_data=[], closes=[], dates=[]
+    #)
 
     # We pass empty lists for charts to disable them without breaking HTML
     return render_template(
@@ -184,7 +201,6 @@ def index_post():
         prediction=prediction,
         stock_data=stock_data,
         error=error,
-        # EMPTY CHART DATA
         ohlc_data=[],
         closes=[],
         dates=[],
@@ -208,20 +224,20 @@ def serve_sw():
 
 #@app.route('/login', methods=['GET', 'POST'])
 #def login():
-    error = None
-    if request.method == 'POST':
+    #error = None
+    #if request.method == 'POST':
         # Check if the code matches
-        if request.form.get('code') == ACCESS_CODE:
-            session.permanent = True
-            session['sp500_unlocked'] = True
-            return redirect(url_for('sp500_list'))
-        else:
-            error = "Invalid access code. Please try again."
+        #if request.form.get('code') == ACCESS_CODE:
+            #session.permanent = True
+            #session['sp500_unlocked'] = True
+            #return redirect(url_for('sp500_list'))
+        #else:
+            #error = "Invalid access code. Please try again."
             # We don't redirect here; we just fall through to render_template
             # This ensures the 'error' variable actually makes it to the page
-            flash(error, "danger")
+            #flash(error, "danger")
     
-    return render_template('login.html', error=error)
+    #return render_template('login.html', error=error)
 
 @app.route('/logout')
 def logout():
@@ -232,145 +248,127 @@ def logout():
 @app.route('/sp500')
 def sp500_list():
     # --- SECURITY CHECK ---
-    #if not session.get('sp500_unlocked'):
-        #return redirect(url_for('login'))
+    # if not session.get('sp500_unlocked'):
+    #    return redirect(url_for('login'))
     # ----------------------
 
     """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
     
-    try:
-        preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
-    except:
-        pass
-
     formatted_stocks = []
     for p in preds:
-        prob = float(p.get('probability', 0))
-        formatted_stocks.append({
-            'symbol': p.get('symbol'),
-            'score_percent': f"{prob*100:.1f}%",
-            'probability': prob,  # <--- ADD THIS LINE
-            'recommendation': p.get('recommendation', 'N/A'),
-            'currentPrice': p.get('price', 'N/A'),
-            'shortName': p.get('name', p.get('symbol')), # Ensure name exists for table
-            'sector': p.get('sector', 'Unknown')        # Ensure sector exists for table
-        })
-
-    return render_template("SP500.html", stocks=formatted_stocks[:100], last_updated="Static Data")
-
-@app.route('/nasdaq')
-def nasdaq_list():
-    preds = load_predictions(NASDAQ_PREDICTIONS_CSV)
-    
-    formatted_stocks = []
-    for p in preds:
-        # 1. Normalize 'probability' (Handle different column names)
-        # Some CSVs use 'combined_score', others 'probability'
+        # Read 'combined_score' (which is what predict_single_stock.py saves)
+        # Fallback to 'probability' if combined_score is missing
         raw_score = p.get('combined_score', p.get('probability', 0))
         try:
             prob = float(raw_score)
         except:
             prob = 0.0
 
-        # 2. Create the display variables
-        p['probability'] = prob
-        p['score_percent'] = f"{prob*100:.1f}%"
+        consistency = float(p.get('consistency', 0))
         
-        # 3. Ensure other required fields exist
-        if 'shortName' not in p:
-            p['shortName'] = p.get('name', p.get('symbol', 'N/A'))
-            
-        if 'currentPrice' not in p:
-            p['currentPrice'] = p.get('price', 0)
-            
-        if 'sector' not in p:
-            p['sector'] = "Unknown"
-
-        formatted_stocks.append(p)
-
-    # Sort by high confidence
-    try:
-        formatted_stocks.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
-    except:
-        pass
-
-    return render_template("NASDAQ.html", stocks=formatted_stocks[:100], last_updated="Live")
-# --- PHONE ROUTES ---
-
-@app.route('/indexphone', methods=['GET', 'POST'])
-def index_phone():
-    """Phone version of the Dashboard"""
-    symbol = ""
-    prediction = None
-    stock_data = None
-    error = None
-
-    if request.method == 'POST':
-        symbol = request.form.get('symbol', '').upper().strip()
-        
-        # Look up prediction (Same logic as desktop)
-        raw_data = get_latest_prediction(symbol)
-        
-        if raw_data:
-            prediction = {
-                'symbol': raw_data.get('symbol'),
-                'recommendation': raw_data.get('recommendation', 'HOLD'),
-                'probability': raw_data.get('probability', 0),
-                '1pct': raw_data.get('prob_1pct', 0),   
-                '3pct': raw_data.get('prob_3pct', 0),
-                '5pct': raw_data.get('prob_5pct', 0),
-                '10pct': raw_data.get('prob_10pct', 0),
-                '1mo': raw_data.get('prob_1mo', 0),
-            }
-            stock_data = get_fundamentals(symbol)
+        if prob >= 0.35 and consistency >= 0.85:
+            recommendation = "BUY" # Strong Buy
+        elif prob >= 0.35:
+            recommendation = "CONSIDER"
         else:
-            error = f"No prediction found for {symbol}."
+            recommendation = "DISREGARD"
 
-    return render_template(
-        'indexphone.html',
-        symbol=symbol,
-        prediction=prediction,
-        stock_data=stock_data,
-        error=error,
-        ohlc_data=[],
-        closes=[],
-        dates=[],
-        growth_summary=None,
-        price_history=None
-    )
-
-@app.route('/sp500phone')
-def sp500_list_phone():
-    # --- SECURITY CHECK ---
-    # This ensures they must be logged in to view the phone page
-    #if not session.get('sp500_unlocked'):
-        #return redirect(url_for('login'))
-    # ----------------------
-
-    """Show top predictions from CSV for Phone"""
-    preds = load_predictions(PREDICTIONS_CSV)
-    
-    try:
-        preds.sort(key=lambda x: float(x.get('probability', 0)), reverse=True)
-    except:
-        pass
-
-    formatted_stocks = []
-    for p in preds:
-        prob = float(p.get('probability', 0))
         formatted_stocks.append({
             'symbol': p.get('symbol'),
             'score_percent': f"{prob*100:.1f}%",
-            'probability': prob,
-            'recommendation': p.get('recommendation', 'N/A'),
-            'currentPrice': p.get('price', 'N/A'),
-            'shortName': p.get('name', p.get('symbol')),
+            'probability': prob, 
+            'recommendation': recommendation, 
+            'currentPrice': float(p.get('price', 0)), 
+            'shortName': p.get('name', p.get('symbol')), 
             'sector': p.get('sector', 'Unknown')
         })
 
-    return render_template("SP500phone.html", stocks=formatted_stocks, last_updated="Static Data")
+    # Sort by probability descending
+    try:
+        formatted_stocks.sort(key=lambda x: x['probability'], reverse=True)
+    except:
+        pass
 
+    return render_template("SP500.html", stocks=formatted_stocks[:100], last_updated="Static Data")
+
+@app.route('/nasdaq')
+def nasdaq_list():
+    """Show S&P 500 stocks using predictions from CSV data - FULLY OFFLINE"""
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    stocks = []
+    
+    try:
+        # Check if file exists
+        if not os.path.exists(MARKET_PREDICTIONS_CSV):
+             return render_template("nasdaq.html", stocks=[], 
+                                 error=f"File not found: {MARKET_PREDICTIONS_CSV}. Run market_predict_single_stock.py --scan first.",
+                                 last_updated=current_time)
+
+        df_latest = pd.read_csv(MARKET_PREDICTIONS_CSV)
+        
+        if df_latest.empty:
+            return render_template("nasdaq.html", stocks=[], 
+                                 error="No predictions found in CSV.",
+                                 last_updated=current_time)
+        
+        # Get the most recent prediction for each symbol
+        if 'timestamp' in df_latest.columns:
+            df_latest = df_latest.sort_values('timestamp').groupby('symbol').tail(1)
+        
+        print(f"Found {len(df_latest)} unique symbols with predictions")
+        
+        for _, row in df_latest.iterrows():
+            try:
+                symbol = row['symbol'].upper()
+                
+                # Handle different column names (combined_score vs probability) ---
+                raw_score = row.get('combined_score', row.get('probability', 0))
+                probability = float(raw_score)
+                # ------------------------------------------------------------------------
+
+                # Create recommendation based on probability
+                # Use consistency if available, otherwise default to high prob
+                consistency = float(row.get('consistency', 1.0))
+
+                if probability >= 0.80 and consistency >= 0.85:
+                    recommendation = 'BUY'
+                elif probability >= 0.75:
+                    recommendation = 'CONSIDER' # Matches SP500 logic
+                else:
+                    recommendation = 'DISREGARD'
+                
+                # Try to get fundamentals data from CSV if available
+                # (You can use your existing helper or row data if the CSV has it)
+                stock_name = row.get('name', symbol) 
+                sector = row.get('sector', 'Unknown')
+                price = float(row.get('price', 0))
+
+                stocks.append({
+                    'symbol': symbol,
+                    'shortName': stock_name,
+                    'sector': sector,
+                    'currentPrice': price,
+                    'probability': probability,
+                    'recommendation': recommendation,
+                    'score_percent': f"{probability * 100:.1f}%",
+                    'score': f"{probability:.3f}",
+                    'timestamp': row.get('timestamp', '')
+                })
+                
+            except Exception as e:
+                print(f"Error processing {row.get('symbol', 'unknown')}: {e}")
+                continue
+        
+        # Sort by probability (highest first)
+        stocks.sort(key=lambda x: x['probability'], reverse=True)
+        
+        return render_template("nasdaq.html", stocks=stocks, last_updated=current_time)
+
+    except Exception as e:
+        print(f"Error in nasdaq_list: {e}")
+        return render_template("nasdaq.html",stocks= [], error=str(e), last_updated=current_time)
+    
 @app.route('/autocomplete')
 def autocomplete():
     """Autocomplete merging both S&P 500 and NASDAQ"""
