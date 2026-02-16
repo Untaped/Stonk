@@ -172,29 +172,48 @@ def index_post():
         raw_data = get_latest_prediction(symbol)
         
         if raw_data:
+            # Get individual probabilities
+            p3 = float(raw_data.get('prob_3pct', 0))
+            p5 = float(raw_data.get('prob_5pct', 0))
+            p10 = float(raw_data.get('prob_10pct', 0))
+            p15 = float(raw_data.get('prob_1mo', 0))
+            
+            # Default recommendation based on score
+            rec = raw_data.get('recommendation', 'HOLD')
+            
+            # --- NEW LOGIC: Override recommendation for Display ---
+            # Check for linearity: 3% > 5% > 10% > 15%
+            is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
+            
+            # Use combined score (if available) or raw probability
+            raw_score = raw_data.get('combined_score', raw_data.get('probability', 0))
+            try:
+                prob_score = float(raw_score)
+            except:
+                prob_score = 0.0
+
+            if prob_score >= 0.35:
+                if is_linear:
+                    rec = "BUY"
+                else:
+                    rec = "CONSIDER"
+            else:
+                rec = "DISREGARD"
+            # ------------------------------------------------------
+
             prediction = {
                 'symbol': raw_data.get('symbol'),
-                'recommendation': raw_data.get('recommendation', 'HOLD'),
+                'recommendation': rec,
                 'probability': raw_data.get('probability', 0), 
-                '3pct': raw_data.get('prob_3pct', 0),
-                '5pct': raw_data.get('prob_5pct', 0),
-                '10pct': raw_data.get('prob_10pct', 0),
-                '1mo': raw_data.get('prob_1mo', 0),
+                '3pct': p3,
+                '5pct': p5,
+                '10pct': p10,
+                '1mo': p15,
             }
             stock_data = get_fundamentals(symbol)
         else:
             error = f"No prediction found for {symbol} in S&P 500 or NASDAQ databases."
 
-    #return render_template(
-        #'index.html',
-        #symbol=symbol,
-        #prediction=prediction,
-        #stock_data=stock_data,
-        #error=error,
-        #ohlc_data=[], closes=[], dates=[]
-    #)
-
-    # We pass empty lists for charts to disable them without breaking HTML
     return render_template(
         'index.html',
         symbol=symbol,
@@ -222,57 +241,43 @@ def serve_manifest():
 def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
-#@app.route('/login', methods=['GET', 'POST'])
-#def login():
-    #error = None
-    #if request.method == 'POST':
-        # Check if the code matches
-        #if request.form.get('code') == ACCESS_CODE:
-            #session.permanent = True
-            #session['sp500_unlocked'] = True
-            #return redirect(url_for('sp500_list'))
-        #else:
-            #error = "Invalid access code. Please try again."
-            # We don't redirect here; we just fall through to render_template
-            # This ensures the 'error' variable actually makes it to the page
-            #flash(error, "danger")
-    
-    #return render_template('login.html', error=error)
-
 @app.route('/logout')
 def logout():
     session.pop('sp500_unlocked', None)
-    flash("You have been logged out safely.", "info") # Add this
+    flash("You have been logged out safely.", "info") 
     return redirect(url_for('index'))
 
 @app.route('/sp500')
 def sp500_list():
-    # --- SECURITY CHECK ---
-    # if not session.get('sp500_unlocked'):
-    #    return redirect(url_for('login'))
-    # ----------------------
-
     """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
     
     formatted_stocks = []
     for p in preds:
-        # Read 'combined_score' (which is what predict_single_stock.py saves)
-        # Fallback to 'probability' if combined_score is missing
+        # Read 'combined_score' 
         raw_score = p.get('combined_score', p.get('probability', 0))
         try:
             prob = float(raw_score)
         except:
             prob = 0.0
 
-        consistency = float(p.get('consistency', 0))
-        
-        if prob >= 0.35 and consistency >= 0.85:
-            recommendation = "BUY" # Strong Buy
+        # Get individual probabilities
+        p3 = float(p.get('prob_3pct', 0))
+        p5 = float(p.get('prob_5pct', 0))
+        p10 = float(p.get('prob_10pct', 0))
+        p15 = float(p.get('prob_1mo', 0))
+
+        # --- NEW LOGIC ---
+        # "Buy if each percentage is greater than the last (3>5>10>15)"
+        is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
+
+        if prob >= 0.35 and is_linear:
+            recommendation = "BUY" # Strong Buy because confidence is logical and high
         elif prob >= 0.35:
-            recommendation = "CONSIDER"
+            recommendation = "CONSIDER" # High score, but non-linear (conflicting models)
         else:
             recommendation = "DISREGARD"
+        # -----------------
 
         formatted_stocks.append({
             'symbol': p.get('symbol'),
@@ -327,19 +332,24 @@ def nasdaq_list():
                 probability = float(raw_score)
                 # ------------------------------------------------------------------------
 
-                # Create recommendation based on probability
-                # Use consistency if available, otherwise default to high prob
-                consistency = float(row.get('consistency', 1.0))
+                # Get individual probabilities for logic
+                p3 = float(row.get('prob_3pct', 0))
+                p5 = float(row.get('prob_5pct', 0))
+                p10 = float(row.get('prob_10pct', 0))
+                p15 = float(row.get('prob_1mo', 0))
 
-                if probability >= 0.80 and consistency >= 0.85:
+                # --- NEW LOGIC ---
+                # Check linearity: 3 > 5 > 10 > 15
+                is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
+
+                if probability >= 0.35 and is_linear:
                     recommendation = 'BUY'
-                elif probability >= 0.75:
-                    recommendation = 'CONSIDER' # Matches SP500 logic
+                elif probability >= 0.35:
+                    recommendation = 'CONSIDER' # Non-linear confidence
                 else:
                     recommendation = 'DISREGARD'
+                # -----------------
                 
-                # Try to get fundamentals data from CSV if available
-                # (You can use your existing helper or row data if the CSV has it)
                 stock_name = row.get('name', symbol) 
                 sector = row.get('sector', 'Unknown')
                 price = float(row.get('price', 0))
