@@ -252,7 +252,7 @@
             <div class="mt-8 w-full animate-fade-in">
                 <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
                     <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
-                        <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis</h2>
+                        <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
                         
                         <div class="px-6 py-2 rounded-xl border backdrop-blur-md flex items-center gap-2 mt-2
                             {% if prediction.recommendation == 'BUY' %} bg-green-500/10 border-green-500/30 text-green-400
@@ -273,13 +273,13 @@
                                 </div>
                             </div>
                         {% endmacro %}
-                        {{ probability_card('+3% in 3 days', '3pct', 'emerald') }}
-                        {{ probability_card('+5% in 5 days', '5pct', 'teal') }}
-                        {{ probability_card('+10% in 10 days', '10pct', 'blue') }}
-                        {{ probability_card('+15% in 30 days', '1mo', 'indigo') }}
+                        {{ probability_card('+3% (1.5% Stop Loss)', '3pct', 'emerald') }}
+                        {{ probability_card('+5% (2.5% Stop Loss)', '5pct', 'teal') }}
+                        {{ probability_card('+10% (5.0% Stop Loss)', '10pct', 'blue') }}
+                        {{ probability_card('+15% (7.5% Stop Loss)', '1mo', 'indigo') }}
                     </div>
                     <div class="mt-3">
-                         {{ probability_card('+15% in 30 days', '1mo', 'purple') }}
+
                     </div>
                 </div>
             </div>
@@ -290,10 +290,10 @@
                             <div class="bg-blue-500/20 p-1.5 rounded-lg">
                                 <i class="fas fa-code text-blue-400 text-sm"></i>
                             </div>
-                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes:</h3>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated: Feb 14, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
-                            This website is still in beta and as such will have glitches and innacuracies, I am always working on it and I hope to launch soon. If you are an OG email me at preuploadediting@gmail.com so when paid services start to come out I'll try and give you a pass.
+                            This website is still in beta and as such will have glitches and innacuracies, I am always working on it and I hope to launch soon. Multi-day analysis will soon be released following the current 5 day analysis.
                         </p>
                     </div>
                 </div></center>
