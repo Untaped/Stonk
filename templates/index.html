@@ -254,12 +254,7 @@
                     <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
                         <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
                         
-                        <div class="px-6 py-2 rounded-xl border backdrop-blur-md flex items-center gap-2 mt-2
-                            {% if prediction.recommendation == 'BUY' %} bg-green-500/10 border-green-500/30 text-green-400
-                            {% elif prediction.recommendation == 'AVOID' %} bg-red-500/10 border-red-500/30 text-red-400
-                            {% else %} bg-yellow-500/10 border-yellow-500/30 text-yellow-400 {% endif %}">
-                            <span class="text-2xl font-black tracking-wider">{{ prediction.recommendation }}</span>
-                        </div>
+
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -290,7 +285,7 @@
                             <div class="bg-blue-500/20 p-1.5 rounded-lg">
                                 <i class="fas fa-code text-blue-400 text-sm"></i>
                             </div>
-                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Feb 23, 2025):</h3>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Feb 24, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
                             This website is still in beta and as such will have glitches and innacuracies, I am always working on it and I hope to launch soon. <strong> The AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. </strong> Multi-day analysis will soon be released following the current 5 day analysis.
