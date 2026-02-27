@@ -273,7 +273,7 @@ def sp500_list():
 
         if prob >= 0.35 and is_linear:
             recommendation = "BUY" # Strong Buy because confidence is logical and high
-        elif prob >= 0.35:
+        elif prob >= 0.30:
             recommendation = "CONSIDER" # High score, but non-linear (conflicting models)
         else:
             recommendation = "DISREGARD"
