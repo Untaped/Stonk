@@ -285,7 +285,7 @@
                             <div class="bg-blue-500/20 p-1.5 rounded-lg">
                                 <i class="fas fa-code text-blue-400 text-sm"></i>
                             </div>
-                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Mar 1, 2025):</h3>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Mar 3, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
                             This website is still in beta and as such will have glitches and innacuracies, I am always working on it and I hope to launch soon. <strong> The five day AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. </strong> Multi-day analysis will soon be released following the current 5 day analysis.
@@ -407,31 +407,76 @@
         }
 
         // --- 2. Popup System Class ---
-        class PopupSystem {
+        #class PopupSystem {
             constructor() {
                 this.isActive = false;
                 this.clickCount = 0;
+                this.baseProbability = 0.025; // Starts at a 10% chance
                 this.init();
             }
+
             init() {
                 const closeBtn = document.getElementById('popupClose');
                 const dismissBtn = document.getElementById('popupDismiss');
-                const actionBtn = document.getElementById('popupAction');
                 
                 if(closeBtn) closeBtn.addEventListener('click', () => this.close());
                 if(dismissBtn) dismissBtn.addEventListener('click', () => this.close());
-                if(actionBtn) actionBtn.addEventListener('click', () => this.close());
                 
                 document.addEventListener('click', (e) => {
+                    // Prevent triggering if the loading overlay or popup is currently active
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    if (this.isActive || !loadingOverlay.classList.contains('hidden')) return;
+
+                    // Trigger based on elements you've marked with 'popup-trigger'
                     if (e.target.closest('.popup-trigger')) {
                         this.clickCount++;
-                        // Random logic to show popup occasionally
-                        if (this.clickCount % 10 === 0) {
-                            // Simplified for demo
+                        
+                        // Increase the probability by 2% for every click to make it show more often
+                        const currentChance = this.baseProbability + (this.clickCount * 0.02);
+                        
+                        // Check if the random number hits our probability threshold
+                        if (Math.random() < currentChance) {
+                            // Delay slightly so it doesn't instantly interrupt a click action
+                            setTimeout(() => this.showDonationPopup(), 300);
+                            
+                            // Reset clicks, but increase the baseline probability so it triggers faster next time
+                            this.clickCount = 0;
+                            this.baseProbability = Math.min(0.40, this.baseProbability + 0.05); // Caps at 40% base chance
                         }
                     }
                 });
             }
+
+            showDonationPopup() {
+                const title = document.getElementById('popupTitle');
+                const body = document.getElementById('popupBody');
+                const icon = document.getElementById('popupIcon');
+                const actionBtn = document.getElementById('popupAction');
+                const dismissBtn = document.getElementById('popupDismiss');
+
+                if (!title || !body || !actionBtn) return;
+
+                // Match the existing glassmorphism styling and inject content
+                icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
+                title.innerText = "Support LitlGuy!";
+                body.innerHTML = `
+                    <p class="mb-3 text-white">This tool is completely free and maintained by a single developer.</p>
+                    <p class="text-sm text-gray-400">If these AI predictions have helped your strategy, consider donating to help cover server costs and keep the AI learning!</p>
+                `;
+
+                actionBtn.innerText = "Donate Now";
+                actionBtn.onclick = () => {
+                    // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
+                    window.open('https://buy.stripe.com/test_cNi5kE0a7ayU61BcOxbMQ00', '_blank');
+                    this.close();
+                };
+
+                dismissBtn.innerText = "Maybe Later";
+
+                document.getElementById('popupOverlay').classList.add('active');
+                this.isActive = true;
+            }
+
             close() {
                 document.getElementById('popupOverlay').classList.remove('active');
                 this.isActive = false;
