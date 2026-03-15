@@ -38,16 +38,24 @@ MARKET_PREDICTIONS_SCAN_CSV = "stonk_download/market_predictions.csv"
 
 MARKET_PREDICTIONS_5PCT_CSV = os.getenv('MARKET_PREDICTIONS_5PCT_CSV', "stonk_download/market_predictions_5pct.csv")
 MARKET_MODEL_PATHS = {
-    '1pct': 'stock_ai/market_lightgbm_model_1pct.pkl',
     '3pct': 'stock_ai/market_lightgbm_model_3pct.pkl',
     '5pct': 'stock_ai/market_lightgbm_model_5pct.pkl',
-    '10pct': 'stock_ai/market_lightgbm_model_10pct.pkl'
+    '10pct': 'stock_ai/market_lightgbm_model_10pct.pkl',
+    '1mo': 'stock_ai/market_lightgbm_model_1mo.pkl',
+    '30_3pct': 'stock_ai/market_lightgbm_model_30_3pct.pkl',
+    '30_5pct': 'stock_ai/market_lightgbm_model_30_5pct.pkl',
+    '30_10pct': 'stock_ai/market_lightgbm_model_30_10pct.pkl',
+    '30_1mo': 'stock_ai/market_lightgbm_model_30_1mo.pkl'
 }
 MARKET_FEATURE_PATHS = {
-    '1pct': 'stock_ai/market_feature_names_1pct.pkl',
     '3pct': 'stock_ai/market_feature_names_3pct.pkl',
     '5pct': 'stock_ai/market_feature_names_5pct.pkl',
-    '10pct': 'stock_ai/fmarket_eature_names_10pct.pkl'
+    '10pct': 'stock_ai/market_eature_names_10pct.pkl',
+    '1mo': 'stock_ai/market_eature_names_1mo.pkl',
+    '30_3pct': 'stock_ai/market_feature_names_30_3pct.pkl',
+    '30_5pct': 'stock_ai/market_feature_names_30_5pct.pkl',
+    '30_10pct': 'stock_ai/market_eature_names_30_10pct.pkl',
+    '30_1mo': 'stock_ai/market_eature_names_30_1mo.pkl'
 }
 MARKET_MODEL_5PCT_PATH = "stock_ai/market_lightgbm_model_5pct.pkl"
 MARKET_FEATURE_NAMES_5PCT_PATH = "stock_ai/market_feature_names_5pct.pkl"
@@ -168,64 +176,51 @@ def index_post():
     error = None
 
     if symbol:
-        # Now searches BOTH databases
         raw_data = get_latest_prediction(symbol)
         
         if raw_data:
-            # Get individual probabilities
+            # Extract 5d
             p3 = float(raw_data.get('prob_3pct', 0))
             p5 = float(raw_data.get('prob_5pct', 0))
             p10 = float(raw_data.get('prob_10pct', 0))
             p15 = float(raw_data.get('prob_1mo', 0))
             
-            # Default recommendation based on score
-            rec = raw_data.get('recommendation', 'HOLD')
-            
-            # --- NEW LOGIC: Override recommendation for Display ---
-            # Check for linearity: 3% > 5% > 10% > 15%
-            is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
+            # Extract 30d
+            p30_3 = float(raw_data.get('prob_30_3pct', 0))
+            p30_5 = float(raw_data.get('prob_30_5pct', 0))
+            p30_10 = float(raw_data.get('prob_30_10pct', 0))
+            p30_15 = float(raw_data.get('prob_30_1mo', 0))
             
             # Use combined score (if available) or raw probability
-            raw_score = raw_data.get('combined_score', raw_data.get('probability', 0))
-            try:
-                prob_score = float(raw_score)
-            except:
-                prob_score = 0.0
-
-            if prob_score >= 0.35:
-                if is_linear:
-                    rec = "BUY"
-                else:
-                    rec = "CONSIDER"
+            rec = raw_data.get('recommendation', 'HOLD')
+            # Determine 5-day Recommendation
+            is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
+            score_5d = float(raw_data.get('score_5d', 0))
+            if score_5d >= 0.35:
+                rec_5d = "BUY" if is_linear_5d else "CONSIDER"
             else:
-                rec = "DISREGARD"
-            # ------------------------------------------------------
+                rec_5d = "DISREGARD"
+
+            # Determine 30-day Recommendation
+            is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
+            score_30d = float(raw_data.get('score_30d', 0))
+            if score_30d >= 0.35:
+                rec_30d = "BUY" if is_linear_30d else "CONSIDER"
+            else:
+                rec_30d = "DISREGARD"
 
             prediction = {
                 'symbol': raw_data.get('symbol'),
                 'recommendation': rec,
                 'probability': raw_data.get('probability', 0), 
-                '3pct': p3,
-                '5pct': p5,
-                '10pct': p10,
-                '1mo': p15,
+                '3pct': p3, '5pct': p5, '10pct': p10, '1mo': p15,
+                '30_3pct': p30_3, '30_5pct': p30_5, '30_10pct': p30_10, '30_1mo': p30_15
             }
             stock_data = get_fundamentals(symbol)
         else:
-            error = f"No prediction found for {symbol} in S&P 500 or NASDAQ databases."
+            error = f"No prediction found for {symbol} in S&P 500 databases."
 
-    return render_template(
-        'index.html',
-        symbol=symbol,
-        prediction=prediction,
-        stock_data=stock_data,
-        error=error,
-        ohlc_data=[],
-        closes=[],
-        dates=[],
-        growth_summary=None,
-        price_history=None
-    )
+    return render_template('index.html', symbol=symbol, prediction=prediction, stock_data=stock_data, error=error)
 
 @app.route('/api/stocks')
 def api_stocks():
@@ -249,53 +244,75 @@ def logout():
 
 @app.route('/sp500')
 def sp500_list():
-    """Show top predictions from CSV"""
     preds = load_predictions(PREDICTIONS_CSV)
     
-    formatted_stocks = []
+    formatted_stocks_5d = []
+    formatted_stocks_30d = []
+    
     for p in preds:
-        # Read 'combined_score' 
-        raw_score = p.get('combined_score', p.get('probability', 0))
-        try:
-            prob = float(raw_score)
-        except:
-            prob = 0.0
-
-        # Get individual probabilities
+        # 5-day probabilities
         p3 = float(p.get('prob_3pct', 0))
         p5 = float(p.get('prob_5pct', 0))
         p10 = float(p.get('prob_10pct', 0))
         p15 = float(p.get('prob_1mo', 0))
+        
+        # 30-day probabilities
+        p30_3 = float(p.get('prob_30_3pct', 0))
+        p30_5 = float(p.get('prob_30_5pct', 0))
+        p30_10 = float(p.get('prob_30_10pct', 0))
+        p30_15 = float(p.get('prob_30_1mo', 0))
 
-        # --- NEW LOGIC ---
-        # "Buy if each percentage is greater than the last (3>5>10>15)"
-        is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
+        # Because `combined_score` mixed everything in your predict file, 
+        # let's approximate the isolated 5d vs 30d scores using your weights.
+        prob_5d = (p3*0.05 + p5*0.15 + p10*0.4 + p15*0.4)
+        prob_30d = (p30_3*0.05 + p30_5*0.15 + p30_10*0.4 + p30_15*0.4)
 
-        if prob >= 0.35 and is_linear:
-            recommendation = "BUY" # Strong Buy because confidence is logical and high
-        elif prob >= 0.30:
-            recommendation = "CONSIDER" # High score, but non-linear (conflicting models)
-        else:
-            recommendation = "DISREGARD"
-        # -----------------
+        # 5-Day Rec
+        is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
+        if prob_5d >= 0.35 and is_linear_5d: rec_5d = "BUY"
+        elif prob_5d >= 0.30: rec_5d = "CONSIDER"
+        else: rec_5d = "DISREGARD"
 
-        formatted_stocks.append({
+        # 30-Day Rec
+        is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
+        if prob_30d >= 0.35 and is_linear_30d: rec_30d = "BUY"
+        elif prob_30d >= 0.30: rec_30d = "CONSIDER"
+        else: rec_30d = "DISREGARD"
+
+        base_info = {
             'symbol': p.get('symbol'),
-            'score_percent': f"{prob*100:.1f}%",
-            'probability': prob, 
-            'recommendation': recommendation, 
             'currentPrice': float(p.get('price', 0)), 
             'shortName': p.get('name', p.get('symbol')), 
             'sector': p.get('sector', 'Unknown')
-        })
+        }
 
-    # Sort by probability descending
-    try:
-        formatted_stocks.sort(key=lambda x: x['probability'], reverse=True)
-    except:
-        pass
+        formatted_stocks_5d.append({**base_info, 'probability': prob_5d, 'score_percent': f"{prob_5d*100:.1f}%", 'recommendation': rec_5d})
+        formatted_stocks_30d.append({**base_info, 'probability': prob_30d, 'score_percent': f"{prob_30d*100:.1f}%", 'recommendation': rec_30d})
 
-    return render_template("SP500.html", stocks=formatted_stocks[:100], last_updated="Static Data")
+    # Sort both lists by highest probability
+    formatted_stocks_5d.sort(key=lambda x: x['probability'], reverse=True)
+    formatted_stocks_30d.sort(key=lambda x: x['probability'], reverse=True)
+    stats_5d = {
+        'buy': 42,      # Replace with actual logic to count 'buy' recommendations
+        'hold': 15,     # Replace with actual logic
+        'sell': 3       # Replace with actual logic
+    }
+    
+    stats_30d = {
+        'buy': 30,      # Replace with actual logic 
+        'hold': 20,     # Replace with actual logic
+        'sell': 10      # Replace with actual logic
+    }
+
+    # 2. Pass them into render_template
+    return render_template(
+        "SP500.html",
+        stocks_5d=formatted_stocks_5d[:100], 
+        stocks_30d=formatted_stocks_30d[:100], 
+        last_updated="Static Data",
+        stats_5d=stats_5d,
+        stats_30d=stats_30d
+    )
 
 @app.route('/nasdaq')
 def nasdaq_list():
