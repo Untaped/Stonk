@@ -292,16 +292,18 @@ def sp500_list():
     # Sort both lists by highest probability
     formatted_stocks_5d.sort(key=lambda x: x['probability'], reverse=True)
     formatted_stocks_30d.sort(key=lambda x: x['probability'], reverse=True)
+    # Calculate actual statistics for the 5-Day timeframe
     stats_5d = {
-        'buy': 42,      # Replace with actual logic to count 'buy' recommendations
-        'hold': 15,     # Replace with actual logic
-        'sell': 3       # Replace with actual logic
+        'buy': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'BUY'),
+        'consider': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'CONSIDER'),
+        'disregard': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'DISREGARD')
     }
     
+    # Calculate actual statistics for the 30-Day timeframe
     stats_30d = {
-        'buy': 30,      # Replace with actual logic 
-        'hold': 20,     # Replace with actual logic
-        'sell': 10      # Replace with actual logic
+        'buy': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'BUY'),
+        'consider': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'CONSIDER'),
+        'disregard': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'DISREGARD')
     }
 
     # 2. Pass them into render_template
