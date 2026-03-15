@@ -251,53 +251,56 @@
             </div>
             
             {% if prediction %}
-                        <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
-                            <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
-                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
-                                    <i class="fas fa-bolt mr-2"></i>5 Days
-                                </button>
-                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
-                                    <i class="fas fa-calendar-alt mr-2"></i>30 Days
-                                </button>
-                            </div>
-                        </div><div id="view-5d" class="mt-8 w-full animate-fade-in">
-                            <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                                <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
-                                    <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    {% macro probability_card(label, value, color_class='blue') %}
-                                        {% set val = value|float * 100 %}
-                                        <div class="bg-gray-800/40 border border-gray-700/50 rounded-xl p-3">
-                                            <div class="text-[10px] text-gray-400 font-medium uppercase mb-1">{{ label }}</div>
-                                            <div class="text-xl font-bold text-white mb-1">{{ "%.1f"|format(val) }}%</div>
-                                            <div class="w-full bg-gray-700/50 rounded-full h-1">
-                                                <div class="h-full rounded-full bg-{{ color_class }}-500" style="width: {{ val }}%"></div>
-                                            </div>
-                                        </div>
-                                    {% endmacro %}
-                                    {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'emerald') }}
-                                    {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
-                                    {{ probability_card('+10% (5.0% Stop Loss)', prediction['10pct'], 'blue') }}
-                                    {{ probability_card('+15% (7.5% Stop Loss)', prediction['1mo'], 'indigo') }}
-                                </div>
-                            </div>
-                        </div>
+            <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
+                <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
+                    <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
+                        <i class="fas fa-bolt mr-2"></i>5 Days
+                    </button>
+                    <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-calendar-alt mr-2"></i>30 Days
+                    </button>
+                </div>
+            </div>
 
-                        <div id="view-30d" class="mt-8 w-full animate-fade-in hidden">
-                            <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                                <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
-                                    <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2>
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    {{ probability_card('+3% (1.5% Stop Loss)', prediction['30_3pct'], 'emerald') }}
-                                    {{ probability_card('+5% (2.5% Stop Loss)', prediction['30_5pct'], 'teal') }}
-                                    {{ probability_card('+10% (5.0% Stop Loss)', prediction['30_10pct'], 'blue') }}
-                                    {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_1mo'], 'indigo') }}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
+            {% macro probability_card(label, value, color_class='blue') %}
+                {% set val = value|float * 100 %}
+                <div class="bg-gray-800/40 border border-gray-700/50 rounded-xl p-3">
+                    <div class="text-[10px] text-gray-400 font-medium uppercase mb-1">{{ label }}</div>
+                    <div class="text-xl font-bold text-white mb-1">{{ "%.1f"|format(val) }}%</div>
+                    <div class="w-full bg-gray-700/50 rounded-full h-1">
+                        <div class="h-full rounded-full bg-{{ color_class }}-500" style="width: {{ val }}%"></div>
+                    </div>
+                </div>
+            {% endmacro %}
+
+            <div id="view-5d" class="mt-8 w-full animate-fade-in">
+                <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
+                    <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
+                        <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'emerald') }}
+                        {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
+                        {{ probability_card('+10% (5.0% Stop Loss)', prediction['10pct'], 'blue') }}
+                        {{ probability_card('+15% (7.5% Stop Loss)', prediction['1mo'], 'indigo') }}
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-30d" class="mt-8 w-full animate-fade-in hidden">
+                <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
+                    <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
+                        <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_3pct'], 'emerald') }}
+                        {{ probability_card('+20% (10% Stop Loss)', prediction['30_5pct'], 'teal') }}
+                        {{ probability_card('+25% (12.5% Stop Loss)', prediction['30_10pct'], 'blue') }}
+                        {{ probability_card('+30% (15% Stop Loss)', prediction['30_1mo'], 'indigo') }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             <script>
                 function toggleTimeframe(view) {
@@ -333,7 +336,7 @@
                             <strong>Currently Working On: Dynamic Market Trend (Bullish and Bearish) Adentification</strong>
                         </p>
                         <p class="text-gray-300 text-sm leading-relaxed">
-                            This website is still in beta and will have glitches and innacuracies, I am always working on it and I hope to launch soon. <strong> The five day AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC of 3% is 0.84, 5% is 0.84, 10% is 0.52, and 15% is 0.66.</strong>
+                            This website is still in beta and will have glitches and innacuracies, I am always working on it and I hope to launch soon. <strong> The five day AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
                         </p>
                     </div>
                 </div></center>
