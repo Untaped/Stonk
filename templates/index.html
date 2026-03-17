@@ -330,7 +330,7 @@
                             <div class="bg-blue-500/20 p-1.5 rounded-lg">
                                 <i class="fas fa-code text-blue-400 text-sm"></i>
                             </div>
-                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Mar 16, 2025):</h3>
+                            <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: Mar 17, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
                             <strong>Currently Working On: Dynamic Market Trend (Bullish and Bearish) Adentification</strong>
@@ -475,7 +475,7 @@
             constructor() {
                 this.isActive = false;
                 this.clickCount = 0;
-                this.baseProbability = 0.0000000000000000000000000000000000000000000000000000000000000001; // Starts at a 10% chance
+                this.baseProbability = 0.0000000000000000001; // Starts at a 10% chance
                 this.init();
             }
 
@@ -496,7 +496,7 @@
                         this.clickCount++;
                         
                         // Increase the probability by 2% for every click to make it show more often
-                        const currentChance = this.baseProbability + (this.clickCount * 0.0000000000000000000000000000000000001)
+                        const currentChance = this.baseProbability + (this.clickCount * 0.00000001)
                         
                         // Check if the random number hits our probability threshold
                         if (Math.random() < currentChance) {
