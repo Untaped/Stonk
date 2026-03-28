@@ -1,0 +1,24 @@
+2026-03-28 00:50:17,777 - IP: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-03-28 00:50:17,778 - IP: [33mPress CTRL+C to quit[0m
+2026-03-28 00:50:17,779 - IP:  * Restarting with stat
+2026-03-28 00:50:18,393 - IP:  * Debugger is active!
+2026-03-28 00:50:18,409 - IP:  * Debugger PIN: 184-546-153
+2026-03-28 00:51:23,597 - IP: 127.0.0.1 accessed /
+2026-03-28 00:51:23,617 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:23] "GET / HTTP/1.1" 200 -
+2026-03-28 00:51:23,631 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-28 00:51:23,633 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:23] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-28 00:51:24,625 - IP: 127.0.0.1 accessed /sw.js
+2026-03-28 00:51:24,627 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:24] "GET /sw.js HTTP/1.1" 200 -
+2026-03-28 00:51:27,965 - IP: 127.0.0.1 accessed /sp500
+2026-03-28 00:51:28,031 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:28] "GET /sp500 HTTP/1.1" 200 -
+2026-03-28 00:51:28,237 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-28 00:51:28,238 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:28] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-28 00:51:29,041 - IP: 127.0.0.1 accessed /sw.js
+2026-03-28 00:51:29,042 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:29] "GET /sw.js HTTP/1.1" 200 -
+2026-03-28 00:51:34,424 - IP: 127.0.0.1 accessed /
+2026-03-28 00:51:34,425 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:34] "GET / HTTP/1.1" 200 -
+2026-03-28 00:51:34,443 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-28 00:51:34,444 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:34] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-28 00:51:35,437 - IP: 127.0.0.1 accessed /sw.js
+2026-03-28 00:51:35,439 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:35] "GET /sw.js HTTP/1.1" 200 -

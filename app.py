@@ -1,4 +1,8 @@
 from flask import Flask, request, render_template, jsonify, session, redirect, url_for, flash
+import logging
+
+# The IP log is in the file server_access.log :D:D:D:D:D:D
+
 from datetime import datetime
 import pandas as pd
 import os
@@ -10,9 +14,33 @@ import requests
 from io import StringIO
 from datetime import datetime
 
+#Logging IPsssssss
+def get_location(ip):
+    response = requests.get(f"https://ipinfo.io/{ip}/json")
+    return response.json()
+
 load_dotenv()
 
 app = Flask(__name__)
+
+# --- NEW LOGGING SETUP ---
+# 1. Configure where the logs are saved
+logging.basicConfig(
+    filename='server_access.log', 
+    level=logging.INFO,
+    format='%(asctime)s - IP: %(message)s'
+)
+
+# 2. Automatically log every visitor's IP and the page they visited
+@app.before_request
+def log_request_info():
+    # Because you are using ProxyFix, request.remote_addr is the real IP
+    client_ip = request.remote_addr
+    path = request.path
+    
+    # Ignore logging for static files to keep your log clean
+    if not path.startswith('/static/'):
+        logging.info(f"{client_ip} accessed {path}")
 
 # Configuration
 PREDICTIONS_CSV = "stonk_download/predictions.csv"
