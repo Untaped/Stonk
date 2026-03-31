@@ -18,14 +18,6 @@ from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-# Add this after your app = Flask(__name__) definition
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://" # Uses local memory, perfect for lightweight apps
-)
-
 #Logging IPsssssss
 def get_location(ip):
     response = requests.get(f"https://ipinfo.io/{ip}/json")
@@ -36,6 +28,13 @@ load_dotenv()
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://" # Uses local memory, perfect for lightweight apps
 )
 
 # --- NEW LOGGING SETUP ---
