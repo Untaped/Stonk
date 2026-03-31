@@ -228,7 +228,7 @@
             </div>
 
             <div class="glass-card rounded-2xl p-6 md:p-8 text-center popup-trigger">
-                <h2 class="text-3xl md:text-4xl font-black mb-4 gradient-text">In Debth Stock Anaylsis</h2>
+                <h2 class="text-3xl md:text-4xl font-black mb-4 gradient-text">In Debth Stock Analysis</h2>
                 <form method="POST" action="/" class="max-w-md mx-auto relative z-20">
                     <div class="relative mb-6">
                         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -278,7 +278,7 @@
                 <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
                     <div class="flex flex-col items-center mb-6 gap-2 border-b border-gray-700/50 pb-6">
                         <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
-                    </div>
+                    </div> 
                     <div class="grid grid-cols-2 gap-3">
                         {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'emerald') }}
                         {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
