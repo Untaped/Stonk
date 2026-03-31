@@ -8,3 +8,4 @@ lightgbm
 requests
 yfinance
 python-dotenv
+flask-Limiter

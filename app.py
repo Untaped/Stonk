@@ -13,6 +13,18 @@ from datetime import timedelta
 import requests
 from io import StringIO
 from datetime import datetime
+from werkzeug.middleware.proxy_fix import ProxyFix
+from flask import abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+# Add this after your app = Flask(__name__) definition
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://" # Uses local memory, perfect for lightweight apps
+)
 
 #Logging IPsssssss
 def get_location(ip):
@@ -22,6 +34,9 @@ def get_location(ip):
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 
 # --- NEW LOGGING SETUP ---
 # 1. Configure where the logs are saved
@@ -31,6 +46,19 @@ logging.basicConfig(
     format='%(asctime)s - IP: %(message)s'
 )
 
+@app.before_request
+def block_bad_requests():
+    # 1. Block malicious paths instantly
+    bad_patterns = ['.php', '/wp-', '/.env', '/cgi-bin', '.git']
+    if any(pattern in request.path for pattern in bad_patterns):
+        abort(403) # Instantly returns "Forbidden" without processing further
+
+    # 2. Your existing logging logic
+    client_ip = request.remote_addr
+    path = request.path
+    
+    if not path.startswith('/static/'):
+        logging.info(f"{client_ip} accessed {path}")
 # 2. Automatically log every visitor's IP and the page they visited
 @app.before_request
 def log_request_info():
