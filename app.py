@@ -27,7 +27,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    app.wsgi_app, x_for=2, x_proto=1, x_host=1, x_prefix=1
 )
 
 limiter = Limiter(
@@ -50,12 +50,13 @@ def block_bad_requests():
     # 1. Block malicious paths instantly
     bad_patterns = ['.php', '/wp-', '/.env', '/cgi-bin', '.git']
     if any(pattern in request.path for pattern in bad_patterns):
-        abort(403) # Instantly returns "Forbidden" without processing further
+        abort(403) 
 
-    # 2. Your existing logging logic
-    client_ip = request.remote_addr
+    # 2. Get the REAL IP (Check Cloudflare first, then fallback to ProxyFix)
+    client_ip = request.headers.get('CF-Connecting-IP', request.remote_addr)
     path = request.path
     
+    # 3. Log legitimate traffic
     if not path.startswith('/static/'):
         logging.info(f"{client_ip} accessed {path}")
 # 2. Automatically log every visitor's IP and the page they visited

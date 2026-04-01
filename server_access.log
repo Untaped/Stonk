@@ -22,3 +22,307 @@
 2026-03-28 00:51:34,444 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:34] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
 2026-03-28 00:51:35,437 - IP: 127.0.0.1 accessed /sw.js
 2026-03-28 00:51:35,439 - IP: 127.0.0.1 - - [28/Mar/2026 00:51:35] "GET /sw.js HTTP/1.1" 200 -
+2026-03-28 10:40:12,118 - IP: 127.0.0.1 accessed /
+2026-03-28 10:40:12,142 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:12] "GET / HTTP/1.1" 200 -
+2026-03-28 10:40:12,163 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-28 10:40:12,168 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:12] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-28 10:40:13,153 - IP: 127.0.0.1 accessed /sw.js
+2026-03-28 10:40:13,155 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:13] "GET /sw.js HTTP/1.1" 200 -
+2026-03-28 10:40:15,373 - IP: 127.0.0.1 accessed /
+2026-03-28 10:40:15,374 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:15] "GET / HTTP/1.1" 200 -
+2026-03-28 10:40:15,384 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-28 10:40:15,385 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:15] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-28 10:40:16,383 - IP: 127.0.0.1 accessed /sw.js
+2026-03-28 10:40:16,384 - IP: 127.0.0.1 - - [28/Mar/2026 10:40:16] "GET /sw.js HTTP/1.1" 200 -
+2026-03-29 10:12:14,251 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-29 10:12:14,615 - IP:  * Restarting with stat
+2026-03-29 10:12:15,917 - IP:  * Debugger is active!
+2026-03-29 10:12:15,935 - IP:  * Debugger PIN: 184-546-153
+2026-03-29 10:12:22,025 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-29 10:12:22,161 - IP:  * Restarting with stat
+2026-03-29 10:12:22,949 - IP:  * Debugger is active!
+2026-03-29 10:12:22,966 - IP:  * Debugger PIN: 184-546-153
+2026-03-29 10:12:24,004 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-29 10:12:24,119 - IP:  * Restarting with stat
+2026-03-29 10:12:24,856 - IP:  * Debugger is active!
+2026-03-29 10:12:24,869 - IP:  * Debugger PIN: 184-546-153
+2026-03-29 10:12:25,897 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-29 10:12:26,028 - IP:  * Restarting with stat
+2026-03-29 10:12:26,814 - IP:  * Debugger is active!
+2026-03-29 10:12:26,827 - IP:  * Debugger PIN: 184-546-153
+2026-03-29 13:03:59,191 - IP: $VLTO: possibly delisted; no price data found  (1d 2016-03-29 -> 2026-03-27)
+2026-03-29 23:12:12,805 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-29 23:12:13,138 - IP:  * Restarting with stat
+2026-03-29 23:12:14,484 - IP:  * Debugger is active!
+2026-03-29 23:12:14,500 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:21:15,746 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-30 00:21:15,940 - IP:  * Restarting with stat
+2026-03-30 00:21:17,254 - IP:  * Debugger is active!
+2026-03-30 00:21:17,269 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:21:27,435 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-30 00:21:27,566 - IP:  * Restarting with stat
+2026-03-30 00:21:28,344 - IP:  * Debugger is active!
+2026-03-30 00:21:28,356 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:42,430 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-30 00:27:42,557 - IP:  * Restarting with stat
+2026-03-30 00:27:43,833 - IP:  * Debugger is active!
+2026-03-30 00:27:43,848 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:44,890 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-30 00:27:45,035 - IP:  * Restarting with stat
+2026-03-30 00:27:45,969 - IP:  * Debugger is active!
+2026-03-30 00:27:45,983 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:47,019 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-30 00:27:47,142 - IP:  * Restarting with stat
+2026-03-30 00:27:47,941 - IP:  * Debugger is active!
+2026-03-30 00:27:47,953 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:49,997 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-30 00:27:50,223 - IP:  * Restarting with stat
+2026-03-30 00:27:50,947 - IP:  * Debugger is active!
+2026-03-30 00:27:50,960 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:53,002 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-30 00:27:53,135 - IP:  * Restarting with stat
+2026-03-30 00:27:53,937 - IP:  * Debugger is active!
+2026-03-30 00:27:53,949 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 00:27:56,005 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-30 00:27:56,128 - IP:  * Restarting with stat
+2026-03-30 00:27:56,818 - IP:  * Debugger is active!
+2026-03-30 00:27:56,831 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 11:36:51,800 - IP: 127.0.0.1 accessed /
+2026-03-30 11:36:51,883 - IP: 127.0.0.1 - - [30/Mar/2026 11:36:51] "GET / HTTP/1.1" 200 -
+2026-03-30 11:36:51,931 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:36:51,937 - IP: 127.0.0.1 - - [30/Mar/2026 11:36:51] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:36:52,915 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:36:52,922 - IP: 127.0.0.1 - - [30/Mar/2026 11:36:52] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:21,730 - IP: 127.0.0.1 accessed /
+2026-03-30 11:48:21,763 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:21] "GET / HTTP/1.1" 200 -
+2026-03-30 11:48:21,782 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:21,784 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:21] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:22,773 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:22,775 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:22] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:26,132 - IP: 127.0.0.1 accessed /sp500
+2026-03-30 11:48:26,279 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:26] "GET /sp500 HTTP/1.1" 200 -
+2026-03-30 11:48:26,551 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:26,552 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:26] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:27,288 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:27,289 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:27] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:28,753 - IP: 127.0.0.1 accessed /
+2026-03-30 11:48:28,754 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:28] "GET / HTTP/1.1" 200 -
+2026-03-30 11:48:28,767 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:28,768 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:28] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:29,761 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:29,761 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:29] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:34,052 - IP: 127.0.0.1 accessed /sp500
+2026-03-30 11:48:34,074 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:34] "GET /sp500 HTTP/1.1" 200 -
+2026-03-30 11:48:34,327 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:34,327 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:34] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:35,082 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:35,083 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:35] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:35,383 - IP: 127.0.0.1 accessed /
+2026-03-30 11:48:35,383 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:35] "GET / HTTP/1.1" 200 -
+2026-03-30 11:48:35,396 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:35,398 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:35] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:36,390 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:36,391 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:36] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:37,178 - IP: 127.0.0.1 accessed /sp500
+2026-03-30 11:48:37,198 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:37] "GET /sp500 HTTP/1.1" 200 -
+2026-03-30 11:48:37,471 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:37,472 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:37] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:38,206 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:38,207 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:38] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:48:38,431 - IP: 127.0.0.1 accessed /
+2026-03-30 11:48:38,432 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:38] "GET / HTTP/1.1" 200 -
+2026-03-30 11:48:38,446 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:48:38,447 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:38] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:48:39,438 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:48:39,439 - IP: 127.0.0.1 - - [30/Mar/2026 11:48:39] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:49:41,648 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-30 11:49:41,981 - IP:  * Restarting with stat
+2026-03-30 11:49:43,543 - IP:  * Debugger is active!
+2026-03-30 11:49:43,563 - IP:  * Debugger PIN: 184-546-153
+2026-03-30 11:49:51,661 - IP: 127.0.0.1 accessed /
+2026-03-30 11:49:51,683 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:51] "GET / HTTP/1.1" 200 -
+2026-03-30 11:49:51,701 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:49:51,705 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:51] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:49:52,691 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:49:52,693 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:52] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:49:55,468 - IP: 127.0.0.1 accessed /sp500
+2026-03-30 11:49:55,530 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:55] "GET /sp500 HTTP/1.1" 200 -
+2026-03-30 11:49:55,775 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:49:55,776 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:55] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:49:56,539 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:49:56,540 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:56] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:49:57,003 - IP: 127.0.0.1 accessed /
+2026-03-30 11:49:57,004 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:57] "GET / HTTP/1.1" 200 -
+2026-03-30 11:49:57,016 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:49:57,017 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:57] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:49:58,009 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:49:58,010 - IP: 127.0.0.1 - - [30/Mar/2026 11:49:58] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:50:51,297 - IP: 127.0.0.1 accessed /
+2026-03-30 11:50:51,313 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:51] "GET / HTTP/1.1" 200 -
+2026-03-30 11:50:51,326 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:50:51,327 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:51] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:50:52,323 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:50:52,324 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:52] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:50:54,613 - IP: 127.0.0.1 accessed /sp500
+2026-03-30 11:50:54,667 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:54] "GET /sp500 HTTP/1.1" 200 -
+2026-03-30 11:50:54,907 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:50:54,908 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:54] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:50:55,676 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:50:55,677 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:55] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:50:57,906 - IP: 127.0.0.1 accessed /nasdaq
+2026-03-30 11:50:58,015 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:58] "GET /nasdaq HTTP/1.1" 200 -
+2026-03-30 11:50:58,436 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:50:58,437 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:58] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:50:59,023 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:50:59,024 - IP: 127.0.0.1 - - [30/Mar/2026 11:50:59] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 11:51:02,254 - IP: 127.0.0.1 accessed /
+2026-03-30 11:51:02,255 - IP: 127.0.0.1 - - [30/Mar/2026 11:51:02] "GET / HTTP/1.1" 200 -
+2026-03-30 11:51:02,272 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-30 11:51:02,273 - IP: 127.0.0.1 - - [30/Mar/2026 11:51:02] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-30 11:51:03,261 - IP: 127.0.0.1 accessed /sw.js
+2026-03-30 11:51:03,262 - IP: 127.0.0.1 - - [30/Mar/2026 11:51:03] "GET /sw.js HTTP/1.1" 200 -
+2026-03-30 18:04:11,609 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-30 18:04:12,050 - IP:  * Restarting with stat
+2026-03-30 18:04:13,877 - IP:  * Debugger is active!
+2026-03-30 18:04:13,896 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:00:06,761 - IP: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-03-31 01:00:06,762 - IP: [33mPress CTRL+C to quit[0m
+2026-03-31 01:00:06,763 - IP:  * Restarting with stat
+2026-03-31 01:00:07,496 - IP:  * Debugger is active!
+2026-03-31 01:00:07,517 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:02:03,102 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 01:02:03,237 - IP:  * Restarting with stat
+2026-03-31 01:02:04,342 - IP:  * Debugger is active!
+2026-03-31 01:02:04,358 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:02:34,722 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 01:02:34,886 - IP:  * Restarting with stat
+2026-03-31 01:02:36,081 - IP:  * Debugger is active!
+2026-03-31 01:02:36,093 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:02:38,146 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 01:02:38,314 - IP:  * Restarting with stat
+2026-03-31 01:02:39,108 - IP:  * Debugger is active!
+2026-03-31 01:02:39,120 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:03:05,586 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 01:03:05,709 - IP:  * Restarting with stat
+2026-03-31 01:30:58,590 - IP: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-03-31 01:30:58,591 - IP: [33mPress CTRL+C to quit[0m
+2026-03-31 01:30:58,593 - IP:  * Restarting with stat
+2026-03-31 01:30:59,365 - IP:  * Debugger is active!
+2026-03-31 01:30:59,382 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 01:31:11,280 - IP: 127.0.0.1 accessed /
+2026-03-31 01:31:11,280 - IP: 127.0.0.1 accessed /
+2026-03-31 01:31:11,300 - IP: 127.0.0.1 - - [31/Mar/2026 01:31:11] "GET / HTTP/1.1" 200 -
+2026-03-31 01:31:11,318 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 01:31:11,318 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 01:31:11,320 - IP: 127.0.0.1 - - [31/Mar/2026 01:31:11] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 01:31:12,311 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 01:31:12,311 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 01:31:12,312 - IP: 127.0.0.1 - - [31/Mar/2026 01:31:12] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 01:37:43,576 - IP: 127.0.0.1 accessed /
+2026-03-31 01:37:43,577 - IP: 127.0.0.1 accessed /
+2026-03-31 01:37:43,608 - IP: 127.0.0.1 - - [31/Mar/2026 01:37:43] "GET / HTTP/1.1" 200 -
+2026-03-31 01:37:43,626 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 01:37:43,627 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 01:37:43,628 - IP: 127.0.0.1 - - [31/Mar/2026 01:37:43] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 01:37:44,618 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 01:37:44,618 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 01:37:44,620 - IP: 127.0.0.1 - - [31/Mar/2026 01:37:44] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:30:53,642 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:30:54,097 - IP:  * Restarting with stat
+2026-03-31 17:30:55,617 - IP:  * Debugger is active!
+2026-03-31 17:30:55,711 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:31:01,817 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:31:01,956 - IP:  * Restarting with stat
+2026-03-31 17:31:02,771 - IP:  * Debugger is active!
+2026-03-31 17:31:02,784 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:31:05,843 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:31:06,005 - IP:  * Restarting with stat
+2026-03-31 17:31:06,912 - IP:  * Debugger is active!
+2026-03-31 17:31:06,924 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:31:58,689 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:31:58,833 - IP:  * Restarting with stat
+2026-03-31 17:32:00,120 - IP:  * Debugger is active!
+2026-03-31 17:32:00,132 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:32:10,294 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:32:10,433 - IP:  * Restarting with stat
+2026-03-31 17:32:11,293 - IP:  * Debugger is active!
+2026-03-31 17:32:11,309 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:32:13,363 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/app.py', reloading
+2026-03-31 17:32:13,504 - IP:  * Restarting with stat
+2026-03-31 17:32:14,322 - IP:  * Debugger is active!
+2026-03-31 17:32:14,334 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:32:22,468 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-31 17:32:22,620 - IP:  * Restarting with stat
+2026-03-31 17:32:23,668 - IP:  * Debugger is active!
+2026-03-31 17:32:23,686 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:43:23,056 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:23,057 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:23,088 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:23] "GET / HTTP/1.1" 200 -
+2026-03-31 17:43:23,150 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:23,150 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:23,152 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:23] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 17:43:23,871 - IP: 127.0.0.1 accessed /favicon.ico
+2026-03-31 17:43:23,871 - IP: 127.0.0.1 accessed /favicon.ico
+2026-03-31 17:43:23,872 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:23] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-03-31 17:43:24,102 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:24,102 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:24,103 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:24] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:43:34,556 - IP: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-03-31 17:43:34,557 - IP: [33mPress CTRL+C to quit[0m
+2026-03-31 17:43:34,558 - IP:  * Restarting with stat
+2026-03-31 17:43:35,631 - IP:  * Debugger is active!
+2026-03-31 17:43:35,648 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:43:35,666 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:35,666 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:35,685 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:35] "GET / HTTP/1.1" 200 -
+2026-03-31 17:43:35,702 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:35,702 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:35,704 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:35] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 17:43:36,693 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:36,693 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:36,694 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:36] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:43:39,880 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:39,880 - IP: 127.0.0.1 accessed /
+2026-03-31 17:43:39,881 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:39] "GET / HTTP/1.1" 200 -
+2026-03-31 17:43:39,895 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:39,895 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:43:39,896 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:39] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 17:43:40,891 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:40,891 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:43:40,891 - IP: 127.0.0.1 - - [31/Mar/2026 17:43:40] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:43:52,083 - IP: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-03-31 17:43:52,083 - IP: [33mPress CTRL+C to quit[0m
+2026-03-31 17:43:52,085 - IP:  * Restarting with stat
+2026-03-31 17:43:52,796 - IP:  * Debugger is active!
+2026-03-31 17:43:52,809 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:45:18,057 - IP: 127.0.0.1 accessed /
+2026-03-31 17:45:18,058 - IP: 127.0.0.1 accessed /
+2026-03-31 17:45:18,077 - IP: 127.0.0.1 - - [31/Mar/2026 17:45:18] "GET / HTTP/1.1" 200 -
+2026-03-31 17:45:18,090 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:45:18,090 - IP: 127.0.0.1 accessed /manifest.json
+2026-03-31 17:45:18,091 - IP: 127.0.0.1 - - [31/Mar/2026 17:45:18] "[36mGET /manifest.json HTTP/1.1[0m" 304 -
+2026-03-31 17:45:19,087 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:45:19,087 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:45:19,089 - IP: 127.0.0.1 - - [31/Mar/2026 17:45:19] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:56:38,080 - IP: 127.0.0.1 accessed /
+2026-03-31 17:56:38,081 - IP: 127.0.0.1 accessed /
+2026-03-31 17:56:38,083 - IP: 127.0.0.1 - - [31/Mar/2026 17:56:38] "GET / HTTP/1.1" 200 -
+2026-03-31 17:56:39,092 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:56:39,092 - IP: 127.0.0.1 accessed /sw.js
+2026-03-31 17:56:39,094 - IP: 127.0.0.1 - - [31/Mar/2026 17:56:39] "GET /sw.js HTTP/1.1" 200 -
+2026-03-31 17:57:30,846 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-31 17:57:31,052 - IP:  * Restarting with stat
+2026-03-31 17:57:32,406 - IP:  * Debugger is active!
+2026-03-31 17:57:32,419 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 17:58:42,345 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/save_daily_snapshot.py', reloading
+2026-03-31 17:58:42,484 - IP:  * Restarting with stat
+2026-03-31 17:58:43,396 - IP:  * Debugger is active!
+2026-03-31 17:58:43,409 - IP:  * Debugger PIN: 184-546-153
+2026-03-31 18:06:30,493 - IP:  * Detected change in '/Users/jpallen/Desktop/Stonk/stock_ai/market_predict_single_stock.py', reloading
+2026-03-31 18:06:30,637 - IP:  * Restarting with stat
+2026-03-31 18:06:31,711 - IP:  * Debugger is active!
+2026-03-31 18:06:31,724 - IP:  * Debugger PIN: 184-546-153
