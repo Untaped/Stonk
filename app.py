@@ -14,9 +14,13 @@ import requests
 from io import StringIO
 from datetime import datetime
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
 
 #Logging IPsssssss
 def get_location(ip):
@@ -26,6 +30,8 @@ def get_location(ip):
 load_dotenv()
 
 app = Flask(__name__)
+# ... your existing ProxyFix and Limiter setup ...
+
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=2, x_proto=1, x_host=1, x_prefix=1
 )
@@ -41,9 +47,38 @@ limiter = Limiter(
 # 1. Configure where the logs are saved
 logging.basicConfig(
     filename='server_access.log', 
-    level=logging.INFO,
-    format='%(asctime)s - IP: %(message)s'
+    level=logging.INFO,  # <--- Ensure there is a comma here
+    format='%(asctime)s - IP: %(message)s' # <--- And here if you add more lines
 )
+
+# A secret key is required for secure cookies (sessions)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'replace-this-with-a-random-string-in-production')
+
+# Use SQLite locally, but allow Render to inject a PostgreSQL database URL
+# Important: Render uses ephemeral disks, so SQLite will wipe on every deploy. 
+# You will need a free PostgreSQL database for production.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///litlguy_users.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Tells Flask where to redirect unauthorized users
+login_manager.login_message = "Please log in to access this feature."
+
+# --- NEW: Database Models ---
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(150), nullable=False)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Create the database tables if they don't exist
+with app.app_context():
+    db.create_all()
 
 @app.before_request
 def block_bad_requests():
@@ -69,6 +104,56 @@ def log_request_info():
     # Ignore logging for static files to keep your log clean
     if not path.startswith('/static/'):
         logging.info(f"{client_ip} accessed {path}")
+
+# --- NEW: Authentication Routes ---
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Check if user already exists
+        if User.query.filter_by(username=username).first():
+            flash("Username already exists. Please choose another or log in.")
+            return redirect(url_for('register'))
+            
+        # Hash password and save user
+        hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
+        new_user = User(username=username, password_hash=hashed_pw)
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash("Registration successful! Please log in.")
+        return redirect(url_for('login'))
+        
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            return redirect(url_for('index')) # Redirect to home page
+        else:
+            flash("Invalid username or password.")
+            
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+@app.route('/premium-feature')
+@login_required
+def premium_feature():
+    # If a user is not logged in, Flask automatically redirects them to the /login page
+    return render_template('premium.html', username=current_user.username)
 
 # Configuration
 PREDICTIONS_CSV = "stonk_download/predictions.csv"
@@ -292,12 +377,6 @@ def serve_manifest():
 def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
-@app.route('/logout')
-def logout():
-    session.pop('sp500_unlocked', None)
-    flash("You have been logged out safely.", "info") 
-    return redirect(url_for('index'))
-
 @app.route('/sp500')
 def sp500_list():
     preds = load_predictions(PREDICTIONS_CSV)
@@ -373,6 +452,7 @@ def sp500_list():
     )
 
 @app.route('/nasdaq')
+@login_required
 def nasdaq_list():
     """Show S&P 500 stocks using predictions from CSV data - FULLY OFFLINE"""
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
