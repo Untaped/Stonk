@@ -11,3 +11,4 @@ python-dotenv
 Flask-Limiter
 Flask-Sqlalchemy
 psycopg2-binary
+Flask-Login
