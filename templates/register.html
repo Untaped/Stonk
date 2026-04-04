@@ -18,7 +18,7 @@
           {% endif %}
         {% endwith %}
 
-        <form action="{{ url_for('login') }}" method="POST" class="space-y-4">
+        <form action="{{ url_for('register') }}" method="POST" class="space-y-4">
             <div>
                 <label class="block text-gray-400 text-sm font-bold mb-2">Username</label>
                 <input type="text" name="username" required class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
@@ -32,7 +32,7 @@
             </button>
         </form>
         <p class="mt-4 text-center text-gray-400">
-            Don't have an account? <a href="{{ url_for('register') }}" class="text-blue-400 hover:underline">Register here</a>.
+            Have an account? <a href="{{ url_for('login') }}" class="text-blue-400 hover:underline">Login here</a>.
         </p>
     </div>
 </body>

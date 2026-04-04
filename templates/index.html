@@ -195,9 +195,15 @@
                     <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
-                    <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-university mr-3"></i> SPX (Experimental)
-                    </a>
+                    {% if current_user.is_authenticated %}
+                        <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-university mr-3"></i> SPX (Experimental)
+                        </a>
+                    {% else %}
+                        <a href="#" onclick="requireAuthPopup(event)" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                            <i class="fas fa-lock mr-3"></i> SPX (Experimental)
+                        </a>
+                    {% endif %}
                 </nav>
             </div>
             <div class="mt-10">
@@ -334,9 +340,6 @@
                             <h3 class="text-blue-400 font-bold text-xs uppercase tracking-widest">John Allen Dev Notes (Updated For: April 3, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
-                            <strong>Currently Working On: Dynamic Market Trend (Bullish and Bearish) Adentification</strong>
-                        </p>
-                        <p class="text-gray-300 text-sm leading-relaxed">
                             This website is still in beta and will have glitches and innacuracies, I am always working on it and I hope to launch soon. <strong> The five day AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
                         </p>
                     </div>
@@ -350,7 +353,7 @@
                             <h3 class="text-emerald-400 font-bold text-xs uppercase tracking-widest">Log Update (April 1, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
-                            <strong> Added Web Potection and Anti-Bot measures to Prevent Web Scanning and Spamming. </strong>
+                            <strong> Implemented Dynamic Market Trend Adentification and Increased Data Collection for Higher AUC and more Accurate Algorithm Results. Added Web Potection and Anti-Bot measures to Prevent Web Scanning and Spamming. </strong>
                         </p>
                     </div>
                 </div></center>
@@ -363,7 +366,7 @@
                             <h3 class="text-emerald-400 font-bold text-xs uppercase tracking-widest">Log Update (Mar 14, 2025):</h3>
                         </div>
                         <p class="text-gray-300 text-sm leading-relaxed">
-                            <strong>Added in depth 30-day Market Prediction Anaylsis for  the S&P 500 </strong>
+                            <strong>Added in Depth 30-day Market Prediction Anaylsis for the S&P 500. </strong>
                         </p>
                         <p class="text-gray-300 text-sm leading-relaxed">
                             <strong>Business Email: jpallen783@gmail.com</strong>
@@ -407,10 +410,17 @@
                 <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
             </a>
             
-            <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-university text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Experimental</span>
-            </a>
+            {% if current_user.is_authenticated %}
+                <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
+                    <i class="fas fa-university text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium tracking-wide">Experimental</span>
+                </a>
+            {% else %}
+                <a href="#" onclick="requireAuthPopup(event)" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
+                    <i class="fas fa-lock text-xl mb-1"></i>
+                    <span class="text-[10px] font-medium tracking-wide">Experimental</span>
+                </a>
+            {% endif %}
         </div>
     </nav>
 
