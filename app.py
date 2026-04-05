@@ -359,23 +359,23 @@ def index():
     saved_stocks_data = []
     
     if current_user.is_authenticated:
-        # 1. Load your existing CSV data to get the current prices
-        try:
-            sp500 = load_predictions(PREDICTIONS_CSV)
-            nasdaq = load_predictions(NASDAQ_PREDICTIONS_CSV)
-            all_data = sp500 + nasdaq
-            
-            # Create a fast lookup dictionary: {'AAPL': 150.50, 'MSFT': 400.20}
-            price_map = {row.get('symbol'): row.get('current_price', 0.0) for row in all_data if row.get('symbol')}
-        except Exception as e:
-            print(f"Could not load prices for watchlist: {e}")
-            price_map = {}
-
-        # 2. Build the list of dictionaries for the HTML template
         for stock in current_user.saved_stocks:
+            # Find current price robustly
+            current_price = 0.0
+            raw_data = get_latest_prediction(stock.symbol)
+            
+            # Check for both possible column names in your CSVs
+            if raw_data:
+                current_price = float(raw_data.get('current_price', raw_data.get('price', 0.0)))
+            
+            # If the CSV didn't have it, fallback to the fundamentals file
+            if current_price == 0.0:
+                fund_data = get_fundamentals(stock.symbol)
+                current_price = float(fund_data.get('price', 0.0))
+
             saved_stocks_data.append({
-                'symbol': stock.symbol,
-                'price': float(price_map.get(stock.symbol, 0.00)), # Current price
+                'symbol': stock.symbol, 
+                'price': current_price,
                 'saved_price': stock.saved_price or 0.00
             })
             
@@ -388,7 +388,6 @@ def index_post():
     stock_data = None
     error = None
 
-# --- UPDATED WATCHLIST RENDERER ---
     saved_stocks = []
     if current_user.is_authenticated:
         for stock in current_user.saved_stocks:
