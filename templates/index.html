@@ -283,7 +283,7 @@
                                                                     <div class="text-xs font-mono mt-1 {% if diff >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
                                                                         {% if diff >= 0 %}<i class="fas fa-caret-up"></i> +{% else %}<i class="fas fa-caret-down"></i> {% endif %}${{ "%.2f"|format(diff|abs) }} 
                                                                         ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
-                                                                        <span class="text-gray-500 ml-1 block mt-0.5 text-[10px]">Saved at: ${{ "%.2f"|format(saved_price) }}</span>
+                                                                        
                                                                     </div>
                                                                 {% else %}
                                                                     <div class="text-xs text-gray-500 mt-1 italic">Price history unavailable</div>
