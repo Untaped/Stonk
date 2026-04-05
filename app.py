@@ -417,7 +417,7 @@ def index_post():
             p3 = float(raw_data.get('prob_3pct', 0))
             p5 = float(raw_data.get('prob_5pct', 0))
             p10 = float(raw_data.get('prob_10pct', 0))
-            p15 = float(raw_data.get('prob_15pct', 0))
+            p15 = float(raw_data.get('prob_1mo', 0))
 
             # 2. Extract 30-Day probabilities
             p30_3 = float(raw_data.get('prob_30_3pct', 0))
@@ -551,7 +551,7 @@ def nasdaq_list():
     """Show S&P 500 stocks using predictions from CSV data - FULLY OFFLINE"""
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     stocks = []
-    
+
     try:
         # Check if file exists
         if not os.path.exists(MARKET_PREDICTIONS_CSV):
