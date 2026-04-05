@@ -128,6 +128,9 @@
                             <i class="fas fa-lock mr-3"></i> SPX (Experimental)
                         </a>
                     {% endif %}
+                    <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
+                    </a>
                 </nav>
             </div>
             <div class="mt-10">
@@ -228,12 +231,31 @@
                 {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
                 {% else %} border-red-500 {% endif %}">
                 
-                <div class="flex-1 min-w-0 pr-4">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
+                    
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-white">{{ stock.symbol }}</span>
+                            
+                            {% if current_user.is_authenticated %}
+                                <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                class="cursor-pointer transition-all duration-200 text-lg
+                                {% if stock.symbol in user_watchlist %}
+                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                {% else %}
+                                    far fa-star text-gray-600 hover:text-yellow-400/70
+                                {% endif %}">
+                                </i>
+                            {% else %}
+                                <a href="/login" title="Login to favorite">
+                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
                 </div>
 
                 <div class="text-right flex flex-col items-end">
@@ -273,7 +295,26 @@
                         {% for stock in stocks_5d %}
                         <tr class="hover:bg-white/5 transition-colors">
                             <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
-                            <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-white">{{ stock.symbol }}</span>
+                                    
+                                    {% if current_user.is_authenticated %}
+                                        <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                        class="cursor-pointer transition-all duration-200 text-lg
+                                        {% if stock.symbol in user_watchlist %}
+                                            fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                        {% else %}
+                                            far fa-star text-gray-600 hover:text-yellow-400/70
+                                        {% endif %}">
+                                        </i>
+                                    {% else %}
+                                        <a href="/login" title="Login to favorite">
+                                            <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
                             <td class="py-4 px-6 text-center">
                                 {% if stock.probability >= 0.35 %}
                                     <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
@@ -345,12 +386,31 @@
                 {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
                 {% else %} border-red-500 {% endif %}">
                 
-                <div class="flex-1 min-w-0 pr-4">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
-                    </div>
-                    <div class="text-xs text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
+                    
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-white">{{ stock.symbol }}</span>
+                            
+                            {% if current_user.is_authenticated %}
+                                <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                class="cursor-pointer transition-all duration-200 text-lg
+                                {% if stock.symbol in user_watchlist %}
+                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                {% else %}
+                                    far fa-star text-gray-600 hover:text-yellow-400/70
+                                {% endif %}">
+                                </i>
+                            {% else %}
+                                <a href="/login" title="Login to favorite">
+                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
                 </div>
 
                 <div class="text-right flex flex-col items-end">
@@ -390,7 +450,31 @@
                         {% for stock in stocks_30d %}
                         <tr class="hover:bg-white/5 transition-colors">
                             <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
-                            <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white">{{ stock.symbol }}</span>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-bold text-white">{{ stock.symbol }}</span>
+                                        
+                                        {% if current_user.is_authenticated %}
+                                            <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                            class="cursor-pointer transition-all duration-200 text-lg
+                                            {% if stock.symbol in user_watchlist %}
+                                                fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                            {% else %}
+                                                far fa-star text-gray-600 hover:text-yellow-400/70
+                                            {% endif %}">
+                                            </i>
+                                        {% else %}
+                                            <a href="/login" title="Login to favorite">
+                                                <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                </div>
+                            </td>
                             <td class="py-4 px-6 text-center">
                                 {% if stock.probability >= 0.35 %}
                                     <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
@@ -488,6 +572,29 @@
                 view5d.classList.add('hidden');
             }
         }
+    </script>
+    <script>
+    function toggleStock(symbol) {
+        fetch('/toggle_stock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ symbol: symbol })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'added') {
+                alert(symbol + ' added to your watchlist!');
+            } else if (data.status === 'removed') {
+                alert(symbol + ' removed from your watchlist!');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Something went wrong. Please try again.');
+        });
+    }
     </script>
 </body>
 </html>
