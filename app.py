@@ -145,9 +145,10 @@ def login():
         
         user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password_hash, password):
+        if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('index')) # Redirect to home page
+            logging.info(f"CHANGE: User {username} logged in from IP: {request.remote_addr}")
+            return redirect(url_for('index'))
         else:
             flash("Invalid username or password.")
             
