@@ -119,15 +119,9 @@
                     <a class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold border-l-4 border-emerald-500">
                         <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
-                    {% if current_user.is_authenticated %}
-                        <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                            <i class="fas fa-university mr-3"></i> SPX (Experimental)
-                        </a>
-                    {% else %}
-                        <a href="/login" onclick="requireAuthPopup(event)" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                            <i class="fas fa-lock mr-3"></i> SPX (Experimental)
-                        </a>
-                    {% endif %}
+                    <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-university mr-3"></i> SPX (Experimental)
+                    </a>
                     <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
                     </a>
@@ -232,7 +226,6 @@
                 {% else %} border-red-500 {% endif %}">
                 
                 <div class="flex items-center gap-2 mb-1">
-                    <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
                     
                     <td class="py-4 px-6">
                         <div class="flex items-center gap-3">
@@ -519,19 +512,11 @@
                 <i class="fas fa-layer-group text-xl mb-1"></i>
                 <span class="text-[10px] font-bold tracking-wide">Top S&P 500</span>
                 <span class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-lg shadow-[0_0_10px_#10b981]"></span>
+            </a>      
+            <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
+                <i class="fas fa-university text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Experimental</span>
             </a>
-            
-            {% if current_user.is_authenticated %}
-                <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                    <i class="fas fa-university text-xl mb-1"></i>
-                    <span class="text-[10px] font-medium tracking-wide">Experimental</span>
-                </a>
-            {% else %}
-                <a href="/login" onclick="requireAuthPopup(event)" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                    <i class="fas fa-lock text-xl mb-1"></i>
-                    <span class="text-[10px] font-medium tracking-wide">Experimental</span>
-                </a>
-            {% endif %}
         </div>
     </nav>
 
@@ -573,28 +558,36 @@
             }
         }
     </script>
-    <script>
-    function toggleStock(symbol) {
-        fetch('/toggle_stock', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ symbol: symbol })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'added') {
-                alert(symbol + ' added to your watchlist!');
-            } else if (data.status === 'removed') {
-                alert(symbol + ' removed from your watchlist!');
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            alert('Something went wrong. Please try again.');
-        });
-    }
+<script>
+        function toggleStock(symbol, element) {
+            // Add a quick pop animation
+            element.style.transform = 'scale(1.3)';
+            setTimeout(() => element.style.transform = 'scale(1)', 200);
+
+            fetch('/toggle_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol: symbol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    // Switch to solid yellow star
+                    element.classList.remove('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                    element.classList.add('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                } else if (data.status === 'removed') {
+                    // Switch to empty gray star
+                    element.classList.remove('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                    element.classList.add('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                element.style.transform = 'scale(1)'; 
+            });
+        }
     </script>
 </body>
 </html>

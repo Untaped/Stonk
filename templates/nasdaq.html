@@ -117,7 +117,7 @@
                     <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
-                    <a class="flex items-center px-4 py-3 bg-red-500/10 rounded-xl text-red-400 font:bold border-1-4 border-red-500">
+                    <a class="flex items-center px-4 py-3 bg-red-500/10 rounded-xl text-red-400 font-bold border-l-4 border-red-500">
                         <i class="fas fa-university mr-3"></i> SPX (Experimental)
                     </a>
                     <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
@@ -200,96 +200,131 @@
                 </div>
             </div>
 
-            {% if stocks %}
-                <div class="mobile-list space-y-3">
-                    {% for stock in stocks %}
-                    <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
-                        {% if stock.recommendation == 'BUY' %} border-green-500
-                        {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
-                        {% else %} border-red-500 {% endif %}">
-                        
-                        <div class="flex-1 min-w-0 pr-4">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
-                            </div>
-                            <div class="text-xs d text-gray-400 truncate">{{ stock.shortName[:25] }}</div>
-                        </div>
-
-                        <div class="text-right flex flex-col items-end">
-                             {% if stock.probability > 0.80 %}
-                                <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
-                            {% elif stock.probability > 0.75 %}
-                                <div class="text-yellow-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                            {% else %}
-                                <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                            {% endif %}
+    {% if stocks %}
+        <div class="mobile-list space-y-3">
+            {% for stock in stocks %}
+            <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
+                {% if stock.recommendation == 'BUY' %} border-green-500
+                {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
+                {% else %} border-red-500 {% endif %}">
+                
+                <div class="flex items-center gap-2 mb-1">
+                    
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-white">{{ stock.symbol }}</span>
                             
-                            <div class="text-[10px] font-bold mt-1 px-2 py-0.5 rounded-full bg-gray-800
-                                {% if stock.recommendation == 'BUY' %} text-green-400
-                                {% elif stock.recommendation == 'CONSIDER' %} text-yellow-400
-                                {% else %} text-red-400 {% endif %}">
-                                {{ stock.recommendation }}
-                            </div>
+                            {% if current_user.is_authenticated %}
+                                <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                class="cursor-pointer transition-all duration-200 text-lg
+                                {% if stock.symbol in user_watchlist %}
+                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                {% else %}
+                                    far fa-star text-gray-600 hover:text-yellow-400/70
+                                {% endif %}">
+                                </i>
+                            {% else %}
+                                <a href="/login" title="Login to favorite">
+                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                </a>
+                            {% endif %}
                         </div>
-                    </div>
-                    {% endfor %}
+                    </td>
+
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
                 </div>
 
-                <div class="desktop-table glass-card rounded-2xl shadow-2xl overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full">
-                            <thead class="bg-gray-900/50">
-                                <tr>
-                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Rank</th>
-                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Symbol</th>
-                                    <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Confidence</th>
-                                    <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Company</th>
-                                    <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Action</th>
-                                    <th class="py-4 px-6 text-right text-sm font-semibold text-gray-400 uppercase">Price</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-700/50">
-                                {% for stock in stocks %}
-                                <tr class="hover:bg-white/5 transition-colors">
-                                    <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
-                                    <td class="py-4 px-6 font-bold text-white">{{ stock.symbol }}</td>
-                                    <td class="py-4 px-6 text-center">
-                                        {% if stock.probability > 0.80 %}
-                                            <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                        {% elif stock.probability > 0.75 %}
-                                            <span class="text-yellow-400 font-bold">{{ stock.score_percent }}</span>
+                <div class="text-right flex flex-col items-end">
+                     {% if stock.probability >= 0.80 %}
+                        <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
+                    {% elif stock.probability >= 0.75 %}
+                        <div class="text-green-400 font-bold text-xl">{{ stock.score_percent }}</div>
+                    {% else %}
+                        <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
+                    {% endif %}
+                    
+                    <div class="text-[10px] font-bold mt-1 px-2 py-0.5 rounded-full bg-gray-800
+                        {% if stock.recommendation == 'BUY' %} text-green-400
+                        {% elif stock.recommendation == 'CONSIDER' %} text-yellow-400
+                        {% else %} text-red-400 {% endif %}">
+                        {{ stock.recommendation }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="desktop-table glass-card rounded-2xl shadow-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-900/50">
+                        <tr>
+                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Rank</th>
+                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Symbol</th>
+                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">5D Confidence</th>
+                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Company</th>
+                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Action</th>
+                            <th class="py-4 px-6 text-right text-sm font-semibold text-gray-400 uppercase">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700/50">
+                        {% for stock in stocks %}
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-white">{{ stock.symbol }}</span>
+                                    
+                                    {% if current_user.is_authenticated %}
+                                        <i onclick="toggleStock('{{ stock.symbol }}', this)" 
+                                        class="cursor-pointer transition-all duration-200 text-lg
+                                        {% if stock.symbol in user_watchlist %}
+                                            fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
                                         {% else %}
-                                            <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-4 px-6 text-gray-300 text-sm">{{ stock.shortName[:30] }}</td>
-                                    <td class="py-4 px-6 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold
-                                            {% if stock.recommendation == 'BUY' %} bg-green-500/20 text-green-400
-                                            {% elif stock.recommendation == 'CONSIDER' %} bg-yellow-500/20 text-yellow-400
-                                            {% else %} bg-red-500/20 text-red-400 {% endif %}">
-                                            {{ stock.recommendation }}
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-6 text-right font-mono text-gray-300">
-                                        {% if stock.currentPrice > 0 %}${{ "%.2f" | format(stock.currentPrice) }}{% else %}N/A{% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            {% else %}
-                <div class="glass-card rounded-2xl p-12 text-center">
-                    <i class="fas fa-chart-bar text-6xl text-gray-600 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-400">No Data Available</h3>
-                </div>
-            {% endif %}
-
-        </main>
-    </div>
+                                            far fa-star text-gray-600 hover:text-yellow-400/70
+                                        {% endif %}">
+                                        </i>
+                                    {% else %}
+                                        <a href="/login" title="Login to favorite">
+                                            <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 text-center">
+                                {% if stock.probability >= 0.80 %}
+                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
+                                {% elif stock.probability >= 0.75 %}
+                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
+                                {% else %}
+                                    <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-6 text-gray-300 text-sm">{{ stock.shortName[:30] }}</td>
+                            <td class="py-4 px-6 text-center">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold
+                                    {% if stock.recommendation == 'BUY' %} bg-green-500/20 text-green-400
+                                    {% elif stock.recommendation == 'CONSIDER' %} bg-yellow-500/20 text-yellow-400
+                                    {% else %} bg-red-500/20 text-red-400 {% endif %}">
+                                    {{ stock.recommendation }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 text-right font-mono text-gray-300">
+                                {% if stock.currentPrice > 0 %}${{ "%.2f" | format(stock.currentPrice) }}{% else %}N/A{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="glass-card rounded-2xl p-12 text-center">
+            <i class="fas fa-chart-bar text-6xl text-gray-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-400">No Data Available</h3>
+        </div>
+    {% endif %}
+</div>
 
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
         <div class="flex justify-around items-center h-16">
@@ -322,6 +357,35 @@
                 }, 500);
             }
         });
+        function toggleStock(symbol, element) {
+            // Add a quick pop animation
+            element.style.transform = 'scale(1.3)';
+            setTimeout(() => element.style.transform = 'scale(1)', 200);
+
+            fetch('/toggle_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol: symbol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    // Switch to solid yellow star
+                    element.classList.remove('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                    element.classList.add('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                } else if (data.status === 'removed') {
+                    // Switch to empty gray star
+                    element.classList.remove('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                    element.classList.add('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                element.style.transform = 'scale(1)'; 
+            });
+        }
     </script>
 </body>
 </html>
