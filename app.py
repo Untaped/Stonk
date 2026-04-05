@@ -71,10 +71,19 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
+    
+    # THIS IS THE CRITICAL LINE THAT IS MISSING OR INDENTED WRONG:
+    saved_stocks = db.relationship('SavedStock', backref='owner', lazy=True)
+
+class SavedStock(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    symbol = db.Column(db.String(20), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    saved_price = db.Column(db.Float, nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 # Create the database tables if they don't exist
 with app.app_context():
@@ -160,6 +169,46 @@ PREDICTIONS_CSV = "stonk_download/predictions.csv"
 FUNDAMENTALS_CSV = "stonk_download/fundamentals.csv"
 PREDICTIONS_5PCT_CSV = "stonk_download/predictions_5pct.csv"
 NASDAQ_PREDICTIONS_CSV = "stonk_download/nasdaq_predictions.csv"
+
+@app.route('/toggle_stock', methods=['POST'])
+@login_required
+def toggle_stock():
+    data = request.get_json()
+    symbol = data.get('symbol')
+    
+    if not symbol:
+        return jsonify({'error': 'No symbol provided'}), 400
+
+    existing_stock = SavedStock.query.filter_by(user_id=current_user.id, symbol=symbol).first()
+    
+    if existing_stock:
+        db.session.delete(existing_stock)
+        db.session.commit()
+        return jsonify({'status': 'removed', 'symbol': symbol})
+    else:
+        # --- NEW: Robust Price Finder ---
+        current_price = 0.0
+        
+        # 1. Try getting the price from the prediction files first
+        raw_data = get_latest_prediction(symbol)
+        if raw_data:
+            # Check for both possible column names
+            if raw_data.get('current_price'):
+                current_price = float(raw_data.get('current_price', 0.0))
+            elif raw_data.get('price'):
+                current_price = float(raw_data.get('price', 0.0))
+        
+        # 2. If it's still 0.0, fallback to fundamentals
+        if current_price == 0.0:
+            fund_data = get_fundamentals(symbol)
+            current_price = float(fund_data.get('price', 0.0))
+        
+        # Save the stock WITH the located price
+        new_stock = SavedStock(symbol=symbol, user_id=current_user.id, saved_price=current_price)
+        db.session.add(new_stock)
+        db.session.commit()
+        
+        return jsonify({'status': 'added', 'symbol': symbol, 'saved_price': current_price})
 
 def get_last_update_time():
     path = "stonk_download/predictions.csv"
@@ -306,8 +355,31 @@ def health_check():
     return jsonify({'status': 'healthy', 'mode': 'lightweight_viewer'})
 
 @app.route('/')
-def index(): # Changed to GET-only for cleaner initial load, form submits to same URL
-    return render_template('index.html')
+def index():
+    saved_stocks_data = []
+    
+    if current_user.is_authenticated:
+        for stock in current_user.saved_stocks:
+            # Find current price robustly
+            current_price = 0.0
+            raw_data = get_latest_prediction(stock.symbol)
+            
+            # Check for both possible column names in your CSVs
+            if raw_data:
+                current_price = float(raw_data.get('current_price', raw_data.get('price', 0.0)))
+            
+            # If the CSV didn't have it, fallback to the fundamentals file
+            if current_price == 0.0:
+                fund_data = get_fundamentals(stock.symbol)
+                current_price = float(fund_data.get('price', 0.0))
+
+            saved_stocks_data.append({
+                'symbol': stock.symbol, 
+                'price': current_price,
+                'saved_price': stock.saved_price or 0.00
+            })
+            
+    return render_template('index.html', saved_stocks=saved_stocks_data)
 
 @app.route('/', methods=['POST'])
 def index_post():
@@ -316,25 +388,44 @@ def index_post():
     stock_data = None
     error = None
 
+    saved_stocks = []
+    if current_user.is_authenticated:
+        for stock in current_user.saved_stocks:
+            # Find current price robustly
+            current_price = 0.0
+            raw_data = get_latest_prediction(stock.symbol)
+            if raw_data:
+                current_price = float(raw_data.get('current_price', raw_data.get('price', 0.0)))
+            
+            if current_price == 0.0:
+                fund_data = get_fundamentals(stock.symbol)
+                current_price = float(fund_data.get('price', 0.0))
+
+            saved_stocks.append({
+                'symbol': stock.symbol, 
+                'price': current_price,
+                'saved_price': stock.saved_price or 0.00
+            })
+    # ---------------------------------------------------------
+
     if symbol:
         raw_data = get_latest_prediction(symbol)
         
         if raw_data:
             # Extract 5d
             p3 = float(raw_data.get('prob_3pct', 0))
+            p3 = float(raw_data.get('prob_3pct', 0))
             p5 = float(raw_data.get('prob_5pct', 0))
             p10 = float(raw_data.get('prob_10pct', 0))
-            p15 = float(raw_data.get('prob_1mo', 0))
-            
-            # Extract 30d
+            p15 = float(raw_data.get('prob_15pct', 0))
+
+            # 2. Extract 30-Day probabilities
             p30_3 = float(raw_data.get('prob_30_3pct', 0))
             p30_5 = float(raw_data.get('prob_30_5pct', 0))
             p30_10 = float(raw_data.get('prob_30_10pct', 0))
             p30_15 = float(raw_data.get('prob_30_1mo', 0))
             
-            # Use combined score (if available) or raw probability
             rec = raw_data.get('recommendation', 'HOLD')
-            # Determine 5-day Recommendation
             is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
             score_5d = float(raw_data.get('score_5d', 0))
             if score_5d >= 0.35:
@@ -342,7 +433,6 @@ def index_post():
             else:
                 rec_5d = "DISREGARD"
 
-            # Determine 30-day Recommendation
             is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
             score_30d = float(raw_data.get('score_30d', 0))
             if score_30d >= 0.35:
@@ -361,7 +451,8 @@ def index_post():
         else:
             error = f"No prediction found for {symbol} in S&P 500 databases."
 
-    return render_template('index.html', symbol=symbol, prediction=prediction, stock_data=stock_data, error=error)
+    # Make sure saved_stocks is passed here!
+    return render_template('index.html', symbol=symbol, prediction=prediction, stock_data=stock_data, error=error, saved_stocks=saved_stocks)
 
 @app.route('/api/stocks')
 def api_stocks():
@@ -441,18 +532,21 @@ def sp500_list():
         'disregard': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'DISREGARD')
     }
 
-    # 2. Pass them into render_template
+    user_watchlist = []
+    if current_user.is_authenticated:
+        user_watchlist = [w.symbol for w in SavedStock.query.filter_by(user_id=current_user.id).all()]
+
     return render_template(
         "SP500.html",
         stocks_5d=formatted_stocks_5d[:100], 
         stocks_30d=formatted_stocks_30d[:100], 
         last_updated="Static Data",
         stats_5d=stats_5d,
-        stats_30d=stats_30d
+        stats_30d=stats_30d,
+        user_watchlist=user_watchlist
     )
 
 @app.route('/nasdaq')
-@login_required
 def nasdaq_list():
     """Show S&P 500 stocks using predictions from CSV data - FULLY OFFLINE"""
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -524,16 +618,24 @@ def nasdaq_list():
             except Exception as e:
                 print(f"Error processing {row.get('symbol', 'unknown')}: {e}")
                 continue
-        
         # Sort by probability (highest first)
         stocks.sort(key=lambda x: x['probability'], reverse=True)
         
-        return render_template("nasdaq.html", stocks=stocks, last_updated=current_time)
+        # ADD THIS BLOCK: Get user's watchlist if logged in
+        user_watchlist = []
+        if current_user.is_authenticated:
+            user_watchlist = [w.symbol for w in SavedStock.query.filter_by(user_id=current_user.id).all()]
+        
+        return render_template("nasdaq.html", stocks=stocks, last_updated=current_time, user_watchlist=user_watchlist)
 
     except Exception as e:
         print(f"Error in nasdaq_list: {e}")
-        return render_template("nasdaq.html",stocks= [], error=str(e), last_updated=current_time)
-    
+        return render_template("nasdaq.html", stocks=[], error=str(e), last_updated=current_time)
+
+@app.route('/about')
+def about_page():
+    return render_template('about.html')
+
 @app.route('/autocomplete')
 def autocomplete():
     """Autocomplete merging both S&P 500 and NASDAQ"""
