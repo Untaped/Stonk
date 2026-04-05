@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification" content="-EYeOaB9zf9RqlD7LYWpstpmfwJTpBdHsQxGkygG2FQ" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>AI Predictions - Stock Strategy Advisor</title>
+    
+    <meta name="theme-color" content="#1a202c">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/Sstatic/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed', err));
+        });
+      }
+    </script>
+
+    <style>
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            --secondary-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            --card-bg: rgba(26, 32, 44, 0.85);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            /* Fix for iOS bottom safe area */
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* --- Animations --- */
+        .animate-spin-slow { animation: spin 3s linear infinite; }
+        .animate-spin-reverse { animation: spin-reverse 2s linear infinite; }
+        @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        .loading-text-fade { animation: textFade 0.5s ease-in-out; }
+        @keyframes textFade { 0% { opacity: 0; transform: translateY(5px); } 80% { opacity: 1; transform: translateY(0); } }
+
+        /* --- Glass Cards --- */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* --- Orbs --- */
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .floating-orb:nth-child(1) { width: 80px; height: 80px; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); top: 10%; left: 10%; }
+        .floating-orb:nth-child(2) { width: 120px; height: 120px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); top: 70%; right: 10%; animation-delay: 2s; }
+        .floating-orb:nth-child(3) { width: 60px; height: 60px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); top: 40%; left: 70%; animation-delay: 4s; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 33% { transform: translateY(-20px) rotate(120deg); } 66% { transform: translateY(-10px) rotate(240deg); } }
+
+        /* --- Form Elements --- */
+        .form-input {
+            background: rgba(26, 32, 44, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 30px rgba(74, 85, 104, 0.5);
+            outline: none;
+        }
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            /* Ensure buttons are clickable */
+            cursor: pointer;
+            z-index: 1; 
+        }
+
+        /* --- Popups --- */
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .popup-overlay.active { opacity: 1; visibility: visible; }
+        .popup-container {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%; max-width: 500px;
+            transform: scale(0.7) translateY(50px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .popup-overlay.active .popup-container { transform: scale(1) translateY(0); }
+
+        .popup-btn {
+            padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none;
+        }
+        .popup-btn-primary { background: var(--primary-gradient); color: white; }
+
+        @media (max-width: 768px) {
+            .floating-orb { display: none; }
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <div id="loading-overlay" class="fixed inset-0 z-[99999] hidden flex-col items-center justify-center bg-[#1a202c]/95 backdrop-blur-md transition-opacity duration-300">    
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
+            <div class="absolute inset-4 border-4 border-t-transparent border-r-teal-400 border-b-transparent border-l-blue-400 rounded-full animate-spin-reverse"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-brain text-4xl text-blue-200 animate-pulse"></i>
+            </div>
+        </div>
+        <div class="text-center z-10">
+            <h2 id="loading-title" class="text-3xl font-black mb-2 gradient-text tracking-wide loading-text-fade">INITIALIZING</h2>
+            <p id="loading-subtitle" class="text-blue-300/70 font-mono text-sm uppercase tracking-widest loading-text-fade">establishing secure connection...</p>
+        </div>
+    </div>
+
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-container" id="popupContainer">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" id="popupIcon"><i class="fas fa-info-circle"></i></div>
+                    <h3 class="text-xl font-bold" id="popupTitle">Notification</h3>
+                </div>
+                <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" id="popupClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="text-gray-300 mb-6 leading-relaxed" id="popupBody"></div>
+            <div class="flex justify-end gap-3">
+                <button class="popup-btn bg-white/10 hover:bg-white/20 text-gray-300" id="popupDismiss">Dismiss</button>
+                <button class="popup-btn popup-btn-primary" id="popupAction">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
+            <div>
+                <h1 class="text-3xl font-black mb-8 gradient-text">
+                    <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
+                </h1>
+                <nav class="space-y-2">
+                    <a class="flex items-center px-4 py-3 bg-blue-500/10 rounded-xl text-blue-400 font-bold border-l-4 border-blue-500">
+                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
+                    </a>
+                    <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
+                    </a>
+                    <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-university mr-3"></i> SPX (Experimental)
+                    </a>
+                    <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-10">
+                <div class="px-4 py-2 bg-gray-800/30 rounded-lg border border-gray-700/30 flex items-center justify-between">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Updates for Open Bell</span>
+                </div>
+                <div class="glass-card rounded-xl p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-robot text-green-400 mr-2"></i>
+                        <span class="text-sm font-medium">AI Status</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-green-400 rounded-full pulse-glow mr-2"></div>
+                        <span class="text-xs text-gray-300">Online & Learning</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto relative z-10 pb-28 md:pb-6">
+                      <div class="glass-card rounded-2xl p-6 md:p-8 text-center popup-trigger">
+                        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4 mb-8">
+                            
+                            <form id="prediction-form" method="POST" action="/" class="relative flex-grow w-full">
+                                <div class="relative group">
+                                    <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                                    <div class="relative flex items-center">
+                                        <div class="absolute left-5 text-gray-400">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            id="symbol-input" 
+                                            name="symbol" 
+                                            placeholder="Enter Ticker (e.g. AAPL)" 
+                                            class="w-full bg-gray-900/90 border border-gray-700/50 text-white text-base px-12 py-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-all placeholder-gray-500"
+                                            required
+                                            autocomplete="off"
+                                        >
+                                    </div>
+                                </div>
+                            </form>
+
+                            <div class="flex items-center gap-3 shrink-0">
+                                {% if current_user.is_authenticated %}
+                                    <div class="hidden md:block h-8 w-[1px] bg-gray-700 mx-2"></div>
+                                    <span class="text-emerald-400 text-sm font-medium mr-2 hidden lg:inline">Hi, {{ current_user.username }}</span>
+                                    <a href="{{ url_for('logout') }}" class="bg-gray-800 hover:bg-red-900/30 text-red-400 border border-red-500/30 px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 px-5 py-3 rounded-xl text-sm font-bold transition-all">
+                                        Log In
+                                    </a>
+                                    <a href="{{ url_for('register') }}" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-500/20">
+                                        Sign Up
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                                        {% if current_user.is_authenticated %}
+                                                <center><h3 class="text-xl font-bold text-blue-400 mb-4"></h3></center>
+                                                {% if saved_stocks %}
+                                                    <div id="saved-stocks" class="flex flex-wrap gap-4">
+                                                    {% for stock in saved_stocks %}
+                                                        {% set current_price = stock.price|float %}
+                                                        {% set saved_price = stock.saved_price|float %}
+                                                        {% set diff = current_price - saved_price %}
+                                                        {% set pct = (diff / saved_price * 100) if saved_price > 0 else 0 %}
+                                                        
+                                                        <div id="saved-{{ stock.symbol }}" class="bg-gray-700 px-4 py-3 rounded shadow border border-gray-600 flex items-center justify-between transition-all hover:bg-gray-600 w-full sm:w-auto min-w-[200px]">
+                                                            
+                                                            <button onclick="searchWatchlistStock('{{ stock.symbol }}')" class="flex flex-col text-left focus:outline-none flex-grow">
+                                                                <div class="flex items-center justify-between gap-4">
+                                                                    <span class="text-white font-bold text-lg">{{ stock.symbol }}</span>
+                                                                    <span class="text-gray-300 font-mono text-sm">${{ "%.2f"|format(current_price) }}</span>
+                                                                </div>
+                                                                
+                                                                {% if saved_price > 0 %}
+                                                                    <div class="text-xs font-mono mt-1 {% if diff >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                                                                        {% if diff >= 0 %}<i class="fas fa-caret-up"></i> +{% else %}<i class="fas fa-caret-down"></i> {% endif %}${{ "%.2f"|format(diff|abs) }} 
+                                                                        ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
+                                                                        <span class="text-gray-500 ml-1 block mt-0.5 text-[10px]">Saved at: ${{ "%.2f"|format(saved_price) }}</span>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="text-xs text-gray-500 mt-1 italic">Price history unavailable</div>
+                                                                {% endif %}
+                                                            </button>
+                                                            
+                                                            <button onclick="removeSavedStock('{{ stock.symbol }}')" class="text-gray-400 hover:text-red-400 transition-colors flex items-center justify-center ml-3 border-l border-gray-500 pl-3 self-stretch">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </div>
+                                                    {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <p class="text-gray-400">You haven't saved any stocks yet.</p>
+                                                {% endif %}
+                                        {% else %}
+                                                <h2 class="text-2xl font-bold mb-2 text-gray-400"><center>Your Watchlist</center></h2>
+                                                <div class="w-16 h-16 bg-gray-900/50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
+                                                    <i class="fas fa-lock text-2xl text-gray-500"></i>
+                                                </div>
+                                                <p class="text-gray-300 mb-6 max-w-md mx-auto">Create a custom portfolio to track your AI predictions for your favorite stocks.</p>
+                                                <a href="/login" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-200 shadow-[0_0_15px_rgba(37,99,235,0.3)]">
+                                                    <i class="fas fa-sign-in-alt"></i> Log In to Build Watchlist
+                                                </a>
+                                        {% endif %}
+                </div>
+            
+{% if prediction %}
+                {% macro probability_card(label, value, color_class='blue') %}
+                    {% set val = value|float * 100 %}
+                    <div class="bg-gray-800/40 border border-gray-700/50 rounded-xl p-3">
+                        <div class="text-[10px] text-gray-400 font-medium uppercase mb-1">{{ label }}</div>
+                        <div class="text-xl font-bold text-white mb-1">{{ "%.1f"|format(val) }}%</div>
+                        <div class="w-full bg-gray-700/50 rounded-full h-1">
+                            <div class="h-full rounded-full bg-{{ color_class }}-500" style="width: {{ val }}%"></div>
+                        </div>
+                    </div>
+                {% endmacro %}
+
+                <div id="view-5d" class="mt-8 w-full animate-fade-in">
+                    <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
+                        <center><h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2></center>
+                        <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
+                            <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
+                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
+                                    <i class="fas fa-bolt mr-2"></i>5 Days
+                                </button>
+                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                    <i class="fas fa-calendar-alt mr-2"></i>30 Days
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'emerald') }}
+                            {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
+                            {{ probability_card('+10% (5.0% Stop Loss)', prediction['10pct'], 'blue') }}
+                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['1mo'], 'indigo') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-30d" class="mt-8 w-full animate-fade-in hidden">
+                    <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
+                        <center><h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2></center>
+                        <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
+                            <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
+                                <button id="btn-5d-30" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                    <i class="fas fa-bolt mr-2"></i>5 Days
+                                </button>
+                                <button id="btn-30d-30" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-gray-500/20 text-blue-400 transition-all shadow-sm">
+                                    <i class="fas fa-calendar-alt mr-2"></i>30 Days
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_3pct'], 'emerald') }}
+                            {{ probability_card('+20% (10% Stop Loss)', prediction['30_5pct'], 'teal') }}
+                            {{ probability_card('+25% (12.5% Stop Loss)', prediction['30_10pct'], 'blue') }}
+                            {{ probability_card('+30% (15% Stop Loss)', prediction['30_1mo'], 'indigo') }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %} 
+                        <div class="max-w-3xl mx-auto space-y-6 animate-fade-in mt-8 md:mt-2">
+
+                            <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="bg-blue-500/20 p-2 rounded-lg">
+                                        <i class="fas fa-laptop-code text-blue-400 text-lg"></i>
+                                    </div>
+                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: April 5, 2025</h3>
+                                </div>
+                                <p class="text-gray-300 text-sm md:text-base leading-relaxed">
+                                    This website is still in beta and will have glitches and inaccuracies. Data is updated daily and I am always working on it, I hope to launch soon. <strong class="text-white">The five day AUC of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
+                                </p>
+                            </div>
+
+            <script>
+                function toggleTimeframe(view) {
+                    const btn5d = document.getElementById('btn-5d');
+                    const btn30d = document.getElementById('btn-30d');
+                    const view5d = document.getElementById('view-5d');
+                    const view30d = document.getElementById('view-30d');
+
+                    if (!view5d || !view30d) return;
+
+                    if (view === '5d') {
+                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm';
+                        btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        view5d.classList.remove('hidden');
+                        view30d.classList.add('hidden');
+                    } else {
+                        btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
+                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        view30d.classList.remove('hidden');
+                        view5d.classList.add('hidden');
+                    }
+                }
+            </script>
+            <!----    <center>
+                <div class="w-full max-w-2xl mb-8">
+                    <a href="https://instagram.com/LitlGuy.inc" target="_blank" class="block bg-gray-800/50 border border-gray-700 hover:border-pink-500/50 rounded-xl p-4 backdrop-blur-sm shadow-xl transition-all duration-300 group hover:bg-gray-800/70 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-purple-500/0 to-yellow-500/0 group-hover:from-pink-500/5 group-hover:via-purple-500/5 group-hover:to-yellow-500/5 transition-all duration-500"></div>
+                        
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-3 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.3)] group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                                <i class="fab fa-instagram text-white text-2xl"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-white font-bold text-xs uppercase tracking-widest mb-1 flex items-center gap-2">
+                                    Simulator Tracking <i class="fas fa-external-link-alt text-[10px] text-gray-500"></i>
+                                </h3>
+                                <p class="text-gray-300 text-sm leading-relaxed">
+                                    Follow the journey on Instagram. This is where I track the weekly paper-trading simulator based directly on these AI recommendations.
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </center>
+        </main> -->
+    </div>
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
+        <div class="flex justify-around items-center h-16">
+            <a class="flex flex-col items-center justify-center w-full h-full text-blue-400">
+                <i class="fas fa-search-dollar text-xl mb-1"></i>
+                <span class="text-[10px] font-bold tracking-wide">Dashboard</span>
+                <span class="absolute top-0 w-12 h-1 bg-blue-500 rounded-b-lg shadow-[0_0_10px_#3b82f6]"></span>
+            </a>
+
+            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-emerald-400 transition-colors">
+                <i class="fas fa-layer-group text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
+            </a>
+            <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
+                <i class="fas fa-university text-xl mb-1"></i>
+                <span class="text-[10px] font-medium tracking-wide">Experimental</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        function searchWatchlistStock(symbol) {
+            const input = document.getElementById('symbol-input');
+            const form = input ? input.closest('form') : null;
+            
+            if (input && form) {
+                // Set the value to the clicked stock
+                input.value = symbol;
+                
+                // Use requestSubmit() to trigger the 'submit' event 
+                // and start your "Analyzing Data" animation.
+                form.requestSubmit(); 
+            }
+        }
+        // --- Remove Stock from Watchlist ---
+        function removeSavedStock(symbol) {
+            fetch('/toggle_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol: symbol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'removed') {
+                    // Find the element and fade it out before removing
+                    const el = document.getElementById('saved-' + symbol);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => el.remove(), 300);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error removing stock:', error);
+            });
+        }
+        // --- 1. Welcome Popup Logic ---
+        function showWelcomePopup() {
+            // Check if already seen
+            if (sessionStorage.getItem('disclaimerSeen')) return;
+
+            const welcomeOverlay = document.createElement('div');
+            welcomeOverlay.id = 'welcomeOverlay';
+            welcomeOverlay.className = 'popup-overlay active';
+            welcomeOverlay.style.zIndex = '20000';
+            
+            welcomeOverlay.innerHTML = `
+                <div class="popup-container" style="transform: scale(1) translateY(0); max-height: 90vh; overflow-y: auto;">
+                    <div class="flex items-center gap-3 mb-4 sticky top-0 bg-[#1a202c] py-2 z-10">
+                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-yellow-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Financial Disclaimer</h3>
+                    </div>
+                    
+                    <div class="text-gray-300 mb-6 text-sm leading-relaxed space-y-4">
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">1. Not Financial Advice</p>
+                            <p>The information provided by LitlGuy, including stock predictions and confidence scores, is for <strong>educational and informational purposes only</strong>. This website may be out of date and only may update for Open Bell following the NASDAQ trading day. It should not be considered professional financial investment advice.</p>
+                        </section>
+
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">2. AI & Market Risk</p>
+                            <p>Stock markets are inherently volatile. Models analyze historical patterns which do not guarantee future results. Algorithms can fail, and "Confidence Levels" represent mathematical probability, not certainty.</p>
+                        </section>
+
+                        <section>
+                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">3. Data Accuracy</p>
+                            <p>While we strive for accuracy, market data may be delayed or contain errors. LitlGuy is not responsible for any trading losses incurred through the use of this tool.</p>
+                        </section>
+
+                        <div class="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <p class="text-[11px] text-yellow-200">
+                                <i class="fas fa-exclamation-triangle mr-1"></i> 
+                                <strong>Warning:</strong> Never invest money you cannot afford to lose. Always consult with a licensed financial advisor before making investment decisions. To maintain platform integrity, we log visitor IP addresses for security and anti-bot verification. <strong>We do not sell or distribute your data to third parties</strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center sticky bottom-0 bg-[#1a202c] pt-2">
+                        <button class="popup-btn popup-btn-primary w-full py-4 rounded-xl font-black tracking-widest uppercase text-xs shadow-lg shadow-blue-500/20" id="welcomeUnderstand">
+                            Accept & Continue
+                        </button>
+                    </div>
+                </div>
+                </div>
+            `;
+            
+            document.body.appendChild(welcomeOverlay);
+            
+            // Handle the understand button
+            const btn = document.getElementById('welcomeUnderstand');
+            if(btn) {
+                btn.addEventListener('click', function() {
+                    welcomeOverlay.classList.remove('active');
+                    setTimeout(() => {
+                        if(document.body.contains(welcomeOverlay)) {
+                            document.body.removeChild(welcomeOverlay);
+                        }
+                        sessionStorage.setItem('disclaimerSeen', 'true');
+                    }, 300);
+                });
+            }
+        }
+
+        // --- 2. Popup System Class ---
+        class PopupSystem {
+            constructor() {
+                this.isActive = false;
+                this.clickCount = 0;
+                this.baseProbability = 0.0000000000000000001; // Starts at a 10% chance
+                this.init();
+            }
+
+            init() {
+                const closeBtn = document.getElementById('popupClose');
+                const dismissBtn = document.getElementById('popupDismiss');
+                
+                if(closeBtn) closeBtn.addEventListener('click', () => this.close());
+                if(dismissBtn) dismissBtn.addEventListener('click', () => this.close());
+                
+                document.addEventListener('click', (e) => {
+                    // Prevent triggering if the loading overlay or popup is currently active
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    if (this.isActive || !loadingOverlay.classList.contains('hidden')) return;
+
+                    // Trigger based on elements you've marked with 'popup-trigger'
+                    if (e.target.closest('.popup-trigger')) {
+                        this.clickCount++;
+                        
+                        // Increase the probability by 2% for every click to make it show more often
+                        const currentChance = this.baseProbability + (this.clickCount * 0.00000001)
+                        
+                        // Check if the random number hits our probability threshold
+                        if (Math.random() < currentChance) {
+                            // Delay slightly so it doesn't instantly interrupt a click action
+                            setTimeout(() => this.showDonationPopup(), 300);
+                            
+                            // Reset clicks, but increase the baseline probability so it triggers faster next time
+                            this.clickCount = 0;
+                            this.baseProbability = Math.min(0.000000000002, this.baseProbability + 0.0000000000000000001); // Caps at 40% base chance
+                        }
+                    }
+                });
+            }
+
+            showDonationPopup() {
+                const title = document.getElementById('popupTitle');
+                const body = document.getElementById('popupBody');
+                const icon = document.getElementById('popupIcon');
+                const actionBtn = document.getElementById('popupAction');
+                const dismissBtn = document.getElementById('popupDismiss');
+
+                if (!title || !body || !actionBtn) return;
+
+                // Match the existing glassmorphism styling and inject content
+                icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
+                title.innerText = "Support LitlGuy!";
+                body.innerHTML = `
+                    <p class="mb-3 text-white">If these AI predictions have helped your strategy, consider donating to help cover server costs and keep the AI learning!</p>
+                `;
+
+                actionBtn.innerText = "Donate Now";
+                actionBtn.onclick = () => {
+                    // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
+                    window.open('https://buy.stripe.com/test_cNi5kE0a7ayU61BcOxbMQ00', '_blank');
+                    this.close();
+                };
+
+                dismissBtn.innerText = "Maybe Later";
+
+                document.getElementById('popupOverlay').classList.add('active');
+                this.isActive = true;
+            }
+
+            close() {
+                document.getElementById('popupOverlay').classList.remove('active');
+                this.isActive = false;
+            }
+        }
+
+        // --- 3. Autocomplete Logic (FIXED TYPO) ---
+        function setupAutocomplete() {
+            const input = document.getElementById("symbol-input");
+            const suggestionsBox = document.getElementById("suggestions"); // Ensure ID matches HTML
+
+            if (!input || !suggestionsBox) return;
+
+            input.addEventListener("input", async () => {
+                const query = input.value.trim();
+                if (!query) {
+                    suggestionsBox.classList.add("hidden");
+                    suggestionsBox.innerHTML = "";
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/autocomplete?q=${encodeURIComponent(query)}`);
+                    const suggestions = await response.json();
+                    
+                    suggestionsBox.innerHTML = ""; // FIXED TYPO HERE (was suggestioxwnsBox)
+                    
+                    if (suggestions.length > 0) {
+                        suggestionsBox.classList.remove("hidden");
+                        suggestions.forEach(symbol => {
+                            const li = document.createElement("li");
+                            li.textContent = symbol;
+                            li.className = "px-4 py-3 cursor-pointer hover:bg-blue-500/20 text-gray-200 border-b border-gray-700/50 last:border-0";
+                            li.addEventListener("click", () => {
+                                input.value = symbol;
+                                suggestionsBox.classList.add("hidden");
+                            });
+                            suggestionsBox.appendChild(li);
+                        });
+                    } else {
+                        suggestionsBox.classList.add("hidden");
+                    }
+                } catch (error) {
+                    console.error('Autocomplete error:', error);
+                    suggestionsBox.classList.add("hidden");
+                }
+            });
+
+            // Close on outside click
+            document.addEventListener("click", (e) => {
+                if (!suggestionsBox.contains(e.target) && e.target !== input) {
+                    suggestionsBox.classList.add("hidden");
+                }
+            });
+        }
+
+        // --- 4. Loading Animation ---
+        function setupLoadingAnimation() {
+            const form = document.querySelector('form');
+            const overlay = document.getElementById('loading-overlay');
+            const titleEl = document.getElementById('loading-title');
+            const subEl = document.getElementById('loading-subtitle');
+
+            if (!form || !overlay) return;
+
+            const sequences = [
+                { title: "SEARCHING DATA", sub: "retrieving historical price action..." },
+                { title: "FINDING PATTERNS", sub: "scanning moving averages & RSI..." },
+                { title: "CALCULATING", sub: "running predictive models..." },
+                { title: "ANALYZING VOLATILITY", sub: "assessing market sentiment..." },
+                { title: "FINALIZING", sub: "generating recommendation..." }
+            ];
+
+            form.addEventListener('submit', (e) => {
+                const input = document.getElementById('symbol-input');
+                // Allow default HTML5 validation to block empty submit
+                if (!input.value.trim()) return;
+
+                // Stop submission to show animation
+                e.preventDefault(); 
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                
+                let index = 0;
+                const interval = setInterval(() => {
+                    if (index < sequences.length) {
+                        if(titleEl) titleEl.innerText = sequences[index].title;
+                        if(subEl) subEl.innerText = sequences[index].sub;
+                        index++;
+                    }
+                }, 800);
+
+                setTimeout(() => {
+                    clearInterval(interval);
+                    form.submit();
+                }, 4000);
+            });
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(showWelcomePopup, 500);
+            new PopupSystem();
+            setupAutocomplete();
+            setupLoadingAnimation();
+        });
+
+    </script>
+</body>
+</html>
