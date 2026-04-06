@@ -304,9 +304,9 @@ def evaluate_stock_criteria(fundamentals):
 
     # Determine recommendation based on score
     if score >= 38:
-        recommendation = "BUY"
+        recommendation = "RECOMENDED"
     else:
-        recommendation = "DISREGARD"
+        recommendation = "NOT RECOMENDED"
         reasons.append("Weak Fundamentals")
 
     return score, recommendation, reasons
@@ -429,16 +429,16 @@ def index_post():
             is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
             score_5d = float(raw_data.get('score_5d', 0))
             if score_5d >= 0.35:
-                rec_5d = "BUY" if is_linear_5d else "CONSIDER"
+                rec_5d = "RECOMENDED" if is_linear_5d else "CONSIDER"
             else:
-                rec_5d = "DISREGARD"
+                rec_5d = "NOT RECOMENDED"
 
             is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
             score_30d = float(raw_data.get('score_30d', 0))
             if score_30d >= 0.35:
-                rec_30d = "BUY" if is_linear_30d else "CONSIDER"
+                rec_30d = "RECOMENDED" if is_linear_30d else "CONSIDER"
             else:
-                rec_30d = "DISREGARD"
+                rec_30d = "NOT RECOMENDED"
 
             prediction = {
                 'symbol': raw_data.get('symbol'),
@@ -495,15 +495,15 @@ def sp500_list():
 
         # 5-Day Rec
         is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
-        if prob_5d >= 0.35 and is_linear_5d: rec_5d = "BUY"
+        if prob_5d >= 0.35 and is_linear_5d: rec_5d = "RECOMENDED"
         elif prob_5d >= 0.30: rec_5d = "CONSIDER"
-        else: rec_5d = "DISREGARD"
+        else: rec_5d = "NOT RECOMENDED"
 
         # 30-Day Rec
         is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
-        if prob_30d >= 0.35 and is_linear_30d: rec_30d = "BUY"
+        if prob_30d >= 0.35 and is_linear_30d: rec_30d = "RECOMENDED"
         elif prob_30d >= 0.30: rec_30d = "CONSIDER"
-        else: rec_30d = "DISREGARD"
+        else: rec_30d = "NOT RECOMENDED"
 
         base_info = {
             'symbol': p.get('symbol'),
@@ -520,16 +520,16 @@ def sp500_list():
     formatted_stocks_30d.sort(key=lambda x: x['probability'], reverse=True)
     # Calculate actual statistics for the 5-Day timeframe
     stats_5d = {
-        'buy': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'BUY'),
+        'RECOMENDED': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'RECOMENDED'),
         'consider': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'CONSIDER'),
-        'disregard': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'DISREGARD')
+        'NOT RECOMENDED': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'NOT RECOMENDED')
     }
     
     # Calculate actual statistics for the 30-Day timeframe
     stats_30d = {
-        'buy': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'BUY'),
+        'RECOMENDED': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'RECOMENDED'),
         'consider': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'CONSIDER'),
-        'disregard': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'DISREGARD')
+        'NOT RECOMENDED': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'NOT RECOMENDED')
     }
 
     user_watchlist = []
@@ -592,11 +592,11 @@ def nasdaq_list():
                 is_linear = (p3 > p5) and (p5 > p10) and (p10 > p15)
 
                 if probability >= 0.35 and is_linear:
-                    recommendation = 'BUY'
+                    recommendation = 'RECOMENDED'
                 elif probability >= 0.35:
                     recommendation = 'CONSIDER' # Non-linear confidence
                 else:
-                    recommendation = 'DISREGARD'
+                    recommendation = 'NOT RECOMENDED'
                 # -----------------
                 
                 stock_name = row.get('name', symbol) 
