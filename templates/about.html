@@ -202,3 +202,73 @@
     </nav>
 </body>
 </html>
+<script>
+    // --- UI Sound Effects (Web Audio API) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playClickSound() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        const now = audioCtx.currentTime;
+
+        // Tone 1: The High "Click"
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine'; 
+        osc1.frequency.setValueAtTime(400, now); 
+        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03); 
+        gain1.gain.setValueAtTime(0.15, now); 
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03); 
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.02); 
+
+        // Tone 2: The Low "Thock"
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        const delay = 0.0005; 
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(300, now + delay); 
+        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04); 
+        gain2.gain.setValueAtTime(0, now); 
+        gain2.gain.setValueAtTime(0.15, now + delay); 
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04); 
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + delay);
+        osc2.stop(now + delay + 0.04); 
+    }
+
+    // Automatically attach the sound to tabs, buttons, and links
+    document.addEventListener('DOMContentLoaded', () => {
+        // I added 'li' and '.nav-item' here just in case your tabs use list elements
+        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
+        
+        clickableElements.forEach(el => {
+            el.addEventListener('click', function(e) {
+                // 1. Play the sound immediately
+                playClickSound();
+
+                // 2. Check if this element is a link going to another page
+                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
+                    // Stop the browser from leaving the page instantly
+                    e.preventDefault();
+                    
+                    const targetUrl = this.href;
+
+                    // Wait 100 milliseconds for the sound to finish, then go to the new page
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 100);
+                }
+            });
+        });
+    });
+</script>

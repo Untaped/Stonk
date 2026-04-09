@@ -276,7 +276,7 @@
                                                         
                                                         <div id="saved-{{ stock.symbol }}" class="bg-gray-700 px-4 py-3 rounded shadow border border-gray-600 flex items-center justify-between transition-all hover:bg-gray-600 w-full sm:w-auto min-w-[200px]">
                                                             
-                                                            <button onclick="searchWatchlistStock('{{ stock.symbol }}')" class="flex flex-col text-left focus:outline-none flex-grow">
+                                                            <button onclick="searchWatchlistStock('{{ stock.symbol }}')" class="no-click-sound flex flex-col text-left focus:outline-none flex-grow">
                                                                 <div class="flex items-center justify-between gap-4">
                                                                     <span class="text-white font-bold text-lg">{{ stock.symbol }}</span>
                                                                     <span class="text-gray-300 font-mono text-sm">${{ "%.2f"|format(current_price) }}</span>
@@ -333,7 +333,31 @@
 
                 <div id="view-5d" class="mt-8 w-full animate-fade-in">
                     <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                        <center><h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2></center>
+                        <div class="flex items-center justify-center gap-3">
+                            <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
+                            {% if current_user.is_authenticated %}
+                                {# Check if the current searched stock is already in the user's saved list #}
+                                {% set ns = namespace(is_saved=false) %}
+                                {% for s in saved_stocks %}
+                                    {% if s.symbol == prediction.symbol %}
+                                        {% set ns.is_saved = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <i onclick="toggleStock('{{ prediction.symbol }}', this)" 
+                                class="cursor-pointer transition-all duration-200 text-2xl
+                                {% if ns.is_saved %}
+                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                {% else %}
+                                    far fa-star text-gray-600 hover:text-yellow-400/70
+                                {% endif %}">
+                                </i>
+                            {% else %}
+                                <a href="/login" title="Login to favorite">
+                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-2xl"></i>
+                                </a>
+                            {% endif %}
+                        </div>
                         <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
                             <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
                                 <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
@@ -355,7 +379,30 @@
 
                 <div id="view-30d" class="mt-8 w-full animate-fade-in hidden">
                     <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                        <center><h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2></center>
+                        <div class="flex items-center justify-center gap-3">
+                            <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2>
+                            {% if current_user.is_authenticated %}
+                                {% set ns = namespace(is_saved=false) %}
+                                {% for s in saved_stocks %}
+                                    {% if s.symbol == prediction.symbol %}
+                                        {% set ns.is_saved = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <i onclick="toggleStock('{{ prediction.symbol }}', this)" 
+                                class="cursor-pointer transition-all duration-200 text-2xl
+                                {% if ns.is_saved %}
+                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
+                                {% else %}
+                                    far fa-star text-gray-600 hover:text-yellow-400/70
+                                {% endif %}">
+                                </i>
+                            {% else %}
+                                <a href="/login" title="Login to favorite">
+                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-2xl"></i>
+                                </a>
+                            {% endif %}
+                        </div>
                         <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
                             <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
                                 <button id="btn-5d-30" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
@@ -383,7 +430,7 @@
                                     <div class="bg-blue-500/20 p-2 rounded-lg">
                                         <i class="fas fa-laptop-code text-blue-400 text-lg"></i>
                                     </div>
-                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: April 8, 2025</h3>
+                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: April 9, 2025</h3>
                                 </div>
                                 <p class="text-gray-300 text-sm md:text-base leading-relaxed">
                                     This website is still in beta and has such will have glitches and inaccuracies. Use the Search Bar for a Deeper Analysis Outside of the Base Reccomendations. Data is updated daily and I am always working on it, I hope to launch soon. <strong class="text-white">The five day AUC (Accuracy) of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC (Accuracy) of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
@@ -466,8 +513,49 @@
                 
                 // Use requestSubmit() to trigger the 'submit' event 
                 // and start your "Analyzing Data" animation.
-                form.requestSubmit(); 
+                form.requestSubmit(); s
             }
+        }
+        // --- Toggle Stock from Search Results ---
+        function toggleStock(symbol, element) {
+            // Add a quick pop animation
+            element.style.transform = 'scale(1.3)';
+            setTimeout(() => element.style.transform = 'scale(1)', 200);
+
+            fetch('/toggle_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbol: symbol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    // Switch to solid yellow star
+                    element.classList.remove('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                    element.classList.add('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                    
+                    // Reload the page so the newly saved stock appears in the top Watchlist UI immediately
+                    setTimeout(() => window.location.reload(), 400);
+
+                } else if (data.status === 'removed') {
+                    // Switch to empty gray star
+                    element.classList.remove('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
+                    element.classList.add('far', 'text-gray-600', 'hover:text-yellow-400/70');
+                    
+                    // If they unsave it, remove it from the top Watchlist UI instantly
+                    const el = document.getElementById('saved-' + symbol);
+                    if (el) {
+                        el.style.opacity = '0';
+                        setTimeout(() => el.remove(), 300);
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                element.style.transform = 'scale(1)'; 
+            });
         }
         // --- Remove Stock from Watchlist ---
         function removeSavedStock(symbol) {
@@ -708,13 +796,27 @@
             form.addEventListener('submit', (e) => {
                 const input = document.getElementById('symbol-input');
                 // Allow default HTML5 validation to block empty submit
-                if (!input.value.trim()) return;
+                if (!input || !input.value.trim()) return;
 
-                // Stop submission to show animation
+                // 1. Stop normal instant submission
                 e.preventDefault(); 
-                overlay.classList.remove('hidden');
-                overlay.classList.add('flex');
                 
+                // 2. Play audio SAFELY (if it fails, the app still works!)
+                try {
+                    if (typeof playLoadingJingle === "function") {
+                        playLoadingJingle(); 
+                    }
+                } catch (error) {
+                    console.warn("Audio jingle skipped:", error);
+                }
+                
+                // 3. Show the loading overlay
+                if (overlay) {
+                    overlay.classList.remove('hidden');
+                    overlay.classList.add('flex');
+                }
+                
+                // 4. Start the text animation
                 let index = 0;
                 const interval = setInterval(() => {
                     if (index < sequences.length) {
@@ -724,9 +826,11 @@
                     }
                 }, 800);
 
+                // 5. Submit the form safely after 4 seconds
                 setTimeout(() => {
                     clearInterval(interval);
-                    form.submit();
+                    // This is a bulletproof way to submit the form in JS
+                    HTMLFormElement.prototype.submit.call(form);
                 }, 4000);
             });
         }
@@ -740,5 +844,142 @@
         });
 
     </script>
+<script>
+    // --- UI Sound Effects (Web Audio API) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playClickSound() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        const now = audioCtx.currentTime;
+
+        // Tone 1: The High "Click"
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine'; 
+        osc1.frequency.setValueAtTime(400, now); 
+        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03); 
+        gain1.gain.setValueAtTime(0.15, now); 
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03); 
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.02); 
+
+        // Tone 2: The Low "Thock"
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        const delay = 0.0005; 
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(300, now + delay); 
+        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04); 
+        gain2.gain.setValueAtTime(0, now); 
+        gain2.gain.setValueAtTime(0.15, now + delay); 
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04); 
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + delay);
+        osc2.stop(now + delay + 0.04); 
+    }
+
+    // Automatically attach the sound to tabs, buttons, and links
+    document.addEventListener('DOMContentLoaded', () => {
+        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
+        
+        clickableElements.forEach(el => {
+            el.addEventListener('click', function(e) {
+                // --- ADD THIS LINE: Skip the click sound if it has this class ---
+                if (this.closest('.no-click-sound')) return;
+
+                // 1. Play the sound immediately
+                playClickSound();
+
+                // 2. Check if this element is a link going to another page
+                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
+                    // Stop the browser from leaving the page instantly
+                    e.preventDefault();
+                    
+                    const targetUrl = this.href;
+
+                    // Wait 100 milliseconds for the sound to finish, then go to the new page
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 100);
+                }
+            });
+        });
+    });
+    // --- AI Processing Sound Effect ---
+    function playLoadingJingle() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        const duration = 4.0; // Exactly matches your 4000ms loading screen
+        const now = audioCtx.currentTime;
+
+        const frequencies = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 329.63];
+
+        // 1. The "Data Processing" Blips
+        // We create 40 rapid, random blips over the 4 seconds
+        for (let i = 0; i < 40; i++) {
+            const time = now + (i * 0.1); // One blip every 100ms
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'sine'; // Clean, digital sound
+            // Pick a random note from our tech scale
+            osc.frequency.setValueAtTime(frequencies[Math.floor(Math.random() * frequencies.length)], time);
+
+            // Shape the sound into a sharp, quick click
+            gainNode.gain.setValueAtTime(0, time);
+            gainNode.gain.linearRampToValueAtTime(0.15, time + 0.01); // Quick attack (low volume)
+            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08); // Quick fade
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start(time);
+            osc.stop(time + 0.09);
+        }
+
+        // 2. The Low "Server Hum"
+        // Adds weight and presence to the sound
+// 2. The Low "Server Hum"
+        const droneOsc = audioCtx.createOscillator();
+        const droneGain = audioCtx.createGain();
+        droneOsc.type = 'triangle'; 
+        droneOsc.frequency.setValueAtTime(110, now); 
+
+        droneGain.gain.setValueAtTime(0, now);
+        droneGain.gain.linearRampToValueAtTime(0.02, now + 0.5); // Fade in
+
+        // Hold the volume until 0.5 seconds before the end
+        droneGain.gain.setValueAtTime(0.02, now + duration - 0.5); 
+        
+        // Exponential ramp to almost zero sounds much smoother for fading out
+        droneGain.gain.exponentialRampToValueAtTime(0.001, now + duration); 
+        
+        // Force it to absolute 0 just to be safe
+        droneGain.gain.linearRampToValueAtTime(0, now + duration + 0.05);
+
+        droneOsc.connect(droneGain);
+        droneGain.connect(audioCtx.destination);
+
+        droneOsc.start(now);
+        
+        // Stop the oscillator slightly AFTER the volume hits 0 (e.g., + 0.1s)
+        droneOsc.stop(now + duration + 0.1);
+    }
+</script>
 </body>
 </html>
