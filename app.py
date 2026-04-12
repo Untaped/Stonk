@@ -471,14 +471,6 @@ def api_stocks():
     # This sends raw data that your Android app can "consume"
     return jsonify(preds)
 
-@app.route('/manifest.json')
-def serve_manifest():
-    return send_from_directory('static', 'manifest.json', mimetype='application/manifest+json')
-
-@app.route('/sw.js')
-def serve_sw():
-    return send_from_directory('static', 'sw.js', mimetype='application/javascript')
-
 @app.route('/sp500')
 def sp500_list():
     preds = load_predictions(PREDICTIONS_CSV)
