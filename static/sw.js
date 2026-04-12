@@ -1,7 +1,7 @@
 const CACHE_NAME = 'litlguy-v1';
 const urlsToCache = [
   '/',
-  '/static/manifest.json'
+  '/manifest.json' // Changed this to match index.html
 ];
 
 self.addEventListener('install', event => {
