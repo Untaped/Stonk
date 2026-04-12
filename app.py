@@ -136,6 +136,17 @@ def register():
         
     return render_template('register.html')
 
+# --- PWA & Service Worker Routes ---
+@app.route('/sw.js')
+def serve_sw():
+    # Assumes sw.js is in your root directory next to app.py
+    return send_from_directory(os.path.dirname(os.path.abspath(__file__)), 'sw.js', mimetype='application/javascript')
+
+@app.route('/manifest.json')
+def serve_manifest():
+    # Assumes manifest.json is in your root directory
+    return send_from_directory(os.path.dirname(os.path.abspath(__file__)), 'manifest.json', mimetype='application/json')
+
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute") # Extra strict for logins
 def login():
