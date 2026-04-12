@@ -21,7 +21,6 @@ from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-
 #Logging IPsssssss
 def get_location(ip):
     response = requests.get(f"https://ipinfo.io/{ip}/json")
@@ -138,6 +137,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute") # Extra strict for logins
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
