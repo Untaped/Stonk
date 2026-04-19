@@ -87,12 +87,44 @@
         }
         .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .popup-overlay.active { opacity: 1; visibility: visible; }
+        .popup-container {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 2rem; width: 90%; max-width: 500px;
+            transform: scale(0.7) translateY(50px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .popup-overlay.active .popup-container { transform: scale(1) translateY(0); }
+        .popup-btn { padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+        .popup-btn-primary { background: var(--primary-gradient); color: white; }
     </style>
 </head>
 <body class="text-white">
     <div class="floating-orb"></div>
     <div class="floating-orb"></div>
     <div class="floating-orb"></div>
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-container" id="popupContainer">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" id="popupIcon"><i class="fas fa-info-circle"></i></div>
+                    <h3 class="text-xl font-bold" id="popupTitle">Notification</h3>
+                </div>
+                <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" id="popupClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="text-gray-300 mb-6 leading-relaxed" id="popupBody"></div>
+            <div class="flex justify-end gap-3">
+                <button class="popup-btn bg-white/10 hover:bg-white/20 text-gray-300" id="popupDismiss">Dismiss</button>
+                <button class="popup-btn popup-btn-primary" id="popupAction">Got it</button>
+            </div>
+        </div>
+    </div>
 
     <div id="loadingOverlay" class="loading-overlay fixed inset-0 flex items-center justify-center z-[99999]">
         <div class="text-center space-y-6 p-8 glass-card rounded-2xl mx-4">
@@ -117,7 +149,7 @@
                     <a href="/" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-search-dollar mr-3"></i> Dashboard
                     </a>
-                    <a class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold border-l-4 border-emerald-500">
+                    <a class="flex items-center px-4 py-3 bg-green-500/10 rounded-xl text-green-400 font-bold border-l-4 border-green-500">
                         <i class="fas fa-layer-group mr-3"></i> Top S&P 500
                     </a>
                     <a href="/nasdaq" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
@@ -137,11 +169,11 @@
 
         <main class="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto relative z-10 pb-28 md:pb-6">
             <div class="flex justify-center mb-6 z-20 relative">
-                <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
-                    <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
+                <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">                   
+                    <button id="btn-5d" onclick="toggleTimeframe('5d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
                         <i class="fas fa-bolt mr-2"></i>5 Days
                     </button>
-                    <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                    <button id="btn-30d" onclick="toggleTimeframe('30d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
                         <i class="fas fa-calendar-alt mr-2"></i>30 Days
                     </button>
                 </div>
@@ -156,7 +188,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         
         <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-emerald-400">
+            <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">
                 {% set avg_prob = (stocks_5d | sum(attribute='probability')) / ((stocks_5d | length) or 1) %}
                 {{ "%.0f" | format(avg_prob * 100) }}%
             </div>
@@ -471,10 +503,10 @@
                 <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
             </a>
 
-            <a class="flex flex-col items-center justify-center w-full h-full text-emerald-400">
+            <a class="flex flex-col items-center justify-center w-full h-full text-green-400">
                 <i class="fas fa-layer-group text-xl mb-1"></i>
                 <span class="text-[10px] font-bold tracking-wide">Top S&P 500</span>
-                <span class="absolute top-0 w-12 h-1 bg-emerald-500 rounded-b-lg shadow-[0_0_10px_#10b981]"></span>
+                <span class="absolute top-0 w-12 h-1 bg-green-500 rounded-b-lg shadow-[0_0_10px_#10b981]"></span>
             </a>      
             <a href="/nasdaq" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
                 <i class="fas fa-university text-xl mb-1"></i>
@@ -506,7 +538,7 @@
 
             if (view === '5d') {
                 // Update Buttons
-                btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm';
+                btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
                 btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
                 // Toggle Views
                 view5d.classList.remove('hidden');
@@ -522,6 +554,83 @@
         }
     </script>
 <script>
+        class PopupSystem {
+            constructor() {
+                this.isActive = false;
+                this.clickCount = 0;
+                this.baseProbability = 0.10; // Starts at a 10% chance
+                this.init();
+            }
+
+            init() {
+                const closeBtn = document.getElementById('popupClose');
+                const dismissBtn = document.getElementById('popupDismiss');
+                
+                if(closeBtn) closeBtn.addEventListener('click', () => this.close());
+                if(dismissBtn) dismissBtn.addEventListener('click', () => this.close());
+                
+                document.addEventListener('click', (e) => {
+                    // Prevent triggering if the loading overlay or popup is currently active
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+                    if (this.isActive || (loadingOverlay && loadingOverlay.style.display !== 'none')) return;
+
+                    // Trigger based on elements you've marked with 'popup-trigger'
+                    if (e.target.closest('.popup-trigger')) {
+                        this.clickCount++;
+                        
+                        // Increase the probability by 2% for every click to make it show more often
+                        const currentChance = this.baseProbability + (this.clickCount * 0.02)
+                        
+                        // Check if the random number hits our probability threshold
+                        if (Math.random() < currentChance) {
+                            // Delay slightly so it doesn't instantly interrupt a click action
+                            setTimeout(() => this.showDonationPopup(), 300);
+                            
+                            // Reset clicks, but increase the baseline probability so it triggers faster next time
+                            this.clickCount = 0;
+                            this.baseProbability = Math.min(0.40, this.baseProbability + 0.05); // Caps at 40% base chance
+                        }
+                    }
+                });
+            }
+
+            showDonationPopup() {
+                const title = document.getElementById('popupTitle');
+                const body = document.getElementById('popupBody');
+                const icon = document.getElementById('popupIcon');
+                const actionBtn = document.getElementById('popupAction');
+                const dismissBtn = document.getElementById('popupDismiss');
+
+                if (!title || !body || !actionBtn) return;
+
+                // Match the existing glassmorphism styling and inject content
+                icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
+                title.innerText = "Support LitlGuy!";
+                body.innerHTML = `
+                    <p class="mb-3 text-white">This website is completely free with no ads, if these AI predictions have helped you make money please consider donating to help cover server costs and keep the AI learning!</p>
+                `;
+
+                actionBtn.innerText = "Donate Now";
+                actionBtn.onclick = () => {
+                    // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
+                    window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00', '_blank');
+                    this.close();
+                };
+
+                dismissBtn.innerText = "Maybe Later";
+
+                document.getElementById('popupOverlay').classList.add('active');
+                this.isActive = true;
+            }
+
+            close() {
+                document.getElementById('popupOverlay').classList.remove('active');
+                this.isActive = false;
+            }
+        }
+                    document.addEventListener('DOMContentLoaded', function() {
+                        new PopupSystem();
+                    });
         function toggleStock(symbol, element) {
             // Add a quick pop animation
             element.style.transform = 'scale(1.3)';

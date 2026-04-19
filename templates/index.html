@@ -250,7 +250,7 @@
                             <div class="flex items-center gap-3 shrink-0">
                                 {% if current_user.is_authenticated %}
                                     <div class="hidden md:block h-8 w-[1px] bg-gray-700 mx-2"></div>
-                                    <span class="text-emerald-400 text-sm font-medium mr-2 hidden lg:inline">Hi, {{ current_user.username }}</span>
+                                    <span class="text-green-400 text-sm font-medium mr-2 hidden lg:inline">Hi, {{ current_user.username }}</span>
                                     <a href="{{ url_for('logout') }}" class="bg-gray-800 hover:bg-red-900/30 text-red-400 border border-red-500/30 px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
                                         <i class="fas fa-sign-out-alt"></i> Logout
                                     </a>
@@ -283,7 +283,7 @@
                                                                 </div>
                                                                 
                                                                 {% if saved_price > 0 %}
-                                                                    <div class="text-xs font-mono mt-1 {% if diff >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                                                                    <div class="text-xs font-mono mt-1 {% if diff >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
                                                                         {% if diff >= 0 %}<i class="fas fa-caret-up"></i> +{% else %}<i class="fas fa-caret-down"></i> {% endif %}${{ "%.2f"|format(diff|abs) }} 
                                                                         ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
                                                                         <span class="text-gray-500 ml-1 block mt-0.5 text-[10px]"></span>
@@ -360,16 +360,16 @@
                         </div>
                         <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
                             <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
-                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm">
+                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
                                     <i class="fas fa-bolt mr-2"></i>5 Days
                                 </button>
-                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
                                     <i class="fas fa-calendar-alt mr-2"></i>30 Days
                                 </button>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'emerald') }}
+                            {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'green') }}
                             {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
                             {{ probability_card('+10% (5.0% Stop Loss)', prediction['10pct'], 'blue') }}
                             {{ probability_card('+15% (7.5% Stop Loss)', prediction['1mo'], 'indigo') }}
@@ -405,16 +405,16 @@
                         </div>
                         <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
                             <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">
-                                <button id="btn-5d-30" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
                                     <i class="fas fa-bolt mr-2"></i>5 Days
                                 </button>
-                                <button id="btn-30d-30" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-gray-500/20 text-blue-400 transition-all shadow-sm">
+                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
                                     <i class="fas fa-calendar-alt mr-2"></i>30 Days
                                 </button>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_3pct'], 'emerald') }}
+                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_3pct'], 'green') }}
                             {{ probability_card('+20% (10% Stop Loss)', prediction['30_5pct'], 'teal') }}
                             {{ probability_card('+25% (12.5% Stop Loss)', prediction['30_10pct'], 'blue') }}
                             {{ probability_card('+30% (15% Stop Loss)', prediction['30_1mo'], 'indigo') }}
@@ -430,7 +430,7 @@
                                     <div class="bg-blue-500/20 p-2 rounded-lg">
                                         <i class="fas fa-laptop-code text-blue-400 text-lg"></i>
                                     </div>
-                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: April 17, 2025</h3>
+                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: April 20, 2025</h3>
                                 </div>
                                 <p class="text-gray-300 text-sm md:text-base leading-relaxed">
                                     This website is still in beta and has such will have glitches and inaccuracies. Use the Search Bar for a Deeper Analysis Outside of the Base Reccomendations. Data is updated daily and I am always working on it, I hope to launch soon. <strong class="text-white">The five day AUC (Accuracy) of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC (Accuracy) of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
@@ -447,7 +447,7 @@
                     if (!view5d || !view30d) return;
 
                     if (view === '5d') {
-                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-emerald-500/20 text-emerald-400 transition-all shadow-sm';
+                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
                         btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
                         view5d.classList.remove('hidden');
                         view30d.classList.add('hidden');
@@ -491,7 +491,7 @@
                 <span class="absolute top-0 w-12 h-1 bg-blue-500 rounded-b-lg shadow-[0_0_10px_#3b82f6]"></span>
             </a>
 
-            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-emerald-400 transition-colors">
+            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-green-400 transition-colors">
                 <i class="fas fa-layer-group text-xl mb-1"></i>
                 <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
             </a>
@@ -655,7 +655,7 @@
             constructor() {
                 this.isActive = false;
                 this.clickCount = 0;
-                this.baseProbability = 0.0000000000000000001; // Starts at a 10% chance
+                this.baseProbability = 0.10; // Starts at a 10% chance
                 this.init();
             }
 
@@ -676,7 +676,7 @@
                         this.clickCount++;
                         
                         // Increase the probability by 2% for every click to make it show more often
-                        const currentChance = this.baseProbability + (this.clickCount * 0.00000001)
+                        const currentChance = this.baseProbability + (this.clickCount * 0.02)
                         
                         // Check if the random number hits our probability threshold
                         if (Math.random() < currentChance) {
@@ -685,7 +685,7 @@
                             
                             // Reset clicks, but increase the baseline probability so it triggers faster next time
                             this.clickCount = 0;
-                            this.baseProbability = Math.min(0.000000000002, this.baseProbability + 0.0000000000000000001); // Caps at 40% base chance
+                            this.baseProbability = Math.min(0.40, this.baseProbability + 0.05); // Caps at 40% base chance
                         }
                     }
                 });
@@ -704,13 +704,13 @@
                 icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
                 title.innerText = "Support LitlGuy!";
                 body.innerHTML = `
-                    <p class="mb-3 text-white">This website is conpletely free with no ads, if these AI predictions have helped you make moeny please consider donating to help cover server costs and keep the AI learning!</p>
+                    <p class="mb-3 text-white">This website is completely free with no ads, if these AI predictions have helped you make money please consider donating to help cover server costs and keep the AI learning!</p>
                 `;
 
                 actionBtn.innerText = "Donate Now";
                 actionBtn.onclick = () => {
                     // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
-                    window.open('https://buy.stripe.com/test_cNi5kE0a7ayU61BcOxbMQ00', '_blank');
+                    window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00', '_blank');
                     this.close();
                 };
 
