@@ -20,6 +20,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask import Response
 
 #Logging IPsssssss
 def get_location(ip):
@@ -87,6 +88,38 @@ def load_user(user_id):
 # Create the database tables if they don't exist
 with app.app_context():
     db.create_all()
+
+@app.route('/robots.txt')
+def robots():
+    robots_content = """User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Omgili
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+# Allow normal search engines like Google to index your site
+User-agent: *
+Allow: /
+"""
+    return Response(robots_content, mimetype="text/plain")
 
 @app.before_request
 def block_bad_requests():
