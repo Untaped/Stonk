@@ -222,6 +222,7 @@
                         <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4 mb-8">
                             
                             <form id="prediction-form" method="POST" action="/" class="relative flex-grow w-full">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <div class="relative group">
                                     <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
                                     <div class="relative flex items-center">
