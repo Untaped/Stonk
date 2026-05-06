@@ -4,12 +4,12 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LitlGuy</title>
+    <title>Register - LitlGuy</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center">
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md border border-gray-700">
-        <h2 class="text-3xl font-bold mb-6 text-center text-blue-400">Welcome Back</h2>
+        <h2 class="text-3xl font-bold mb-6 text-center text-blue-400">Create Account</h2>
         
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -20,6 +20,7 @@
         {% endwith %}
 
         <form action="{{ url_for('register') }}" method="POST" class="space-y-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div>
                 <label class="block text-gray-400 text-sm font-bold mb-2">Username</label>
                 <input type="text" name="username" required class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
@@ -29,31 +30,23 @@
                 <input type="password" name="password" required class="w-full p-3 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500">
             </div>
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200">
-                Log In
+                Register
             </button>
         </form>
         <p class="mt-4 text-center text-gray-400">
             Have an account? <a href="{{ url_for('login') }}" class="text-blue-400 hover:underline">Login here</a>.
         </p>
     </div>
-</body>
-</html>
     <script>
-    // --- UI Sound Effects (Web Audio API) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
     function playClickSound() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         
         const now = audioCtx.currentTime;
 
-        // Tone 1: The High "Click"
         const osc1 = audioCtx.createOscillator();
         const gain1 = audioCtx.createGain();
         osc1.type = 'sine'; 
@@ -66,7 +59,6 @@
         osc1.start(now);
         osc1.stop(now + 0.02); 
 
-        // Tone 2: The Low "Thock"
         const osc2 = audioCtx.createOscillator();
         const gain2 = audioCtx.createGain();
         const delay = 0.0005; 
@@ -82,29 +74,19 @@
         osc2.stop(now + delay + 0.04); 
     }
 
-    // Automatically attach the sound to tabs, buttons, and links
     document.addEventListener('DOMContentLoaded', () => {
-        // I added 'li' and '.nav-item' here just in case your tabs use list elements
         const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
-        
         clickableElements.forEach(el => {
             el.addEventListener('click', function(e) {
-                // 1. Play the sound immediately
                 playClickSound();
-
-                // 2. Check if this element is a link going to another page
                 if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
-                    // Stop the browser from leaving the page instantly
                     e.preventDefault();
-                    
                     const targetUrl = this.href;
-
-                    // Wait 100 milliseconds for the sound to finish, then go to the new page
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 100);
+                    setTimeout(() => { window.location.href = targetUrl; }, 100);
                 }
             });
         });
     });
-</script>
+    </script>
+</body>
+</html>
