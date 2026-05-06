@@ -9,6 +9,9 @@ requests
 yfinance
 python-dotenv
 Flask-Limiter
-Flask-Sqlalchemy
+Flask-SQLAlchemy
 psycopg2-binary
 Flask-Login
+Flask-WTF
+WTForms
+email-validator
