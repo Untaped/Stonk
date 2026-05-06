@@ -21,7 +21,7 @@ from flask import abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask import Response
-
+from flask_wtf.csrf import CSRFProtect
 #Logging IPsssssss
 def get_location(ip):
     response = requests.get(f"https://ipinfo.io/{ip}/json")
@@ -52,14 +52,24 @@ logging.basicConfig(
 )
 
 # A secret key is required for secure cookies (sessions)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'replace-this-with-a-random-string-in-production')
+secret = os.environ.get('SECRET_KEY')
+if not secret:
+    raise RuntimeError("SECRET_KEY environment variable is not set!")
+app.config['SECRET_KEY'] = secret
 
 # Use SQLite locally, but allow Render to inject a PostgreSQL database URL
 # Important: Render uses ephemeral disks, so SQLite will wipe on every deploy. 
 # You will need a free PostgreSQL database for production.
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///litlguy_users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+IS_PRODUCTION = os.environ.get('RENDER') is not None  # Render always sets this env var
+app.config['SESSION_COOKIE_SECURE'] = IS_PRODUCTION
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['WTF_CSRF_SSL_STRICT'] = False  # Required behind reverse proxy (Render/Cloudflare)
 
+csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -135,19 +145,24 @@ def block_bad_requests():
     # 3. Log legitimate traffic
     if not path.startswith('/static/'):
         logging.info(f"{client_ip} accessed {path}")
-# 2. Automatically log every visitor's IP and the page they visited
-@app.before_request
-def log_request_info():
-    # Because you are using ProxyFix, request.remote_addr is the real IP
-    client_ip = request.remote_addr
-    path = request.path
-    
-    # Ignore logging for static files to keep your log clean
-    if not path.startswith('/static/'):
-        logging.info(f"{client_ip} accessed {path}")
+@app.after_request
+def set_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' cdn.tailwindcss.com cdn.jsdelivr.net cdnjs.cloudflare.com; "
+        "style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com fonts.googleapis.com; "
+        "font-src 'self' cdnjs.cloudflare.com fonts.gstatic.com; "
+        "img-src 'self' data:; "
+        "connect-src 'self'"
+    )
+    return response
 
-# --- NEW: Authentication Routes ---
+# --- Authentication Routes ---
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per minute; 10 per hour")
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -216,6 +231,7 @@ NASDAQ_PREDICTIONS_CSV = "stonk_download/nasdaq_predictions.csv"
 
 @app.route('/toggle_stock', methods=['POST'])
 @login_required
+@csrf.exempt
 def toggle_stock():
     data = request.get_json()
     symbol = data.get('symbol')
@@ -695,4 +711,4 @@ def autocomplete():
     return jsonify(matches[:10])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
