@@ -402,10 +402,10 @@
                         </div>
                         <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
                             <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">                   
-                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
+                                <button id="btn-5d-b" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
                                     <i class="fas fa-bolt mr-2"></i>5 Days
                                 </button>
-                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
+                                <button id="btn-30d-b" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm">
                                     <i class="fas fa-calendar-alt mr-2"></i>30 Days
                                 </button>
                             </div>
@@ -438,19 +438,25 @@
                 function toggleTimeframe(view) {
                     const btn5d = document.getElementById('btn-5d');
                     const btn30d = document.getElementById('btn-30d');
+                    const btn5dB = document.getElementById('btn-5d-b');
+                    const btn30dB = document.getElementById('btn-30d-b');
                     const view5d = document.getElementById('view-5d');
                     const view30d = document.getElementById('view-30d');
 
                     if (!view5d || !view30d) return;
 
                     if (view === '5d') {
-                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                        btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
+                        if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
+                        if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
                         view5d.classList.remove('hidden');
                         view30d.classList.add('hidden');
                     } else {
-                        btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                        btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
+                        if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                        if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
+                        if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
                         view30d.classList.remove('hidden');
                         view5d.classList.add('hidden');
                     }
@@ -790,33 +796,29 @@
                 { title: "FINALIZING", sub: "generating recommendation..." }
             ];
 
-            let isSubmitting = false;
             form.addEventListener('submit', (e) => {
-                // If we're already in the submit phase, let it through
-                if (isSubmitting) return;
-
                 const input = document.getElementById('symbol-input');
                 // Allow default HTML5 validation to block empty submit
                 if (!input || !input.value.trim()) return;
 
                 // 1. Stop normal instant submission
-                e.preventDefault();
-
+                e.preventDefault(); 
+                
                 // 2. Play audio SAFELY (if it fails, the app still works!)
                 try {
                     if (typeof playLoadingJingle === "function") {
-                        playLoadingJingle();
+                        playLoadingJingle(); 
                     }
                 } catch (error) {
                     console.warn("Audio jingle skipped:", error);
                 }
-
+                
                 // 3. Show the loading overlay
                 if (overlay) {
                     overlay.classList.remove('hidden');
                     overlay.classList.add('flex');
                 }
-
+                
                 // 4. Start the text animation
                 let index = 0;
                 const interval = setInterval(() => {
@@ -827,10 +829,10 @@
                     }
                 }, 800);
 
-                // 5. Submit the form after 4 seconds (flag prevents re-triggering)
+                // 5. Submit the form safely after 4 seconds
                 setTimeout(() => {
                     clearInterval(interval);
-                    isSubmitting = true;
+                    // This is a bulletproof way to submit the form in JS
                     form.requestSubmit();
                 }, 4000);
             });
@@ -864,23 +866,25 @@
         function toggleTimeframe(view) {
             const btn5d = document.getElementById('btn-5d');
             const btn30d = document.getElementById('btn-30d');
+            const btn5dB = document.getElementById('btn-5d-b');
+            const btn30dB = document.getElementById('btn-30d-b');
             const view5d = document.getElementById('view-5d');
             const view30d = document.getElementById('view-30d');
 
             if (view === '5d') {
-                // Update Buttons
-                btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                // Toggle Views
-                view5d.classList.remove('hidden');
-                view30d.classList.add('hidden');
+                if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
+                if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
+                if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                if (view5d) view5d.classList.remove('hidden');
+                if (view30d) view30d.classList.add('hidden');
             } else {
-                // Update Buttons
-                btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                // Toggle Views
-                view30d.classList.remove('hidden');
-                view5d.classList.add('hidden');
+                if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
+                if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
+                if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
+                if (view30d) view30d.classList.remove('hidden');
+                if (view5d) view5d.classList.add('hidden');
             }
         }
     </script>
