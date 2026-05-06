@@ -516,7 +516,7 @@
                 
                 // Use requestSubmit() to trigger the 'submit' event 
                 // and start your "Analyzing Data" animation.
-                form.requestSubmit(); s
+                form.requestSubmit();
             }
         }
         // --- Toggle Stock from Search Results ---
@@ -796,29 +796,33 @@
                 { title: "FINALIZING", sub: "generating recommendation..." }
             ];
 
+            let isSubmitting = false;
             form.addEventListener('submit', (e) => {
+                // If already in real submit phase, let it through
+                if (isSubmitting) return;
+
                 const input = document.getElementById('symbol-input');
                 // Allow default HTML5 validation to block empty submit
                 if (!input || !input.value.trim()) return;
 
                 // 1. Stop normal instant submission
-                e.preventDefault(); 
-                
-                // 2. Play audio SAFELY (if it fails, the app still works!)
+                e.preventDefault();
+
+                // 2. Play audio SAFELY
                 try {
                     if (typeof playLoadingJingle === "function") {
-                        playLoadingJingle(); 
+                        playLoadingJingle();
                     }
                 } catch (error) {
                     console.warn("Audio jingle skipped:", error);
                 }
-                
+
                 // 3. Show the loading overlay
                 if (overlay) {
                     overlay.classList.remove('hidden');
                     overlay.classList.add('flex');
                 }
-                
+
                 // 4. Start the text animation
                 let index = 0;
                 const interval = setInterval(() => {
@@ -829,10 +833,10 @@
                     }
                 }, 800);
 
-                // 5. Submit the form safely after 4 seconds
+                // 5. Submit after 4 seconds — flag prevents re-triggering
                 setTimeout(() => {
                     clearInterval(interval);
-                    // This is a bulletproof way to submit the form in JS
+                    isSubmitting = true;
                     form.requestSubmit();
                 }, 4000);
             });
