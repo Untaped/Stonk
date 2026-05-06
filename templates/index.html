@@ -827,7 +827,7 @@
                 setTimeout(() => {
                     clearInterval(interval);
                     // This is a bulletproof way to submit the form in JS
-                    HTMLFormElement.prototype.submit.call(form);
+                    form.requestSubmit();
                 }, 4000);
             });
         }
