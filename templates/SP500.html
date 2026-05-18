@@ -182,33 +182,6 @@
                 </div>
             {% endif %}
 <div id="view-5d" class="space-y-6 animate-fade-in">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">
-                {% set avg_prob = (stocks_5d | sum(attribute='probability')) / ((stocks_5d | length) or 1) %}
-                {{ "%.0f" | format(avg_prob * 100) }}%
-            </div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Avg 5D Confidence</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">{{ stats_5d['RECOMENDED'] }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Recomended</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-yellow-400">{{ stats_5d.consider }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Consider</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-red-400">{{ stats_5d['NOT RECOMENDED'] }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Not Recomended</p>
-        </div>
-        
-    </div>
-
     {% if stocks_5d %}
         <div class="mobile-list space-y-3">
             {% for stock in stocks_5d %}
@@ -335,33 +308,6 @@
     {% endif %}
 </div>
 <div id="view-30d" class="hidden space-y-6 animate-fade-in">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-indigo-400">
-                {% set avg_prob_30 = (stocks_30d | sum(attribute='probability')) / ((stocks_30d | length) or 1) %}
-                {{ "%.0f" | format(avg_prob_30 * 100) }}%
-            </div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Avg 30D Confidence</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-green-400">{{ stats_30d['RECOMENDED'] }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">RECOMENDED</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-yellow-400">{{ stats_30d.consider }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">Consider</p>
-        </div>
-
-        <div class="glass-card rounded-xl p-4 text-center">
-            <div class="text-2xl md:text-4xl font-black mb-1 text-red-400">{{ stats_30d['NOT RECOMENDED'] }}</div>
-            <p class="text-[10px] md:text-sm text-gray-400 uppercase tracking-wide font-bold">NOT RECOMENDED</p>
-        </div>
-
-    </div>
-
     {% if stocks_30d %}
         <div class="mobile-list space-y-3">
             {% for stock in stocks_30d %}
