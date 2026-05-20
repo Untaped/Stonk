@@ -1,0 +1,455 @@
+{
+  "positions": [
+    {
+      "symbol": "CHTR",
+      "name": "Charter Communications, Inc.",
+      "sector": "Communication Services",
+      "entry_price": 142.5,
+      "entry_date": "2026-05-19",
+      "horizon": "5d",
+      "confidence": 0.4296,
+      "target_days": 5,
+      "status": "active",
+      "current_price": 142.5,
+      "current_conf": 0.4296,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "INTC",
+      "name": "Intel Corporation",
+      "sector": "Technology",
+      "entry_price": 110.8,
+      "entry_date": "2026-05-19",
+      "horizon": "5d",
+      "confidence": 0.4001,
+      "target_days": 5,
+      "status": "active",
+      "current_price": 110.8,
+      "current_conf": 0.4001,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "TTD",
+      "name": "The Trade Desk, Inc.",
+      "sector": "Communication Services",
+      "entry_price": 21.16,
+      "entry_date": "2026-05-19",
+      "horizon": "5d",
+      "confidence": 0.3818,
+      "target_days": 5,
+      "status": "active",
+      "current_price": 21.16,
+      "current_conf": 0.3818,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "MRNA",
+      "name": "Moderna, Inc.",
+      "sector": "Healthcare",
+      "entry_price": 45.72,
+      "entry_date": "2026-05-19",
+      "horizon": "5d",
+      "confidence": 0.3729,
+      "target_days": 5,
+      "status": "active",
+      "current_price": 45.72,
+      "current_conf": 0.3729,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "TER",
+      "name": "Teradyne, Inc.",
+      "sector": "Technology",
+      "entry_price": 321.52,
+      "entry_date": "2026-05-19",
+      "horizon": "5d",
+      "confidence": 0.3702,
+      "target_days": 5,
+      "status": "active",
+      "current_price": 321.52,
+      "current_conf": 0.3702,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "BLDR",
+      "name": "Builders FirstSource, Inc.",
+      "sector": "Industrials",
+      "entry_price": 66.39,
+      "entry_date": "2026-05-19",
+      "horizon": "30d",
+      "confidence": 0.6557,
+      "target_days": 30,
+      "status": "active",
+      "current_price": 66.39,
+      "current_conf": 0.6557,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "NOW",
+      "name": "ServiceNow, Inc.",
+      "sector": "Technology",
+      "entry_price": 101.83,
+      "entry_date": "2026-05-19",
+      "horizon": "30d",
+      "confidence": 0.4214,
+      "target_days": 30,
+      "status": "active",
+      "current_price": 101.83,
+      "current_conf": 0.4214,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "ZTS",
+      "name": "Zoetis Inc.",
+      "sector": "Healthcare",
+      "entry_price": 78.92,
+      "entry_date": "2026-05-19",
+      "horizon": "30d",
+      "confidence": 0.4191,
+      "target_days": 30,
+      "status": "active",
+      "current_price": 78.92,
+      "current_conf": 0.4191,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "EPAM",
+      "name": "EPAM Systems, Inc.",
+      "sector": "Technology",
+      "entry_price": 100.51,
+      "entry_date": "2026-05-19",
+      "horizon": "30d",
+      "confidence": 0.4183,
+      "target_days": 30,
+      "status": "active",
+      "current_price": 100.51,
+      "current_conf": 0.4183,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    },
+    {
+      "symbol": "PSKY",
+      "name": "Paramount Skydance Corporation",
+      "sector": "Communication Services",
+      "entry_price": 9.9,
+      "entry_date": "2026-05-19",
+      "horizon": "30d",
+      "confidence": 0.3914,
+      "target_days": 30,
+      "status": "active",
+      "current_price": 9.9,
+      "current_conf": 0.3914,
+      "current_pnl": 0.0,
+      "days_elapsed": 0,
+      "exit_date": null,
+      "exit_price": null,
+      "exit_reason": null,
+      "pnl": null
+    }
+  ],
+  "last_pick_date": "2026-05-19",
+  "start_date": "2026-05-19",
+  "stats": {
+    "active_5d": 5,
+    "active_30d": 5,
+    "closed": 0,
+    "wins": 0,
+    "losses": 0,
+    "avg_pnl": null,
+    "total_pnl": null,
+    "win_rate": null,
+    "best_trade": null,
+    "worst_trade": null
+  },
+  "top_picks": {
+    "5d": [
+      {
+        "symbol": "CHTR",
+        "name": "Charter Communications, Inc.",
+        "sector": "Communication Services",
+        "price": 142.5,
+        "score": 0.4296,
+        "score_30d": 0.2882
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel Corporation",
+        "sector": "Technology",
+        "price": 110.8,
+        "score": 0.4001,
+        "score_30d": 0.4555
+      },
+      {
+        "symbol": "TTD",
+        "name": "The Trade Desk, Inc.",
+        "sector": "Communication Services",
+        "price": 21.16,
+        "score": 0.3818,
+        "score_30d": 0.521
+      },
+      {
+        "symbol": "MRNA",
+        "name": "Moderna, Inc.",
+        "sector": "Healthcare",
+        "price": 45.72,
+        "score": 0.3729,
+        "score_30d": 0.419
+      },
+      {
+        "symbol": "TER",
+        "name": "Teradyne, Inc.",
+        "sector": "Technology",
+        "price": 321.52,
+        "score": 0.3702,
+        "score_30d": 0.2333
+      },
+      {
+        "symbol": "TECH",
+        "name": "Bio-Techne Corp",
+        "sector": "Healthcare",
+        "price": 45.47,
+        "score": 0.3671,
+        "score_30d": 0.2609
+      },
+      {
+        "symbol": "CVNA",
+        "name": "Carvana Co.",
+        "sector": "Consumer Cyclical",
+        "price": 63.35,
+        "score": 0.3554,
+        "score_30d": 0.3456
+      },
+      {
+        "symbol": "QCOM",
+        "name": "QUALCOMM Incorporated",
+        "sector": "Technology",
+        "price": 195.61,
+        "score": 0.3544,
+        "score_30d": 0.2297
+      },
+      {
+        "symbol": "SNDK",
+        "name": "Sandisk Corporation",
+        "sector": "Technology",
+        "price": 1383.29,
+        "score": 0.3525,
+        "score_30d": 0.1074
+      },
+      {
+        "symbol": "GLW",
+        "name": "Corning Incorporated",
+        "sector": "Technology",
+        "price": 175.83,
+        "score": 0.339,
+        "score_30d": 0.2683
+      },
+      {
+        "symbol": "SMCI",
+        "name": "Super Micro Computer, Inc.",
+        "sector": "Technology",
+        "price": 30.56,
+        "score": 0.3353,
+        "score_30d": 0.1978
+      },
+      {
+        "symbol": "LITE",
+        "name": "Lumentum Holdings Inc.",
+        "sector": "Technology",
+        "price": 890.09,
+        "score": 0.3288,
+        "score_30d": 0.1442
+      },
+      {
+        "symbol": "ON",
+        "name": "ON Semiconductor Corporation",
+        "sector": "Technology",
+        "price": 106.02,
+        "score": 0.3276,
+        "score_30d": 0.261
+      },
+      {
+        "symbol": "COHR",
+        "name": "Coherent Corp.",
+        "sector": "Technology",
+        "price": 353.63,
+        "score": 0.324,
+        "score_30d": 0.1709
+      },
+      {
+        "symbol": "BLDR",
+        "name": "Builders FirstSource, Inc.",
+        "sector": "Industrials",
+        "price": 66.39,
+        "score": 0.3228,
+        "score_30d": 0.6557
+      }
+    ],
+    "30d": [
+      {
+        "symbol": "BLDR",
+        "name": "Builders FirstSource, Inc.",
+        "sector": "Industrials",
+        "price": 66.39,
+        "score": 0.6557,
+        "score_5d": 0.3228
+      },
+      {
+        "symbol": "TTD",
+        "name": "The Trade Desk, Inc.",
+        "sector": "Communication Services",
+        "price": 21.16,
+        "score": 0.521,
+        "score_5d": 0.3818
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel Corporation",
+        "sector": "Technology",
+        "price": 110.8,
+        "score": 0.4555,
+        "score_5d": 0.4001
+      },
+      {
+        "symbol": "NOW",
+        "name": "ServiceNow, Inc.",
+        "sector": "Technology",
+        "price": 101.83,
+        "score": 0.4214,
+        "score_5d": 0.2911
+      },
+      {
+        "symbol": "ZTS",
+        "name": "Zoetis Inc.",
+        "sector": "Healthcare",
+        "price": 78.92,
+        "score": 0.4191,
+        "score_5d": 0.2713
+      },
+      {
+        "symbol": "MRNA",
+        "name": "Moderna, Inc.",
+        "sector": "Healthcare",
+        "price": 45.72,
+        "score": 0.419,
+        "score_5d": 0.3729
+      },
+      {
+        "symbol": "EPAM",
+        "name": "EPAM Systems, Inc.",
+        "sector": "Technology",
+        "price": 100.51,
+        "score": 0.4183,
+        "score_5d": 0.2389
+      },
+      {
+        "symbol": "PSKY",
+        "name": "Paramount Skydance Corporation",
+        "sector": "Communication Services",
+        "price": 9.9,
+        "score": 0.3914,
+        "score_5d": 0.2978
+      },
+      {
+        "symbol": "NCLH",
+        "name": "Norwegian Cruise Line Holdings ",
+        "sector": "Consumer Cyclical",
+        "price": 14.79,
+        "score": 0.3757,
+        "score_5d": 0.3013
+      },
+      {
+        "symbol": "WDAY",
+        "name": "Workday, Inc.",
+        "sector": "Technology",
+        "price": 129.34,
+        "score": 0.3638,
+        "score_5d": 0.2702
+      },
+      {
+        "symbol": "LEN",
+        "name": "Lennar Corporation",
+        "sector": "Consumer Cyclical",
+        "price": 83.0,
+        "score": 0.3583,
+        "score_5d": 0.2203
+      },
+      {
+        "symbol": "HOOD",
+        "name": "Robinhood Markets, Inc.",
+        "sector": "Financial Services",
+        "price": 74.16,
+        "score": 0.3502,
+        "score_5d": 0.3174
+      },
+      {
+        "symbol": "FDS",
+        "name": "FactSet Research Systems Inc.",
+        "sector": "Financial Services",
+        "price": 221.93,
+        "score": 0.3461,
+        "score_5d": 0.2279
+      },
+      {
+        "symbol": "CVNA",
+        "name": "Carvana Co.",
+        "sector": "Consumer Cyclical",
+        "price": 63.35,
+        "score": 0.3456,
+        "score_5d": 0.3554
+      },
+      {
+        "symbol": "CSGP",
+        "name": "CoStar Group, Inc.",
+        "sector": "Real Estate",
+        "price": 33.8,
+        "score": 0.3414,
+        "score_5d": 0.2467
+      }
+    ]
+  },
+  "last_run": "2026-05-19T23:48:31"
+}
