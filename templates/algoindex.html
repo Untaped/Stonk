@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Algo Index Fund — LitlGuy</title>
+    <meta name="theme-color" content="#1a202c">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            min-height: 100vh; overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .glass-card {
+            background: rgba(26,32,44,0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .floating-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px);
+            animation: orb-float 8s ease-in-out infinite; pointer-events: none; z-index: 0;
+        }
+        @keyframes orb-float {
+            0%,100%{transform:translateY(0) translateX(0);}
+            33%{transform:translateY(-20px) translateX(10px);}
+            66%{transform:translateY(10px) translateX(-15px);}
+        }
+        .tab-btn { transition: all 0.2s ease; }
+        .tab-btn.active { background:rgba(99,102,241,0.2); border-color:rgba(99,102,241,0.5); color:#a5b4fc; }
+        .tab-btn:not(.active) { background:transparent; border-color:rgba(255,255,255,0.1); color:rgba(255,255,255,0.5); }
+        .pos-card { transition: border-color 0.2s ease; }
+        .pos-card:hover { border-color:rgba(255,255,255,0.2); }
+
+        .badge-rec  { background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
+        .badge-con  { background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
+        .badge-no   { background:rgba(239,68,68,0.15);  color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+        .badge-act  { background:rgba(99,102,241,0.15); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); }
+        .badge-cls  { background:rgba(107,114,128,0.15);color:#9ca3af; border:1px solid rgba(107,114,128,0.3); }
+        .badge-5d   { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); }
+        .badge-30d  { background:rgba(167,139,250,0.15);color:#c4b5fd; border:1px solid rgba(167,139,250,0.3); }
+        .badge-win  { background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
+        .badge-loss { background:rgba(239,68,68,0.15);  color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+
+        .pnl-pos { color:#34d399; }
+        .pnl-neg { color:#f87171; }
+        .pnl-neu { color:#9ca3af; }
+
+        .progress-bar  { height:4px; border-radius:2px; background:rgba(255,255,255,0.1); overflow:hidden; }
+        .progress-fill { height:100%; border-radius:2px; }
+
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+        .pulse-dot { animation:pulse-dot 2s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+
+<div class="floating-orb w-96 h-96 bg-blue-900 opacity-20" style="top:-100px;left:-100px;"></div>
+<div class="floating-orb w-64 h-64 bg-purple-900 opacity-20" style="bottom:100px;right:-80px;animation-delay:-4s;"></div>
+
+<div class="relative z-10 max-w-3xl mx-auto px-4 py-6">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-6 flex-wrap gap-3">
+        <div>
+            <a href="/" class="text-gray-400 hover:text-white text-sm mb-2 flex items-center gap-1 transition">
+                <i class="fas fa-chevron-left text-xs"></i> Back
+            </a>
+            <h1 class="gradient-text text-2xl font-bold tracking-tight">Algo Index Fund</h1>
+            <p class="text-gray-400 text-xs mt-0.5">
+                Started {{ start_date }}
+                &nbsp;·&nbsp;
+                {{ active|length }} active &nbsp;·&nbsp; {{ closed|length }} closed
+            </p>
+        </div>
+        <div class="text-right">
+            <div class="text-gray-500 text-xs mb-1">Last scan</div>
+            <div class="text-gray-300 text-xs font-mono">
+                {% if last_run %}{{ last_run }}{% else %}Never — run predict_single_stock.py --scan{% endif %}
+            </div>
+            {% if last_pick_date %}
+            <div class="text-gray-500 text-xs mt-1">Last picks: {{ last_pick_date }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if no_data %}
+    <!-- No data yet -->
+    <div class="glass-card rounded-2xl p-10 text-center">
+        <i class="fas fa-chart-line text-4xl text-gray-600 mb-4 block"></i>
+        <div class="text-gray-300 font-medium mb-2">No algo index data yet</div>
+        <div class="text-gray-500 text-sm mb-4">Run the predictor to generate positions:</div>
+        <code class="bg-black/30 text-green-400 px-4 py-2 rounded-lg text-sm block max-w-md mx-auto">
+            python stock_ai/predict_single_stock.py --scan
+        </code>
+        <div class="text-gray-600 text-xs mt-3">The fund will automatically select and track the top picks after each scan.</div>
+    </div>
+
+    {% else %}
+
+    <!-- Metric cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div class="glass-card rounded-2xl p-4">
+            <div class="text-gray-400 text-xs mb-1">Active 5-day</div>
+            <div class="text-white text-2xl font-bold">{{ active_5d_count }}</div>
+            <div class="text-gray-500 text-xs">positions</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+            <div class="text-gray-400 text-xs mb-1">Active 30-day</div>
+            <div class="text-white text-2xl font-bold">{{ active_30d_count }}</div>
+            <div class="text-gray-500 text-xs">positions</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+            <div class="text-gray-400 text-xs mb-1">Win rate</div>
+            <div class="text-2xl font-bold {% if win_rate %}{% if win_rate >= 0.5 %}pnl-pos{% else %}pnl-neg{% endif %}{% else %}text-gray-400{% endif %}">
+                {% if win_rate is not none %}{{ "%.0f"|format(win_rate*100) }}%{% else %}—{% endif %}
+            </div>
+            <div class="text-gray-500 text-xs">{{ win_count }}/{{ closed_count }} trades</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+            <div class="text-gray-400 text-xs mb-1">Total P&amp;L</div>
+            <div class="text-2xl font-bold {% if total_pnl is not none %}{% if total_pnl > 0 %}pnl-pos{% elif total_pnl < 0 %}pnl-neg{% else %}text-gray-400{% endif %}{% else %}text-gray-400{% endif %}">
+                {% if total_pnl is not none %}{{ "+" if total_pnl > 0 else "" }}{{ "%.1f"|format(total_pnl*100) }}%{% else %}—{% endif %}
+            </div>
+            <div class="text-gray-500 text-xs">
+                avg {% if avg_pnl is not none %}{{ "+" if avg_pnl > 0 else "" }}{{ "%.1f"|format(avg_pnl*100) }}%{% else %}—{% endif %} / trade
+            </div>
+        </div>
+    </div>
+
+    <!-- Extra stats row -->
+    {% if stats %}
+    <div class="glass-card rounded-xl px-4 py-3 mb-5 flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-400">
+        <span><i class="fas fa-trophy mr-1 text-yellow-400"></i>
+            Best: {% if stats.best_trade is not none %}
+                <span class="pnl-pos font-medium">+{{ "%.1f"|format(stats.best_trade*100) }}%</span>
+            {% else %}—{% endif %}
+        </span>
+        <span><i class="fas fa-skull-crossbones mr-1 text-red-400"></i>
+            Worst: {% if stats.worst_trade is not none %}
+                <span class="pnl-neg font-medium">{{ "%.1f"|format(stats.worst_trade*100) }}%</span>
+            {% else %}—{% endif %}
+        </span>
+        <span><i class="fas fa-shield-alt mr-1 text-red-400"></i>Stop loss −{{ stop_loss_pct }}%</span>
+        <span><i class="fas fa-rocket mr-1 text-green-400"></i>Take profit +{{ take_profit_pct }}%</span>
+        <span><i class="fas fa-brain mr-1 text-purple-400"></i>Conf. drop &gt;{{ conf_drop_pct }}pp</span>
+    </div>
+    {% endif %}
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-5">
+        <button class="tab-btn active text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('portfolio',this)">
+            Portfolio <span class="ml-1 opacity-60">{{ active|length }}</span>
+        </button>
+        <button class="tab-btn text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('picks',this)">
+            Today's Picks
+        </button>
+        <button class="tab-btn text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('history',this)">
+            History <span class="ml-1 opacity-60">{{ closed|length }}</span>
+        </button>
+    </div>
+
+    <!-- ── TAB: Portfolio ──────────────────────────────────────────── -->
+    <div id="tab-portfolio">
+        <!-- Filter pills -->
+        <div class="flex gap-2 mb-4 flex-wrap">
+            {% for f,lbl in [('all','All'),('active','Active'),('closed','Closed'),('5d','5-Day'),('30d','30-Day')] %}
+            <button class="filter-pill text-xs px-3 py-1 rounded-full border border-white/10
+                           {% if loop.first %}bg-white/10 text-white{% else %}text-gray-400 hover:text-white{% endif %}
+                           transition" data-filter="{{ f }}" onclick="setFilter(this)">{{ lbl }}</button>
+            {% endfor %}
+        </div>
+
+        {% if positions %}
+        <div id="positions-list">
+        {% for pos in positions|sort(attribute='entry_date',reverse=True) %}
+        <div class="pos-card glass-card rounded-2xl p-4 mb-3"
+             data-horizon="{{ pos.horizon }}" data-status="{{ pos.status }}">
+
+            <!-- Top row -->
+            <div class="flex items-start justify-between gap-2 mb-3 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div class="rounded-xl flex items-center justify-center text-xs font-bold w-10 h-10
+                        {% if pos.horizon == '5d' %}badge-5d{% else %}badge-30d{% endif %}">
+                        {{ pos.horizon|upper }}
+                    </div>
+                    <div>
+                        <div class="text-white font-semibold text-sm">{{ pos.symbol }}</div>
+                        <div class="text-gray-400 text-xs">{{ pos.name }}</div>
+                    </div>
+                </div>
+                <div class="flex gap-2 items-center flex-wrap justify-end">
+                    <!-- Confidence badge -->
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if pos.confidence >= 0.35 %}badge-rec
+                        {% elif pos.confidence >= 0.30 %}badge-con
+                        {% else %}badge-no{% endif %}">
+                        {{ "%.0f"|format(pos.confidence*100) }}% conf
+                    </span>
+                    <!-- Status badge -->
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if pos.status == 'active' %}badge-act{% else %}badge-cls{% endif %}">
+                        {% if pos.status == 'active' %}
+                            <span class="pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-indigo-400 mr-1 align-middle"></span>active
+                        {% else %}
+                            {{ pos.exit_reason or 'closed' }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Data grid -->
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 text-xs">
+                <div>
+                    <div class="text-gray-500 mb-0.5">Entry price</div>
+                    <div class="text-white font-medium">${{ "%.2f"|format(pos.entry_price) }}</div>
+                </div>
+                <div>
+                    <div class="text-gray-500 mb-0.5">
+                        {% if pos.status == 'active' %}Live price{% else %}Exit price{% endif %}
+                    </div>
+                    <div class="text-white font-medium">
+                        {% if pos.status == 'active' %}
+                            ${{ "%.2f"|format(pos.get('current_price', pos.entry_price)) }}
+                        {% elif pos.exit_price %}
+                            ${{ "%.2f"|format(pos.exit_price) }}
+                        {% else %}—{% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-gray-500 mb-0.5">P&amp;L</div>
+                    <div class="font-medium">
+                        {% set pnl = pos.get('current_pnl') if pos.status == 'active' else pos.pnl %}
+                        {% if pnl is not none %}
+                            <span class="{% if pnl > 0 %}pnl-pos{% elif pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                                {{ "+" if pnl > 0 else "" }}{{ "%.1f"|format(pnl*100) }}%
+                            </span>
+                        {% else %}—{% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-gray-500 mb-0.5">
+                        {% if pos.status == 'active' %}Days left{% else %}Entry{% endif %}
+                    </div>
+                    <div class="text-white font-medium">
+                        {% if pos.status == 'active' %}
+                            {{ [pos.target_days - pos.get('days_elapsed', 0), 0]|max }}d
+                            <span class="text-gray-600">/{{ pos.target_days }}d</span>
+                        {% else %}
+                            {{ pos.entry_date }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-gray-500 mb-0.5">Sector</div>
+                    <div class="text-gray-300 text-xs truncate">{{ pos.sector }}</div>
+                </div>
+            </div>
+
+            <!-- Progress bar (active only) -->
+            {% if pos.status == 'active' %}
+            {% set elapsed_pct = [(pos.get('days_elapsed', 0) / pos.target_days * 100), 100]|min|int %}
+            <div class="mt-3 progress-bar">
+                <div class="progress-fill {% if elapsed_pct > 80 %}bg-amber-500{% else %}bg-indigo-500{% endif %}"
+                     style="width:{{ elapsed_pct }}%"></div>
+            </div>
+            {% else %}
+            <!-- Closed position summary -->
+            <div class="mt-3 flex items-center gap-3 text-xs text-gray-500">
+                <span>{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</span>
+                {% if pos.pnl is not none %}
+                <span class="{% if pos.pnl > 0 %}badge-win{% else %}badge-loss{% endif %} px-2 py-0.5 rounded-full font-medium">
+                    {{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+        {% else %}
+        <div class="glass-card rounded-2xl p-8 text-center text-gray-400">
+            <i class="fas fa-inbox text-3xl mb-3 block opacity-30"></i>
+            No positions yet. The fund will populate after the next scan.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ── TAB: Today's Picks ─────────────────────────────────────── -->
+    <div id="tab-picks" class="hidden">
+
+        {% if last_pick_date %}
+        <div class="text-gray-400 text-xs mb-4">
+            Picks from <span class="text-gray-200">{{ last_pick_date }}</span> scan.
+            Ranked by model confidence score.
+        </div>
+        {% endif %}
+
+        <!-- 5-day -->
+        <div class="mb-5">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="badge-5d text-xs px-2 py-0.5 rounded-full font-medium">5d</span>
+                <span class="text-gray-300 text-xs font-semibold uppercase tracking-widest">5-Day Horizon</span>
+            </div>
+            {% for s in top_5d %}
+            <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="text-white font-semibold text-sm w-14 shrink-0">{{ s.symbol }}</div>
+                    <div class="text-gray-400 text-xs truncate">{{ s.sector }}</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-gray-300 text-xs">${{ "%.2f"|format(s.price) }}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                        {{ "%.0f"|format(s.score*100) }}%
+                    </span>
+                    <span class="text-xs px-2 py-0.5 rounded-full
+                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                        {% if s.score >= 0.35 %}REC{% elif s.score >= 0.30 %}CONSIDER{% else %}SKIP{% endif %}
+                    </span>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-gray-500 text-sm py-3 text-center">No picks — run a scan first.</div>
+            {% endfor %}
+        </div>
+
+        <!-- 30-day -->
+        <div>
+            <div class="flex items-center gap-2 mb-3">
+                <span class="badge-30d text-xs px-2 py-0.5 rounded-full font-medium">30d</span>
+                <span class="text-gray-300 text-xs font-semibold uppercase tracking-widest">30-Day Horizon</span>
+            </div>
+            {% for s in top_30d %}
+            <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="text-white font-semibold text-sm w-14 shrink-0">{{ s.symbol }}</div>
+                    <div class="text-gray-400 text-xs truncate">{{ s.sector }}</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-gray-300 text-xs">${{ "%.2f"|format(s.price) }}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                        {{ "%.0f"|format(s.score*100) }}%
+                    </span>
+                    <span class="text-xs px-2 py-0.5 rounded-full
+                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                        {% if s.score >= 0.35 %}REC{% elif s.score >= 0.30 %}CONSIDER{% else %}SKIP{% endif %}
+                    </span>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-gray-500 text-sm py-3 text-center">No picks — run a scan first.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ── TAB: History ───────────────────────────────────────────── -->
+    <div id="tab-history" class="hidden">
+        {% if closed %}
+        <div class="text-gray-400 text-xs mb-4">
+            Exit rules: stop loss −{{ stop_loss_pct }}% · take profit +{{ take_profit_pct }}% ·
+            confidence drop &gt;{{ conf_drop_pct }}pp · time limit
+        </div>
+        {% for pos in closed|sort(attribute='exit_date',reverse=True) %}
+        <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center gap-3 justify-between flex-wrap">
+            <div class="flex items-center gap-3">
+                <span class="text-xs px-2 py-0.5 rounded-full {% if pos.horizon=='5d' %}badge-5d{% else %}badge-30d{% endif %}">
+                    {{ pos.horizon|upper }}
+                </span>
+                <div>
+                    <div class="text-white font-semibold text-sm">{{ pos.symbol }}</div>
+                    <div class="text-gray-500 text-xs">{{ pos.exit_reason or '—' }}</div>
+                </div>
+            </div>
+            <div class="text-gray-400 text-xs">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
+            <div class="text-xs text-gray-400">
+                ${{ "%.2f"|format(pos.entry_price) }} →
+                ${{ "%.2f"|format(pos.exit_price) if pos.exit_price else '—' }}
+            </div>
+            <div class="font-semibold text-sm
+                {% if pos.pnl is not none and pos.pnl > 0 %}pnl-pos
+                {% elif pos.pnl is not none and pos.pnl < 0 %}pnl-neg
+                {% else %}pnl-neu{% endif %}">
+                {% if pos.pnl is not none %}
+                    {{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%
+                {% else %}—{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="glass-card rounded-2xl p-8 text-center text-gray-400">
+            <i class="fas fa-history text-3xl mb-3 block opacity-30"></i>
+            No closed positions yet. Exits are processed automatically on each scan.
+        </div>
+        {% endif %}
+    </div>
+
+    {% endif %}{# end no_data #}
+
+    <!-- Footer note -->
+    <div class="mt-6 text-center text-gray-600 text-xs">
+        Data updated by running <code class="text-gray-500">python stock_ai/predict_single_stock.py --scan</code>
+    </div>
+
+</div><!-- /container -->
+
+<script>
+function switchTab(name, btn) {
+    ['portfolio','picks','history'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+    });
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function setFilter(btn) {
+    document.querySelectorAll('.filter-pill').forEach(b => {
+        b.classList.remove('bg-white/10','text-white');
+        b.classList.add('text-gray-400');
+    });
+    btn.classList.add('bg-white/10','text-white');
+    btn.classList.remove('text-gray-400');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('#positions-list > [data-horizon]').forEach(card => {
+        let show = true;
+        if (f === 'active') show = card.dataset.status === 'active';
+        else if (f === 'closed') show = card.dataset.status === 'closed';
+        else if (f === '5d')    show = card.dataset.horizon === '5d';
+        else if (f === '30d')   show = card.dataset.horizon === '30d';
+        card.style.display = show ? '' : 'none';
+    });
+}
+</script>
+</body>
+</html>
