@@ -313,7 +313,11 @@ MARKET_PREDICTIONS_5PCT_CSV = "stonk_download/market_predictions_5pct.csv"
 
 PMARKET_REDICTIONS_SCAN_CSV = "stonk_download/market_predictions.csv"
 
-# --- Helper Functions ---
+# ============================================================
+#  ALGO INDEX FUND — routes to add to app.py
+#  Paste these anywhere after your existing imports/config.
+#  Requires: flask, flask_sqlalchemy, flask_login, pandas, json
+# ============================================================
 
 def load_predictions(file_path):
     """Read predictions from CSV"""
@@ -520,6 +524,94 @@ def api_stocks():
     # This sends raw data that your Android app can "consume"
     return jsonify(preds)
 
+import json as _json
+
+MARKET_HEALTH_JSON = "stonk_download/market_health.json"
+
+def _load_market_health(preds=None):
+    """
+    Load pre-computed market health from market_health.json (written by
+    predict_single_stock.py --scan).  If the file does not exist yet, compute
+    a lightweight approximation on the fly from predictions.csv.
+    """
+    if os.path.exists(MARKET_HEALTH_JSON):
+        try:
+            with open(MARKET_HEALTH_JSON) as fh:
+                return _json.load(fh)
+        except Exception:
+            pass
+
+    if not preds:
+        return {}
+
+    import numpy as np
+
+    sector_map: dict = {}
+    market_scores_5d, market_scores_30d = [], []
+
+    for p in preds:
+        sector = p.get('sector', 'Unknown') or 'Unknown'
+        s5  = float(p.get('score_5d',  p.get('combined_score', 0)) or 0)
+        s30 = float(p.get('score_30d', 0) or 0)
+        market_scores_5d.append(s5)
+        market_scores_30d.append(s30)
+
+        if sector not in sector_map:
+            sector_map[sector] = {'scores_5d': [], 'scores_30d': [], 'symbols': []}
+        sector_map[sector]['scores_5d'].append(s5)
+        sector_map[sector]['scores_30d'].append(s30)
+        sector_map[sector]['symbols'].append(p.get('symbol', ''))
+
+    if not market_scores_5d:
+        return {}
+
+    scores_arr = np.array(market_scores_5d)
+    mkt5  = float(np.mean(scores_arr))
+    mkt30 = float(np.mean(market_scores_30d))
+    median_5d  = float(np.median(scores_arr))
+    median_30d = float(np.median(market_scores_30d))
+    breadth_5d  = float(np.mean(scores_arr > median_5d))
+    breadth_30d = float(np.mean(np.array(market_scores_30d) > median_30d))
+
+    sector_scores = {}
+    for sec, data in sector_map.items():
+        s5  = float(np.mean(data['scores_5d']))
+        s30 = float(np.mean(data['scores_30d']))
+        top_idx = int(np.argmax(data['scores_5d']))
+        sector_scores[sec] = {
+            'score_5d':  round(s5,  4),
+            'score_30d': round(s30, 4),
+            'count':     len(data['scores_5d']),
+            'top_stock': data['symbols'][top_idx] if data['symbols'] else '',
+        }
+
+    sorted_by_5d = sorted(sector_scores, key=lambda s: sector_scores[s]['score_5d'], reverse=True)
+    for rank, sec in enumerate(sorted_by_5d, 1):
+        sector_scores[sec]['rank'] = rank
+
+    top_sector_5d     = sorted_by_5d[0] if sorted_by_5d else 'Unknown'
+    top_sector_30d    = max(sector_scores, key=lambda s: sector_scores[s]['score_30d']) if sector_scores else 'Unknown'
+    weakest_sector_5d = sorted_by_5d[-1] if sorted_by_5d else 'Unknown'
+
+    return {
+        'market_score_5d':    round(mkt5,       4),
+        'market_score_30d':   round(mkt30,      4),
+        'market_breadth_5d':  round(breadth_5d, 4),
+        'market_breadth_30d': round(breadth_30d, 4),
+        'top_sector_5d':      top_sector_5d,
+        'top_sector_30d':     top_sector_30d,
+        'weakest_sector_5d':  weakest_sector_5d,
+        'sector_scores':      sector_scores,
+    }
+
+@app.route('/api/market-health')
+def api_market_health():
+    """JSON endpoint — returns the latest market & sector health snapshot."""
+    preds = load_predictions(PREDICTIONS_CSV)
+    health = _load_market_health(preds)
+    return jsonify(health)
+
+
 @app.route('/sp500')
 def sp500_list():
     preds = load_predictions(PREDICTIONS_CSV)
@@ -588,14 +680,26 @@ def sp500_list():
     if current_user.is_authenticated:
         user_watchlist = [w.symbol for w in SavedStock.query.filter_by(user_id=current_user.id).all()]
 
+    # Load market health data (written by predict_single_stock.py --scan)
+    market_health = _load_market_health(preds)
+
+    # Sort sector scores by 5d score descending so the template can just iterate
+    if market_health and market_health.get('sector_scores'):
+        market_health['sector_scores_sorted'] = sorted(
+            market_health['sector_scores'].items(),
+            key=lambda x: x[1].get('score_5d', 0),
+            reverse=True
+        )
+
     return render_template(
         "SP500.html",
-        stocks_5d=formatted_stocks_5d[:100], 
-        stocks_30d=formatted_stocks_30d[:100], 
+        stocks_5d=formatted_stocks_5d[:15], 
+        stocks_30d=formatted_stocks_30d[:15],
         last_updated="Static Data",
         stats_5d=stats_5d,
         stats_30d=stats_30d,
-        user_watchlist=user_watchlist
+        user_watchlist=user_watchlist,
+        market_health=market_health,
     )
 
 @app.route('/nasdaq')
@@ -709,6 +813,93 @@ def autocomplete():
     matches.sort()
     
     return jsonify(matches[:10])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  ALGO INDEX FUND — read-only display routes
+#  All data is written by: python stock_ai/predict_single_stock.py --scan
+#  The website only reads stonk_download/algo_index.json
+# ══════════════════════════════════════════════════════════════════════════════
+
+import json as _json
+from datetime import date as _date
+
+ALGO_INDEX_FILE   = "stonk_download/algo_index.json"
+STOP_LOSS_PCT     = 0.07
+TAKE_PROFIT_PCT   = 0.25
+CONF_DROP_PCT     = 0.15
+
+
+def _load_algo_index():
+    """Read the algo index state written by predict_single_stock --scan."""
+    if os.path.exists(ALGO_INDEX_FILE):
+        try:
+            with open(ALGO_INDEX_FILE) as fh:
+                return _json.load(fh)
+        except Exception:
+            pass
+    return None
+
+
+@app.route('/algoindex')
+def algo_index_page():
+    state = _load_algo_index()
+
+    if state is None:
+        return render_template(
+            "algoindex.html",
+            no_data        = True,
+            positions      = [],
+            active         = [],
+            closed         = [],
+            active_5d_count  = 0,
+            active_30d_count = 0,
+            avg_pnl        = None,
+            win_rate       = None,
+            total_pnl      = None,
+            closed_count   = 0,
+            win_count      = 0,
+            top_5d         = [],
+            top_30d        = [],
+            last_pick_date = None,
+            start_date     = _date.today().isoformat(),
+            last_run       = None,
+            stats          = {},
+            stop_loss_pct  = int(STOP_LOSS_PCT  * 100),
+            take_profit_pct= int(TAKE_PROFIT_PCT * 100),
+            conf_drop_pct  = int(CONF_DROP_PCT   * 100),
+        )
+
+    positions  = state.get("positions", [])
+    active     = [p for p in positions if p["status"] == "active"]
+    closed     = [p for p in positions if p["status"] == "closed"]
+    stats      = state.get("stats", {})
+    top_picks  = state.get("top_picks", {"5d": [], "30d": []})
+
+    return render_template(
+        "algoindex.html",
+        no_data          = False,
+        positions        = positions,
+        active           = active,
+        closed           = closed,
+        active_5d_count  = stats.get("active_5d",  len([p for p in active if p["horizon"] == "5d"])),
+        active_30d_count = stats.get("active_30d", len([p for p in active if p["horizon"] == "30d"])),
+        avg_pnl          = stats.get("avg_pnl"),
+        win_rate         = stats.get("win_rate"),
+        total_pnl        = stats.get("total_pnl"),
+        closed_count     = stats.get("closed", len(closed)),
+        win_count        = stats.get("wins", 0),
+        top_5d           = top_picks.get("5d",  []),
+        top_30d          = top_picks.get("30d", []),
+        last_pick_date   = state.get("last_pick_date"),
+        start_date       = state.get("start_date", _date.today().isoformat()),
+        last_run         = state.get("last_run"),
+        stats            = stats,
+        stop_loss_pct    = int(STOP_LOSS_PCT  * 100),
+        take_profit_pct  = int(TAKE_PROFIT_PCT * 100),
+        conf_drop_pct    = int(CONF_DROP_PCT   * 100),
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
