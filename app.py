@@ -442,8 +442,28 @@ def index():
                 'price': current_price,
                 'saved_price': stock.saved_price or 0.00
             })
+
+    # Load algo index summary for the sidebar widget
+    algo_widget = None
+    try:
+        ai_state = _load_algo_index()
+        if ai_state:
+            stats = ai_state.get("stats", {})
+            positions = ai_state.get("positions", [])
+            active = [p for p in positions if p["status"] == "active"]
+            unrealized_pnls = [p.get("current_pnl", 0.0) for p in active]
+            algo_widget = {
+                "total_pnl":        stats.get("total_pnl"),
+                "total_unrealized": stats.get("total_unrealized"),
+                "win_rate":         stats.get("win_rate"),
+                "active_count":     len(active),
+                "closed_count":     stats.get("closed", 0),
+                "last_run":         ai_state.get("last_run"),
+            }
+    except Exception:
+        pass
             
-    return render_template('index.html', saved_stocks=saved_stocks_data)
+    return render_template('index.html', saved_stocks=saved_stocks_data, algo_widget=algo_widget)
 
 @app.route('/', methods=['POST'])
 def index_post():
