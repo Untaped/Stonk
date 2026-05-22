@@ -62,6 +62,9 @@
 
         @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
         .pulse-dot { animation:pulse-dot 2s ease-in-out infinite; }
+
+        /* NAV sparkline canvas */
+        #navChart { display:block; width:100%; height:60px; }
     </style>
 </head>
 <body>
@@ -109,56 +112,126 @@
 
     {% else %}
 
-    <!-- Metric cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        <div class="glass-card rounded-2xl p-4">
-            <div class="text-gray-400 text-xs mb-1">Active 5-day</div>
-            <div class="text-white text-2xl font-bold">{{ active_5d_count }}</div>
-            <div class="text-gray-500 text-xs">positions</div>
-        </div>
-        <div class="glass-card rounded-2xl p-4">
-            <div class="text-gray-400 text-xs mb-1">Active 30-day</div>
-            <div class="text-white text-2xl font-bold">{{ active_30d_count }}</div>
-            <div class="text-gray-500 text-xs">positions</div>
-        </div>
-        <div class="glass-card rounded-2xl p-4">
-            <div class="text-gray-400 text-xs mb-1">Win rate</div>
-            <div class="text-2xl font-bold {% if win_rate %}{% if win_rate >= 0.5 %}pnl-pos{% else %}pnl-neg{% endif %}{% else %}text-gray-400{% endif %}">
-                {% if win_rate is not none %}{{ "%.0f"|format(win_rate*100) }}%{% else %}—{% endif %}
+    {# ── Derive display values from portfolio & stats dicts ── #}
+    {% set pf         = portfolio %}
+    {% set starting   = pf.get('starting_balance', 10000) %}
+    {% set total_val  = pf.get('total_value',      starting) %}
+    {% set cash       = pf.get('cash',             starting) %}
+    {% set invested   = pf.get('invested',         0) %}
+    {% set ret_pct    = pf.get('total_return_pct', 0) %}
+    {% set gain_usd   = total_val - starting %}
+    {% set real_pnl   = stats.get('realized_pnl_usd',  0) %}
+    {% set unreal_pnl = stats.get('unrealized_pnl_usd', 0) %}
+    {% set win_rate   = stats.get('win_rate') %}
+    {% set win_count  = stats.get('wins',   0) %}
+    {% set loss_count = stats.get('losses', 0) %}
+
+    <!-- ══ PORTFOLIO HERO CARD ══════════════════════════════════════════════ -->
+    <div class="glass-card rounded-2xl p-5 mb-5 relative overflow-hidden">
+        <!-- Background sparkline -->
+        <canvas id="navChart" class="absolute inset-0 opacity-20 pointer-events-none"></canvas>
+
+        <div class="relative z-10">
+            <!-- Total value + return -->
+            <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
+                <div>
+                    <div class="text-gray-400 text-xs mb-1">Portfolio Value</div>
+                    <div class="text-white text-3xl font-bold tracking-tight">
+                        ${{ "{:,.2f}".format(total_val) }}
+                    </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-sm font-semibold
+                            {% if ret_pct > 0 %}pnl-pos{% elif ret_pct < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                            {{ "+" if ret_pct > 0 else "" }}{{ "%.2f"|format(ret_pct * 100) }}%
+                        </span>
+                        <span class="text-gray-500 text-xs">
+                            ({{ "+" if gain_usd > 0 else "" }}${{ "%.2f"|format(gain_usd) }})
+                            since ${{ "{:,.0f}".format(starting) }} start
+                        </span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-gray-500 text-xs mb-1">Starting balance</div>
+                    <div class="text-gray-300 font-semibold">${{ "{:,.2f}".format(starting) }}</div>
+                </div>
             </div>
-            <div class="text-gray-500 text-xs">{{ win_count }}/{{ closed_count }} trades</div>
-        </div>
-        <div class="glass-card rounded-2xl p-4">
-            <div class="text-gray-400 text-xs mb-1">Total P&amp;L</div>
-            <div class="text-2xl font-bold {% if total_pnl is not none %}{% if total_pnl > 0 %}pnl-pos{% elif total_pnl < 0 %}pnl-neg{% else %}text-gray-400{% endif %}{% else %}text-gray-400{% endif %}">
-                {% if total_pnl is not none %}{{ "+" if total_pnl > 0 else "" }}{{ "%.1f"|format(total_pnl*100) }}%{% else %}—{% endif %}
-            </div>
-            <div class="text-gray-500 text-xs">
-                avg {% if avg_pnl is not none %}{{ "+" if avg_pnl > 0 else "" }}{{ "%.1f"|format(avg_pnl*100) }}%{% else %}—{% endif %} / trade
+
+            <!-- Sub-metrics row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div class="bg-white/5 rounded-xl p-3">
+                    <div class="text-gray-500 mb-0.5">Cash</div>
+                    <div class="text-white font-semibold">${{ "{:,.2f}".format(cash) }}</div>
+                    <div class="text-gray-600">
+                        {{ "%.0f"|format(cash / total_val * 100) if total_val else 0 }}% of fund
+                    </div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3">
+                    <div class="text-gray-500 mb-0.5">Invested</div>
+                    <div class="text-white font-semibold">${{ "{:,.2f}".format(invested) }}</div>
+                    <div class="text-gray-600">
+                        {{ "%.0f"|format(invested / total_val * 100) if total_val else 0 }}% of fund
+                    </div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3">
+                    <div class="text-gray-500 mb-0.5">Realized P&amp;L</div>
+                    <div class="font-semibold
+                        {% if real_pnl > 0 %}pnl-pos{% elif real_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                        {{ "+" if real_pnl > 0 else "" }}${{ "%.2f"|format(real_pnl) }}
+                    </div>
+                    <div class="text-gray-600">from {{ closed_count }} closed</div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3">
+                    <div class="text-gray-500 mb-0.5">Unrealized</div>
+                    <div class="font-semibold
+                        {% if unreal_pnl > 0 %}pnl-pos{% elif unreal_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                        {{ "+" if unreal_pnl > 0 else "" }}${{ "%.2f"|format(unreal_pnl) }}
+                    </div>
+                    <div class="text-gray-600">{{ active|length }} open positions</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Extra stats row -->
-    {% if stats %}
+    <!-- ══ TRADE STATS ROW ═══════════════════════════════════════════════════ -->
     <div class="glass-card rounded-xl px-4 py-3 mb-5 flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-400">
-        <span><i class="fas fa-trophy mr-1 text-yellow-400"></i>
-            Best: {% if stats.best_trade is not none %}
-                <span class="pnl-pos font-medium">+{{ "%.1f"|format(stats.best_trade*100) }}%</span>
+        <!-- Win rate -->
+        <span>
+            <i class="fas fa-percent mr-1 text-indigo-400"></i>
+            Win rate:
+            {% if win_rate is not none %}
+                <span class="{% if win_rate >= 0.5 %}pnl-pos{% else %}pnl-neg{% endif %} font-medium">
+                    {{ "%.0f"|format(win_rate*100) }}%
+                </span>
+                <span class="text-gray-600">({{ win_count }}W / {{ loss_count }}L)</span>
             {% else %}—{% endif %}
         </span>
-        <span><i class="fas fa-skull-crossbones mr-1 text-red-400"></i>
-            Worst: {% if stats.worst_trade is not none %}
-                <span class="pnl-neg font-medium">{{ "%.1f"|format(stats.worst_trade*100) }}%</span>
+        <!-- Best trade $ -->
+        <span>
+            <i class="fas fa-trophy mr-1 text-yellow-400"></i>
+            Best:
+            {% if stats.best_trade_usd is defined and stats.best_trade_usd is not none %}
+                <span class="pnl-pos font-medium">+${{ "%.2f"|format(stats.best_trade_usd) }}</span>
+                <span class="text-gray-600">(+{{ "%.1f"|format(stats.best_trade*100) }}%)</span>
             {% else %}—{% endif %}
         </span>
-        <span><i class="fas fa-shield-alt mr-1 text-red-400"></i>Stop loss −{{ stop_loss_pct }}%</span>
-        <span><i class="fas fa-rocket mr-1 text-green-400"></i>Take profit +{{ take_profit_pct }}%</span>
-        <span><i class="fas fa-brain mr-1 text-purple-400"></i>Conf. drop &gt;{{ conf_drop_pct }}pp</span>
+        <!-- Worst trade $ -->
+        <span>
+            <i class="fas fa-skull-crossbones mr-1 text-red-400"></i>
+            Worst:
+            {% if stats.worst_trade_usd is defined and stats.worst_trade_usd is not none %}
+                <span class="pnl-neg font-medium">${{ "%.2f"|format(stats.worst_trade_usd) }}</span>
+                <span class="text-gray-600">({{ "%.1f"|format(stats.worst_trade*100) }}%)</span>
+            {% else %}—{% endif %}
+        </span>
+        <!-- Exit rules reminder -->
+        <span class="ml-auto text-gray-600">
+            <i class="fas fa-shield-alt mr-1"></i>SL −{{ stop_loss_pct }}%
+            &nbsp;·&nbsp;<i class="fas fa-rocket mr-1"></i>TP +{{ take_profit_pct }}%
+            &nbsp;·&nbsp;<i class="fas fa-brain mr-1"></i>Δconf {{ conf_drop_pct }}pp
+        </span>
     </div>
-    {% endif %}
 
-    <!-- Tabs -->
+    <!-- ══ TABS ══════════════════════════════════════════════════════════════ -->
     <div class="flex gap-2 mb-5">
         <button class="tab-btn active text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('portfolio',this)">
             Portfolio <span class="ml-1 opacity-60">{{ active|length }}</span>
@@ -171,7 +244,7 @@
         </button>
     </div>
 
-    <!-- ── TAB: Portfolio ──────────────────────────────────────────── -->
+    <!-- ── TAB: Portfolio ──────────────────────────────────────────────────── -->
     <div id="tab-portfolio">
         <!-- Filter pills -->
         <div class="flex gap-2 mb-4 flex-wrap">
@@ -185,10 +258,19 @@
         {% if positions %}
         <div id="positions-list">
         {% for pos in positions|sort(attribute='entry_date',reverse=True) %}
+        {# derive position-level dollar numbers #}
+        {% set shares    = pos.get('shares',    0) %}
+        {% set cost      = pos.get('cost_basis', 0) %}
+        {% set cur_price = pos.get('current_price', pos.entry_price) %}
+        {% set mkt_val   = shares * cur_price %}
+        {% set pos_dollar_pnl = pos.get('current_dollar_pnl', pos.get('dollar_pnl', 0)) if pos.status == 'active'
+                                 else pos.get('dollar_pnl', 0) %}
+        {% set pct_pnl   = pos.get('current_pnl') if pos.status == 'active' else pos.get('pnl') %}
+
         <div class="pos-card glass-card rounded-2xl p-4 mb-3"
              data-horizon="{{ pos.horizon }}" data-status="{{ pos.status }}">
 
-            <!-- Top row -->
+            <!-- Top row: symbol / horizon badge / status -->
             <div class="flex items-start justify-between gap-2 mb-3 flex-wrap">
                 <div class="flex items-center gap-3">
                     <div class="rounded-xl flex items-center justify-center text-xs font-bold w-10 h-10
@@ -220,38 +302,63 @@
                 </div>
             </div>
 
-            <!-- Data grid -->
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-3 text-xs">
+            <!-- Data grid — 6 cells -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 text-xs">
+                <!-- Entry price -->
                 <div>
-                    <div class="text-gray-500 mb-0.5">Entry price</div>
+                    <div class="text-gray-500 mb-0.5">Entry</div>
                     <div class="text-white font-medium">${{ "%.2f"|format(pos.entry_price) }}</div>
+                    <div class="text-gray-600">{{ pos.get('shares', 0)|round(4) }} sh</div>
                 </div>
+                <!-- Live / exit price -->
                 <div>
                     <div class="text-gray-500 mb-0.5">
-                        {% if pos.status == 'active' %}Live price{% else %}Exit price{% endif %}
+                        {% if pos.status == 'active' %}Live{% else %}Exit{% endif %}
                     </div>
                     <div class="text-white font-medium">
                         {% if pos.status == 'active' %}
-                            ${{ "%.2f"|format(pos.get('current_price', pos.entry_price)) }}
+                            ${{ "%.2f"|format(cur_price) }}
                         {% elif pos.exit_price %}
                             ${{ "%.2f"|format(pos.exit_price) }}
                         {% else %}—{% endif %}
                     </div>
                 </div>
+                <!-- $ P&L -->
                 <div>
-                    <div class="text-gray-500 mb-0.5">P&amp;L</div>
-                    <div class="font-medium">
-                        {% set pnl = pos.get('current_pnl') if pos.status == 'active' else pos.pnl %}
-                        {% if pnl is not none %}
-                            <span class="{% if pnl > 0 %}pnl-pos{% elif pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
-                                {{ "+" if pnl > 0 else "" }}{{ "%.1f"|format(pnl*100) }}%
-                            </span>
+                    <div class="text-gray-500 mb-0.5">P&amp;L $</div>
+                    <div class="font-medium
+                        {% if pos_dollar_pnl is not none and pos_dollar_pnl > 0 %}pnl-pos
+                        {% elif pos_dollar_pnl is not none and pos_dollar_pnl < 0 %}pnl-neg
+                        {% else %}pnl-neu{% endif %}">
+                        {% if pos_dollar_pnl is not none %}
+                            {{ "+" if pos_dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos_dollar_pnl) }}
                         {% else %}—{% endif %}
                     </div>
                 </div>
+                <!-- % P&L -->
+                <div>
+                    <div class="text-gray-500 mb-0.5">P&amp;L %</div>
+                    <div class="font-medium
+                        {% if pct_pnl is not none and pct_pnl > 0 %}pnl-pos
+                        {% elif pct_pnl is not none and pct_pnl < 0 %}pnl-neg
+                        {% else %}pnl-neu{% endif %}">
+                        {% if pct_pnl is not none %}
+                            {{ "+" if pct_pnl > 0 else "" }}{{ "%.1f"|format(pct_pnl*100) }}%
+                        {% else %}—{% endif %}
+                    </div>
+                </div>
+                <!-- Cost basis / market value -->
+                <div>
+                    <div class="text-gray-500 mb-0.5">Invested</div>
+                    <div class="text-white font-medium">${{ "%.2f"|format(cost) }}</div>
+                    {% if pos.status == 'active' %}
+                    <div class="text-gray-600">mkt ${{ "%.2f"|format(mkt_val) }}</div>
+                    {% endif %}
+                </div>
+                <!-- Days / Sector -->
                 <div>
                     <div class="text-gray-500 mb-0.5">
-                        {% if pos.status == 'active' %}Days left{% else %}Entry{% endif %}
+                        {% if pos.status == 'active' %}Days left{% else %}Entry date{% endif %}
                     </div>
                     <div class="text-white font-medium">
                         {% if pos.status == 'active' %}
@@ -261,10 +368,7 @@
                             {{ pos.entry_date }}
                         {% endif %}
                     </div>
-                </div>
-                <div>
-                    <div class="text-gray-500 mb-0.5">Sector</div>
-                    <div class="text-gray-300 text-xs truncate">{{ pos.sector }}</div>
+                    <div class="text-gray-600 truncate">{{ pos.sector }}</div>
                 </div>
             </div>
 
@@ -276,16 +380,18 @@
                      style="width:{{ elapsed_pct }}%"></div>
             </div>
             {% else %}
-            <!-- Closed position summary -->
-            <div class="mt-3 flex items-center gap-3 text-xs text-gray-500">
+            <!-- Closed summary row -->
+            <div class="mt-3 flex items-center gap-3 text-xs text-gray-500 flex-wrap">
                 <span>{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</span>
-                {% if pos.pnl is not none %}
-                <span class="{% if pos.pnl > 0 %}badge-win{% else %}badge-loss{% endif %} px-2 py-0.5 rounded-full font-medium">
-                    {{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%
+                {% if pos.dollar_pnl is not none %}
+                <span class="{% if pos.dollar_pnl > 0 %}badge-win{% else %}badge-loss{% endif %} px-2 py-0.5 rounded-full font-medium">
+                    {{ "+" if pos.dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos.dollar_pnl) }}
+                    ({{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%)
                 </span>
                 {% endif %}
             </div>
             {% endif %}
+
         </div>
         {% endfor %}
         </div>
@@ -297,9 +403,8 @@
         {% endif %}
     </div>
 
-    <!-- ── TAB: Today's Picks ─────────────────────────────────────── -->
+    <!-- ── TAB: Today's Picks ─────────────────────────────────────────────── -->
     <div id="tab-picks" class="hidden">
-
         {% if last_pick_date %}
         <div class="text-gray-400 text-xs mb-4">
             Picks from <span class="text-gray-200">{{ last_pick_date }}</span> scan.
@@ -366,13 +471,24 @@
         </div>
     </div>
 
-    <!-- ── TAB: History ───────────────────────────────────────────── -->
+    <!-- ── TAB: History ───────────────────────────────────────────────────── -->
     <div id="tab-history" class="hidden">
         {% if closed %}
         <div class="text-gray-400 text-xs mb-4">
             Exit rules: stop loss −{{ stop_loss_pct }}% · take profit +{{ take_profit_pct }}% ·
             confidence drop &gt;{{ conf_drop_pct }}pp · time limit
         </div>
+
+        <!-- Cumulative realized P&L ticker -->
+        {% set total_usd = stats.get('realized_pnl_usd', 0) %}
+        <div class="glass-card rounded-xl px-4 py-3 mb-4 flex items-center justify-between text-xs">
+            <span class="text-gray-400">Cumulative realized P&amp;L</span>
+            <span class="font-semibold text-sm
+                {% if total_usd > 0 %}pnl-pos{% elif total_usd < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                {{ "+" if total_usd > 0 else "" }}${{ "%.2f"|format(total_usd) }}
+            </span>
+        </div>
+
         {% for pos in closed|sort(attribute='exit_date',reverse=True) %}
         <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center gap-3 justify-between flex-wrap">
             <div class="flex items-center gap-3">
@@ -385,16 +501,21 @@
                 </div>
             </div>
             <div class="text-gray-400 text-xs">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
+            <!-- Prices -->
             <div class="text-xs text-gray-400">
                 ${{ "%.2f"|format(pos.entry_price) }} →
                 ${{ "%.2f"|format(pos.exit_price) if pos.exit_price else '—' }}
             </div>
+            <!-- $ P&L -->
             <div class="font-semibold text-sm
-                {% if pos.pnl is not none and pos.pnl > 0 %}pnl-pos
-                {% elif pos.pnl is not none and pos.pnl < 0 %}pnl-neg
+                {% if pos.dollar_pnl is not none and pos.dollar_pnl > 0 %}pnl-pos
+                {% elif pos.dollar_pnl is not none and pos.dollar_pnl < 0 %}pnl-neg
                 {% else %}pnl-neu{% endif %}">
-                {% if pos.pnl is not none %}
-                    {{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%
+                {% if pos.dollar_pnl is not none %}
+                    {{ "+" if pos.dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos.dollar_pnl) }}
+                    <span class="text-gray-500 font-normal text-xs">
+                        ({{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%)
+                    </span>
                 {% else %}—{% endif %}
             </div>
         </div>
@@ -409,7 +530,7 @@
 
     {% endif %}{# end no_data #}
 
-    <!-- Footer note -->
+    <!-- Footer -->
     <div class="mt-6 text-center text-gray-600 text-xs">
         Data updated by running <code class="text-gray-500">python stock_ai/predict_single_stock.py --scan</code>
     </div>
@@ -417,6 +538,7 @@
 </div><!-- /container -->
 
 <script>
+// ── Tab switching ────────────────────────────────────────────────────────────
 function switchTab(name, btn) {
     ['portfolio','picks','history'].forEach(t => {
         document.getElementById('tab-' + t).classList.add('hidden');
@@ -426,6 +548,7 @@ function switchTab(name, btn) {
     btn.classList.add('active');
 }
 
+// ── Filter pills ─────────────────────────────────────────────────────────────
 function setFilter(btn) {
     document.querySelectorAll('.filter-pill').forEach(b => {
         b.classList.remove('bg-white/10','text-white');
@@ -443,6 +566,55 @@ function setFilter(btn) {
         card.style.display = show ? '' : 'none';
     });
 }
+
+// ── NAV sparkline ─────────────────────────────────────────────────────────────
+// nav_history is injected by Jinja as a JS array of {date, total_value} objects
+const NAV_HISTORY = {{ nav_history | tojson }};
+const STARTING_BALANCE = {{ portfolio.get('starting_balance', 10000) }};
+
+(function drawSparkline() {
+    const canvas = document.getElementById('navChart');
+    if (!canvas || NAV_HISTORY.length < 2) return;
+
+    const ctx    = canvas.getContext('2d');
+    const W      = canvas.offsetWidth  || 600;
+    const H      = canvas.offsetHeight || 60;
+    canvas.width  = W;
+    canvas.height = H;
+
+    const vals   = NAV_HISTORY.map(d => d.total_value);
+    const minV   = Math.min(...vals, STARTING_BALANCE) * 0.995;
+    const maxV   = Math.max(...vals, STARTING_BALANCE) * 1.005;
+    const range  = maxV - minV || 1;
+
+    const xStep  = W / (vals.length - 1);
+    const yOf    = v => H - ((v - minV) / range) * H;
+
+    const isPositive = vals[vals.length - 1] >= STARTING_BALANCE;
+    const color      = isPositive ? '#34d399' : '#f87171';
+
+    // Gradient fill
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0,   isPositive ? 'rgba(52,211,153,0.4)' : 'rgba(248,113,113,0.4)');
+    grad.addColorStop(1,   'rgba(0,0,0,0)');
+
+    ctx.beginPath();
+    ctx.moveTo(0, yOf(vals[0]));
+    vals.forEach((v, i) => ctx.lineTo(i * xStep, yOf(v)));
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(0, yOf(vals[0]));
+    vals.forEach((v, i) => ctx.lineTo(i * xStep, yOf(v)));
+    ctx.strokeStyle = color;
+    ctx.lineWidth   = 1.5;
+    ctx.stroke();
+})();
 </script>
 </body>
 </html>
