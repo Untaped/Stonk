@@ -844,10 +844,10 @@ def autocomplete():
 import json as _json
 from datetime import date as _date
 
-ALGO_INDEX_FILE   = "stonk_download/algo_index.json"
-STOP_LOSS_PCT     = 0.07
-TAKE_PROFIT_PCT   = 0.25
-CONF_DROP_PCT     = 0.15
+ALGO_INDEX_FILE  = "stonk_download/algo_index.json"
+STOP_LOSS_PCT    = 0.07
+TAKE_PROFIT_PCT  = 0.25
+CONF_DROP_PCT    = 0.15
 
 
 def _load_algo_index():
@@ -865,36 +865,42 @@ def _load_algo_index():
 def algo_index_page():
     state = _load_algo_index()
 
+    # ── Empty / no-data case ─────────────────────────────────────────────────
     if state is None:
         return render_template(
             "algoindex.html",
-            no_data        = True,
-            positions      = [],
-            active         = [],
-            closed         = [],
+            no_data          = True,
+            positions        = [],
+            active           = [],
+            closed           = [],
             active_5d_count  = 0,
             active_30d_count = 0,
-            avg_pnl        = None,
-            win_rate       = None,
-            total_pnl      = None,
-            closed_count   = 0,
-            win_count      = 0,
-            top_5d         = [],
-            top_30d        = [],
-            last_pick_date = None,
-            start_date     = _date.today().isoformat(),
-            last_run       = None,
-            stats          = {},
-            stop_loss_pct  = int(STOP_LOSS_PCT  * 100),
-            take_profit_pct= int(TAKE_PROFIT_PCT * 100),
-            conf_drop_pct  = int(CONF_DROP_PCT   * 100),
+            avg_pnl          = None,
+            win_rate         = None,
+            # dollar stats (all None when no data)
+            portfolio        = {},
+            stats            = {},
+            nav_history      = [],
+            top_5d           = [],
+            top_30d          = [],
+            last_pick_date   = None,
+            start_date       = _date.today().isoformat(),
+            last_run         = None,
+            closed_count     = 0,
+            win_count        = 0,
+            stop_loss_pct    = int(STOP_LOSS_PCT  * 100),
+            take_profit_pct  = int(TAKE_PROFIT_PCT * 100),
+            conf_drop_pct    = int(CONF_DROP_PCT   * 100),
         )
 
+    # ── Normal case ──────────────────────────────────────────────────────────
     positions  = state.get("positions", [])
     active     = [p for p in positions if p["status"] == "active"]
     closed     = [p for p in positions if p["status"] == "closed"]
     stats      = state.get("stats", {})
+    portfolio  = state.get("portfolio", {})
     top_picks  = state.get("top_picks", {"5d": [], "30d": []})
+    nav_history = state.get("nav_history", [])
 
     return render_template(
         "algoindex.html",
@@ -904,22 +910,23 @@ def algo_index_page():
         closed           = closed,
         active_5d_count  = stats.get("active_5d",  len([p for p in active if p["horizon"] == "5d"])),
         active_30d_count = stats.get("active_30d", len([p for p in active if p["horizon"] == "30d"])),
-        avg_pnl          = stats.get("avg_pnl"),
+        avg_pnl          = stats.get("avg_pnl"),          # per-trade % (legacy)
         win_rate         = stats.get("win_rate"),
-        total_pnl        = stats.get("total_pnl"),
-        closed_count     = stats.get("closed", len(closed)),
-        win_count        = stats.get("wins", 0),
+        # Dollar portfolio fields
+        portfolio        = portfolio,
+        stats            = stats,
+        nav_history      = nav_history,
         top_5d           = top_picks.get("5d",  []),
         top_30d          = top_picks.get("30d", []),
         last_pick_date   = state.get("last_pick_date"),
         start_date       = state.get("start_date", _date.today().isoformat()),
         last_run         = state.get("last_run"),
-        stats            = stats,
+        closed_count     = stats.get("closed", len(closed)),
+        win_count        = stats.get("wins", 0),
         stop_loss_pct    = int(STOP_LOSS_PCT  * 100),
         take_profit_pct  = int(TAKE_PROFIT_PCT * 100),
         conf_drop_pct    = int(CONF_DROP_PCT   * 100),
     )
-
 
 if __name__ == '__main__':
     app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
