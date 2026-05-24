@@ -181,7 +181,7 @@
             {% set mh = market_health %}
             <div>
 
-                {# Sector grid — ranked, no Bullish/Bearish labels #}
+        <!----        {# Sector grid — ranked, no Bullish/Bearish labels #}
                 {% if mh.sector_scores_sorted %}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {% for sector_name, sd in mh.sector_scores_sorted %}
@@ -204,7 +204,7 @@
                 </div>
                 {% endif %}
             </div>
-            {% endif %}
+            {% endif %} -->
 <div id="view-5d" class="space-y-6 animate-fade-in">
     {% if stocks_5d %}
         <div class="mobile-list space-y-3">
