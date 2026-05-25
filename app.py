@@ -634,92 +634,111 @@ def api_market_health():
 
 @app.route('/sp500')
 def sp500_list():
+    """
+    Display S&P 500 predictions.
+
+    score_5d and score_30d in the CSV are now AUC-weighted means computed
+    by predict_single_stock.py using each model's real calibrated_auc from
+    its _info.pkl.  We read them directly — no re-weighting needed here —
+    so the score, recommendation label, and algo index threshold are all
+    derived from the exact same number.
+    """
     preds = load_predictions(PREDICTIONS_CSV)
-    
-    formatted_stocks_5d = []
+
+    formatted_stocks_5d  = []
     formatted_stocks_30d = []
-    
+
     for p in preds:
-        # 5-day probabilities
-        p3 = float(p.get('prob_3pct', 0))
-        p5 = float(p.get('prob_5pct', 0))
-        p10 = float(p.get('prob_10pct', 0))
-        p15 = float(p.get('prob_1mo', 0))
-        
-        # 30-day probabilities
-        p30_3 = float(p.get('prob_30_3pct', 0))
-        p30_5 = float(p.get('prob_30_5pct', 0))
-        p30_10 = float(p.get('prob_30_10pct', 0))
-        p30_15 = float(p.get('prob_30_1mo', 0))
+        # Use the AUC-weighted scores written by the predictor
+        prob_5d  = float(p.get('score_5d',  0) or 0)
+        prob_30d = float(p.get('score_30d', 0) or 0)
 
-        # Because `combined_score` mixed everything in your predict file, 
-        # let's approximate the isolated 5d vs 30d scores using your weights.
-        prob_5d = (p3*0.05 + p5*0.15 + p10*0.4 + p15*0.4)
-        prob_30d = (p30_3*0.05 + p30_5*0.15 + p30_10*0.4 + p30_15*0.4)
+        # Individual model probabilities for the linearity check
+        p3     = float(p.get('prob_3pct',    0) or 0)
+        p5     = float(p.get('prob_5pct',    0) or 0)
+        p10    = float(p.get('prob_10pct',   0) or 0)
+        p15    = float(p.get('prob_1mo',     0) or 0)
+        p30_3  = float(p.get('prob_30_3pct', 0) or 0)
+        p30_5  = float(p.get('prob_30_5pct', 0) or 0)
+        p30_10 = float(p.get('prob_30_10pct',0) or 0)
+        p30_15 = float(p.get('prob_30_1mo',  0) or 0)
 
-        # 5-Day Rec
-        is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
-        if prob_5d >= 0.35 and is_linear_5d: rec_5d = "RECOMENDED"
-        elif prob_5d >= 0.30: rec_5d = "CONSIDER"
-        else: rec_5d = "NOT RECOMENDED"
-
-        # 30-Day Rec
+        # Linearity: each harder threshold should carry a lower probability.
+        # Non-linear profiles (e.g. 10% model fires but 3% doesn't) are suspect.
+        is_linear_5d  = (p3  > p5)    and (p5   > p10)   and (p10  > p15)
         is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
-        if prob_30d >= 0.35 and is_linear_30d: rec_30d = "RECOMENDED"
-        elif prob_30d >= 0.30: rec_30d = "CONSIDER"
-        else: rec_30d = "NOT RECOMENDED"
 
-        base_info = {
-            'symbol': p.get('symbol'),
-            'currentPrice': float(p.get('price', 0)), 
-            'shortName': p.get('name', p.get('symbol')), 
-            'sector': p.get('sector', 'Unknown')
+        # Recommendation thresholds are identical to MIN_SCORE_5D / MIN_SCORE_30D
+        # in algo_index_manager.py (both 0.35) — the single source of truth.
+        if prob_5d >= 0.35 and is_linear_5d:
+            rec_5d = "BUY"
+        elif prob_5d >= 0.30:
+            rec_5d = "CONSIDER"
+        else:
+            rec_5d = "NOT RECOMMENDED"
+
+        if prob_30d >= 0.35 and is_linear_30d:
+            rec_30d = "BUY"
+        elif prob_30d >= 0.30:
+            rec_30d = "CONSIDER"
+        else:
+            rec_30d = "NOT RECOMMENDED"
+
+        base = {
+            'symbol':       p.get('symbol'),
+            'currentPrice': float(p.get('price', 0) or 0),
+            'shortName':    p.get('name', p.get('symbol')),
+            'sector':       p.get('sector', 'Unknown'),
         }
 
-        formatted_stocks_5d.append({**base_info, 'probability': prob_5d, 'score_percent': f"{prob_5d*100:.1f}%", 'recommendation': rec_5d})
-        formatted_stocks_30d.append({**base_info, 'probability': prob_30d, 'score_percent': f"{prob_30d*100:.1f}%", 'recommendation': rec_30d})
+        formatted_stocks_5d.append({
+            **base,
+            'probability':    prob_5d,
+            'score_percent':  f"{prob_5d  * 100:.1f}%",
+            'recommendation': rec_5d,
+        })
+        formatted_stocks_30d.append({
+            **base,
+            'probability':    prob_30d,
+            'score_percent':  f"{prob_30d * 100:.1f}%",
+            'recommendation': rec_30d,
+        })
 
-    # Sort both lists by highest probability
-    formatted_stocks_5d.sort(key=lambda x: x['probability'], reverse=True)
+    formatted_stocks_5d.sort( key=lambda x: x['probability'], reverse=True)
     formatted_stocks_30d.sort(key=lambda x: x['probability'], reverse=True)
-    # Calculate actual statistics for the 5-Day timeframe
+
     stats_5d = {
-        'RECOMENDED': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'RECOMENDED'),
-        'consider': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'CONSIDER'),
-        'NOT RECOMENDED': sum(1 for stock in formatted_stocks_5d if stock['recommendation'] == 'NOT RECOMENDED')
+        'RECOMENDED':     sum(1 for s in formatted_stocks_5d  if s['recommendation'] == 'BUY'),
+        'consider':       sum(1 for s in formatted_stocks_5d  if s['recommendation'] == 'CONSIDER'),
+        'NOT RECOMENDED': sum(1 for s in formatted_stocks_5d  if s['recommendation'] == 'NOT RECOMMENDED'),
     }
-    
-    # Calculate actual statistics for the 30-Day timeframe
     stats_30d = {
-        'RECOMENDED': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'RECOMENDED'),
-        'consider': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'CONSIDER'),
-        'NOT RECOMENDED': sum(1 for stock in formatted_stocks_30d if stock['recommendation'] == 'NOT RECOMENDED')
+        'RECOMENDED':     sum(1 for s in formatted_stocks_30d if s['recommendation'] == 'BUY'),
+        'consider':       sum(1 for s in formatted_stocks_30d if s['recommendation'] == 'CONSIDER'),
+        'NOT RECOMENDED': sum(1 for s in formatted_stocks_30d if s['recommendation'] == 'NOT RECOMMENDED'),
     }
 
     user_watchlist = []
     if current_user.is_authenticated:
         user_watchlist = [w.symbol for w in SavedStock.query.filter_by(user_id=current_user.id).all()]
 
-    # Load market health data (written by predict_single_stock.py --scan)
     market_health = _load_market_health(preds)
-
-    # Sort sector scores by 5d score descending so the template can just iterate
     if market_health and market_health.get('sector_scores'):
         market_health['sector_scores_sorted'] = sorted(
             market_health['sector_scores'].items(),
             key=lambda x: x[1].get('score_5d', 0),
-            reverse=True
+            reverse=True,
         )
 
     return render_template(
         "SP500.html",
-        stocks_5d=formatted_stocks_5d[:15], 
-        stocks_30d=formatted_stocks_30d[:15],
-        last_updated="Static Data",
-        stats_5d=stats_5d,
-        stats_30d=stats_30d,
-        user_watchlist=user_watchlist,
-        market_health=market_health,
+        stocks_5d      = formatted_stocks_5d[:15],
+        stocks_30d     = formatted_stocks_30d[:15],
+        last_updated   = "Static Data",
+        stats_5d       = stats_5d,
+        stats_30d      = stats_30d,
+        user_watchlist = user_watchlist,
+        market_health  = market_health,
     )
 
 @app.route('/nasdaq')
