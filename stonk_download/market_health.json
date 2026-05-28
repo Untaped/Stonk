@@ -1,6 +1,6 @@
 {
-  "market_score_5d": 0.1374,
-  "market_score_30d": 0.0892,
+  "market_score_5d": 0.1397,
+  "market_score_30d": 0.0906,
   "market_breadth_5d": 0.499,
   "market_breadth_30d": 0.499,
   "top_sector_5d": "Technology",
@@ -8,85 +8,85 @@
   "weakest_sector_5d": "Utilities",
   "sector_scores": {
     "Basic Materials": {
-      "score_5d": 0.1449,
-      "score_30d": 0.1088,
+      "score_5d": 0.1553,
+      "score_30d": 0.1148,
       "count": 20,
       "top_stock": "ALB",
-      "rank": 4
-    },
-    "Communication Services": {
-      "score_5d": 0.1411,
-      "score_30d": 0.1029,
-      "count": 24,
-      "top_stock": "SATS",
-      "rank": 5
-    },
-    "Consumer Cyclical": {
-      "score_5d": 0.1491,
-      "score_30d": 0.1139,
-      "count": 54,
-      "top_stock": "F",
       "rank": 3
     },
+    "Communication Services": {
+      "score_5d": 0.1441,
+      "score_30d": 0.1046,
+      "count": 24,
+      "top_stock": "SATS",
+      "rank": 6
+    },
+    "Consumer Cyclical": {
+      "score_5d": 0.1532,
+      "score_30d": 0.1182,
+      "count": 54,
+      "top_stock": "F",
+      "rank": 4
+    },
     "Consumer Defensive": {
-      "score_5d": 0.1231,
+      "score_5d": 0.1263,
       "score_30d": 0.0819,
       "count": 35,
-      "top_stock": "CAG",
+      "top_stock": "DLTR",
       "rank": 9
     },
     "Energy": {
-      "score_5d": 0.1373,
-      "score_30d": 0.0947,
+      "score_5d": 0.1461,
+      "score_30d": 0.1015,
       "count": 21,
       "top_stock": "APA",
-      "rank": 7
+      "rank": 5
     },
     "Financial Services": {
-      "score_5d": 0.1092,
-      "score_30d": 0.069,
+      "score_5d": 0.1144,
+      "score_30d": 0.071,
       "count": 70,
       "top_stock": "COIN",
       "rank": 10
     },
     "Healthcare": {
-      "score_5d": 0.1382,
-      "score_30d": 0.0931,
+      "score_5d": 0.1417,
+      "score_30d": 0.0933,
       "count": 59,
-      "top_stock": "MRNA",
-      "rank": 6
+      "top_stock": "PODD",
+      "rank": 7
     },
     "Industrials": {
-      "score_5d": 0.1329,
-      "score_30d": 0.083,
+      "score_5d": 0.1307,
+      "score_30d": 0.0822,
       "count": 74,
-      "top_stock": "VRT",
+      "top_stock": "AXON",
       "rank": 8
     },
     "Real Estate": {
-      "score_5d": 0.0894,
-      "score_30d": 0.0455,
+      "score_5d": 0.0884,
+      "score_30d": 0.045,
       "count": 31,
       "top_stock": "CSGP",
       "rank": 11
     },
     "Technology": {
-      "score_5d": 0.1984,
-      "score_30d": 0.1208,
+      "score_5d": 0.1981,
+      "score_30d": 0.1225,
       "count": 83,
       "top_stock": "QCOM",
       "rank": 1
     },
     "Unknown": {
-      "score_5d": 0.1836,
-      "score_30d": 0.1948,
+      "score_5d": 0.1865,
+      "score_30d": 0.1806,
       "count": 1,
       "top_stock": "FISV",
       "rank": 2
     },
     "Utilities": {
-      "score_5d": 0.081,
-      "score_30d": 0.0363,
+      "score_5d": 0.0812,
+      "score_30d": 0.0351,
       "count": 31,
       "top_stock": "VST",
       "rank": 12
