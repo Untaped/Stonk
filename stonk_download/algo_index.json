@@ -40,11 +40,11 @@
       "shares": 2.055161,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 251.02,
-      "current_conf": 0.4439,
-      "current_pnl": 0.031773,
-      "current_dollar_pnl": 15.8865,
-      "days_elapsed": 1,
+      "current_price": 228.99,
+      "current_conf": 0.3752,
+      "current_pnl": -0.058778,
+      "current_dollar_pnl": -29.3887,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -67,11 +67,11 @@
       "shares": 23.640662,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 21.56,
-      "current_conf": 0.342,
-      "current_pnl": 0.019385,
-      "current_dollar_pnl": 9.6927,
-      "days_elapsed": 1,
+      "current_price": 23.22,
+      "current_conf": 0.2911,
+      "current_pnl": 0.097872,
+      "current_dollar_pnl": 48.9362,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -90,7 +90,7 @@
       "horizon": "5d",
       "confidence": 0.3518,
       "target_days": 5,
-      "status": "active",
+      "status": "closed",
       "shares": 4.135991,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
@@ -100,13 +100,13 @@
       "current_dollar_pnl": -25.6846,
       "days_elapsed": 1,
       "price_is_fresh": true,
-      "exit_date": null,
-      "exit_price": null,
-      "exit_reason": null,
-      "exit_value": null,
-      "pnl": null,
-      "pnl_pct": null,
-      "dollar_pnl": null
+      "exit_date": "2026-06-01",
+      "exit_price": 109.33,
+      "exit_reason": "Stop loss (\u22129.6%)",
+      "exit_value": 452.1879,
+      "pnl": -0.095624,
+      "pnl_pct": -0.095624,
+      "dollar_pnl": -47.8121
     },
     {
       "symbol": "F",
@@ -121,11 +121,11 @@
       "shares": 30.03003,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 17.44,
-      "current_conf": 0.4102,
-      "current_pnl": 0.047447,
-      "current_dollar_pnl": 23.7237,
-      "days_elapsed": 1,
+      "current_price": 16.63,
+      "current_conf": 0.3457,
+      "current_pnl": -0.001201,
+      "current_dollar_pnl": -0.6006,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -148,11 +148,11 @@
       "shares": 3.505082,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 144.94,
-      "current_conf": 0.3462,
-      "current_pnl": 0.016053,
-      "current_dollar_pnl": 8.0266,
-      "days_elapsed": 1,
+      "current_price": 148.13,
+      "current_conf": 0.3009,
+      "current_pnl": 0.038416,
+      "current_dollar_pnl": 19.2078,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -175,11 +175,11 @@
       "shares": 1.187902,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 420.91,
-      "current_conf": 0.392,
-      "current_pnl": 0.0,
-      "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "current_price": 465.96,
+      "current_conf": 0.3125,
+      "current_pnl": 0.10703,
+      "current_dollar_pnl": 53.5148,
+      "days_elapsed": 3,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -202,11 +202,11 @@
       "shares": 10.84834,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 46.09,
-      "current_conf": 0.3839,
-      "current_pnl": 0.0,
-      "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "current_price": 46.88,
+      "current_conf": 0.3007,
+      "current_pnl": 0.01714,
+      "current_dollar_pnl": 8.5702,
+      "days_elapsed": 3,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -217,16 +217,16 @@
       "dollar_pnl": null
     }
   ],
-  "last_pick_date": "2026-05-29",
+  "last_pick_date": "2026-06-01",
   "start_date": "2026-05-28",
-  "last_run": "2026-05-29T14:11:10",
+  "last_run": "2026-06-01T17:50:57",
   "portfolio": {
     "starting_balance": 10000.0,
-    "cash": 6663.7911,
-    "invested": 3531.6448,
-    "realized_pnl": 163.7911,
-    "total_value": 10195.4359,
-    "total_return_pct": 0.019544
+    "cash": 7115.979,
+    "invested": 3100.2397,
+    "realized_pnl": 115.979,
+    "total_value": 10216.2187,
+    "total_return_pct": 0.021622
   },
   "nav_history": [
     {
@@ -236,31 +236,35 @@
     {
       "date": "2026-05-29",
       "total_value": 10195.4359
+    },
+    {
+      "date": "2026-06-01",
+      "total_value": 10216.2187
     }
   ],
-  "last_scan_date": "2026-05-29",
+  "last_scan_date": "2026-06-01",
   "stats": {
-    "active_5d": 5,
+    "active_5d": 4,
     "active_30d": 2,
-    "closed": 1,
+    "closed": 2,
     "wins": 1,
-    "losses": 0,
-    "avg_pnl": 0.327582,
-    "total_pnl": 0.327582,
+    "losses": 1,
+    "avg_pnl": 0.115979,
+    "total_pnl": 0.231958,
     "best_trade": 0.327582,
-    "worst_trade": 0.327582,
-    "win_rate": 1.0,
-    "realized_pnl_usd": 163.7911,
-    "avg_pnl_usd": 163.7911,
+    "worst_trade": -0.095624,
+    "win_rate": 0.5,
+    "realized_pnl_usd": 115.979,
+    "avg_pnl_usd": 57.9895,
     "best_trade_usd": 163.7911,
-    "worst_trade_usd": 163.7911,
-    "unrealized_pnl_usd": 31.6449,
+    "worst_trade_usd": -47.8121,
+    "unrealized_pnl_usd": 100.2397,
     "starting_balance": 10000.0,
-    "total_value": 10195.4359,
-    "cash": 6663.7911,
-    "invested": 3531.6448,
-    "total_return_pct": 0.019544,
-    "total_gain_usd": 195.4359
+    "total_value": 10216.2187,
+    "cash": 7115.979,
+    "invested": 3100.2397,
+    "total_return_pct": 0.021622,
+    "total_gain_usd": 216.2187
   },
   "top_picks": {
     "5d": [
@@ -268,243 +272,243 @@
         "symbol": "QCOM",
         "name": "QUALCOMM Incorporated",
         "sector": "Technology",
-        "price": 251.02,
-        "score": 0.4439,
-        "score_30d": 0.2114
-      },
-      {
-        "symbol": "DELL",
-        "name": "Dell Technologies Inc.",
-        "sector": "Technology",
-        "price": 420.91,
-        "score": 0.392,
-        "score_30d": 0.1578
-      },
-      {
-        "symbol": "SMCI",
-        "name": "Super Micro Computer, Inc.",
-        "sector": "Technology",
-        "price": 46.09,
-        "score": 0.3839,
-        "score_30d": 0.246
-      },
-      {
-        "symbol": "TTD",
-        "name": "The Trade Desk, Inc.",
-        "sector": "Communication Services",
-        "price": 21.56,
-        "score": 0.342,
-        "score_30d": 0.3559
-      },
-      {
-        "symbol": "F",
-        "name": "Ford Motor Company",
-        "sector": "Consumer Cyclical",
-        "price": 17.44,
-        "score": 0.334,
-        "score_30d": 0.4102
-      },
-      {
-        "symbol": "SATS",
-        "name": "EchoStar Corporation",
-        "sector": "Communication Services",
-        "price": 129.19,
-        "score": 0.3277,
-        "score_30d": 0.1746
-      },
-      {
-        "symbol": "COIN",
-        "name": "Coinbase Global, Inc.",
-        "sector": "Financial Services",
-        "price": 189.03,
-        "score": 0.3226,
-        "score_30d": 0.2804
+        "price": 228.99,
+        "score": 0.3752,
+        "score_30d": 0.1833
       },
       {
         "symbol": "DDOG",
         "name": "Datadog, Inc.",
         "sector": "Technology",
-        "price": 247.35,
-        "score": 0.3063,
+        "price": 277.49,
+        "score": 0.3287,
         "score_30d": 0.1728
       },
       {
-        "symbol": "INTU",
-        "name": "Intuit Inc.",
+        "symbol": "DELL",
+        "name": "Dell Technologies Inc.",
         "sector": "Technology",
-        "price": 331.53,
-        "score": 0.3059,
-        "score_30d": 0.2033
+        "price": 465.96,
+        "score": 0.3125,
+        "score_30d": 0.1746
       },
-      {
-        "symbol": "MU",
-        "name": "Micron Technology, Inc.",
-        "sector": "Technology",
-        "price": 971.0,
-        "score": 0.3055,
-        "score_30d": 0.1377
-      },
-      {
-        "symbol": "INTC",
-        "name": "Intel Corporation",
-        "sector": "Technology",
-        "price": 114.68,
-        "score": 0.3039,
-        "score_30d": 0.2812
-      },
-      {
-        "symbol": "ON",
-        "name": "ON Semiconductor Corporation",
-        "sector": "Technology",
-        "price": 120.62,
-        "score": 0.3011,
-        "score_30d": 0.2258
-      },
-      {
-        "symbol": "LITE",
-        "name": "Lumentum Holdings Inc.",
-        "sector": "Technology",
-        "price": 854.96,
-        "score": 0.2855,
-        "score_30d": 0.1564
-      },
-      {
-        "symbol": "SNDK",
-        "name": "Sandisk Corporation",
-        "sector": "Technology",
-        "price": 1694.98,
-        "score": 0.2851,
-        "score_30d": 0.1209
-      },
-      {
-        "symbol": "PODD",
-        "name": "Insulet Corporation",
-        "sector": "Healthcare",
-        "price": 144.94,
-        "score": 0.285,
-        "score_30d": 0.3462
-      }
-    ],
-    "30d": [
       {
         "symbol": "F",
         "name": "Ford Motor Company",
         "sector": "Consumer Cyclical",
-        "price": 17.44,
-        "score": 0.4102,
-        "score_5d": 0.334
-      },
-      {
-        "symbol": "TTD",
-        "name": "The Trade Desk, Inc.",
-        "sector": "Communication Services",
-        "price": 21.56,
-        "score": 0.3559,
-        "score_5d": 0.342
-      },
-      {
-        "symbol": "PODD",
-        "name": "Insulet Corporation",
-        "sector": "Healthcare",
-        "price": 144.94,
-        "score": 0.3462,
-        "score_5d": 0.285
-      },
-      {
-        "symbol": "CSGP",
-        "name": "CoStar Group, Inc.",
-        "sector": "Real Estate",
-        "price": 32.2,
-        "score": 0.3134,
-        "score_5d": 0.2735
-      },
-      {
-        "symbol": "EPAM",
-        "name": "EPAM Systems, Inc.",
-        "sector": "Technology",
-        "price": 102.46,
-        "score": 0.2957,
-        "score_5d": 0.2747
-      },
-      {
-        "symbol": "ZTS",
-        "name": "Zoetis Inc.",
-        "sector": "Healthcare",
-        "price": 77.69,
-        "score": 0.2927,
-        "score_5d": 0.2586
-      },
-      {
-        "symbol": "NCLH",
-        "name": "Norwegian Cruise Line Holdings ",
-        "sector": "Consumer Cyclical",
-        "price": 18.34,
-        "score": 0.2927,
-        "score_5d": 0.2513
-      },
-      {
-        "symbol": "INTC",
-        "name": "Intel Corporation",
-        "sector": "Technology",
-        "price": 114.68,
-        "score": 0.2812,
-        "score_5d": 0.3039
-      },
-      {
-        "symbol": "COIN",
-        "name": "Coinbase Global, Inc.",
-        "sector": "Financial Services",
-        "price": 189.03,
-        "score": 0.2804,
-        "score_5d": 0.3226
-      },
-      {
-        "symbol": "APA",
-        "name": "APA Corporation",
-        "sector": "Energy",
-        "price": 36.43,
-        "score": 0.2597,
-        "score_5d": 0.2739
-      },
-      {
-        "symbol": "HOOD",
-        "name": "Robinhood Markets, Inc.",
-        "sector": "Financial Services",
-        "price": 94.3,
-        "score": 0.2571,
-        "score_5d": 0.2595
-      },
-      {
-        "symbol": "DOW",
-        "name": "Dow Inc.",
-        "sector": "Basic Materials",
-        "price": 33.75,
-        "score": 0.253,
-        "score_5d": 0.2531
-      },
-      {
-        "symbol": "CHTR",
-        "name": "Charter Communications, Inc.",
-        "sector": "Communication Services",
-        "price": 144.05,
-        "score": 0.2517,
-        "score_5d": 0.2451
+        "price": 16.63,
+        "score": 0.3042,
+        "score_30d": 0.3457
       },
       {
         "symbol": "SMCI",
         "name": "Super Micro Computer, Inc.",
         "sector": "Technology",
-        "price": 46.09,
-        "score": 0.246,
-        "score_5d": 0.3839
+        "price": 46.88,
+        "score": 0.3007,
+        "score_30d": 0.3055
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel Corporation",
+        "sector": "Technology",
+        "price": 109.33,
+        "score": 0.2994,
+        "score_30d": 0.3439
+      },
+      {
+        "symbol": "TTD",
+        "name": "The Trade Desk, Inc.",
+        "sector": "Communication Services",
+        "price": 23.22,
+        "score": 0.2911,
+        "score_30d": 0.4202
+      },
+      {
+        "symbol": "MU",
+        "name": "Micron Technology, Inc.",
+        "sector": "Technology",
+        "price": 1035.5,
+        "score": 0.2902,
+        "score_30d": 0.1377
+      },
+      {
+        "symbol": "ON",
+        "name": "ON Semiconductor Corporation",
+        "sector": "Technology",
+        "price": 120.92,
+        "score": 0.2889,
+        "score_30d": 0.2083
+      },
+      {
+        "symbol": "EPAM",
+        "name": "EPAM Systems, Inc.",
+        "sector": "Technology",
+        "price": 108.76,
+        "score": 0.2833,
+        "score_30d": 0.2816
+      },
+      {
+        "symbol": "ORCL",
+        "name": "Oracle Corporation",
+        "sector": "Technology",
+        "price": 248.15,
+        "score": 0.281,
+        "score_30d": 0.1566
+      },
+      {
+        "symbol": "CHTR",
+        "name": "Charter Communications, Inc.",
+        "sector": "Communication Services",
+        "price": 142.6,
+        "score": 0.2783,
+        "score_30d": 0.3035
+      },
+      {
+        "symbol": "INTU",
+        "name": "Intuit Inc.",
+        "sector": "Technology",
+        "price": 353.76,
+        "score": 0.2765,
+        "score_30d": 0.2175
+      },
+      {
+        "symbol": "SATS",
+        "name": "EchoStar Corporation",
+        "sector": "Communication Services",
+        "price": 127.42,
+        "score": 0.2741,
+        "score_30d": 0.1574
+      },
+      {
+        "symbol": "SNDK",
+        "name": "Sandisk Corporation",
+        "sector": "Technology",
+        "price": 1761.43,
+        "score": 0.2739,
+        "score_30d": 0.1204
+      }
+    ],
+    "30d": [
+      {
+        "symbol": "TTD",
+        "name": "The Trade Desk, Inc.",
+        "sector": "Communication Services",
+        "price": 23.22,
+        "score": 0.4202,
+        "score_5d": 0.2911
+      },
+      {
+        "symbol": "F",
+        "name": "Ford Motor Company",
+        "sector": "Consumer Cyclical",
+        "price": 16.63,
+        "score": 0.3457,
+        "score_5d": 0.3042
+      },
+      {
+        "symbol": "INTC",
+        "name": "Intel Corporation",
+        "sector": "Technology",
+        "price": 109.33,
+        "score": 0.3439,
+        "score_5d": 0.2994
+      },
+      {
+        "symbol": "CSGP",
+        "name": "CoStar Group, Inc.",
+        "sector": "Real Estate",
+        "price": 33.86,
+        "score": 0.3315,
+        "score_5d": 0.2526
+      },
+      {
+        "symbol": "SMCI",
+        "name": "Super Micro Computer, Inc.",
+        "sector": "Technology",
+        "price": 46.88,
+        "score": 0.3055,
+        "score_5d": 0.3007
+      },
+      {
+        "symbol": "CHTR",
+        "name": "Charter Communications, Inc.",
+        "sector": "Communication Services",
+        "price": 142.6,
+        "score": 0.3035,
+        "score_5d": 0.2783
+      },
+      {
+        "symbol": "PODD",
+        "name": "Insulet Corporation",
+        "sector": "Healthcare",
+        "price": 148.13,
+        "score": 0.3009,
+        "score_5d": 0.27
+      },
+      {
+        "symbol": "ZTS",
+        "name": "Zoetis Inc.",
+        "sector": "Healthcare",
+        "price": 77.56,
+        "score": 0.2905,
+        "score_5d": 0.2577
+      },
+      {
+        "symbol": "EPAM",
+        "name": "EPAM Systems, Inc.",
+        "sector": "Technology",
+        "price": 108.76,
+        "score": 0.2816,
+        "score_5d": 0.2833
       },
       {
         "symbol": "PSKY",
         "name": "Paramount Skydance Corporation",
         "sector": "Communication Services",
-        "price": 10.61,
-        "score": 0.2397,
-        "score_5d": 0.2071
+        "price": 10.98,
+        "score": 0.2642,
+        "score_5d": 0.2146
+      },
+      {
+        "symbol": "APA",
+        "name": "APA Corporation",
+        "sector": "Energy",
+        "price": 37.75,
+        "score": 0.2564,
+        "score_5d": 0.2531
+      },
+      {
+        "symbol": "BLDR",
+        "name": "Builders FirstSource, Inc.",
+        "sector": "Industrials",
+        "price": 75.62,
+        "score": 0.2511,
+        "score_5d": 0.2245
+      },
+      {
+        "symbol": "COIN",
+        "name": "Coinbase Global, Inc.",
+        "sector": "Financial Services",
+        "price": 182.61,
+        "score": 0.2472,
+        "score_5d": 0.271
+      },
+      {
+        "symbol": "CCL",
+        "name": "Carnival Corporation Ltd.",
+        "sector": "Consumer Cyclical",
+        "price": 27.51,
+        "score": 0.2422,
+        "score_5d": 0.2438
+      },
+      {
+        "symbol": "NCLH",
+        "name": "Norwegian Cruise Line Holdings ",
+        "sector": "Consumer Cyclical",
+        "price": 18.06,
+        "score": 0.241,
+        "score_5d": 0.2266
       }
     ]
   }
