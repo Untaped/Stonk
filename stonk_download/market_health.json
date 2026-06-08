@@ -1,92 +1,92 @@
 {
-  "market_score_5d": 0.14,
-  "market_score_30d": 0.0848,
-  "market_breadth_5d": 0.498,
+  "market_score_5d": 0.1432,
+  "market_score_30d": 0.0862,
+  "market_breadth_5d": 0.5,
   "market_breadth_30d": 0.5,
-  "top_sector_5d": "Unknown",
+  "top_sector_5d": "Technology",
   "top_sector_30d": "Unknown",
   "weakest_sector_5d": "Utilities",
   "sector_scores": {
     "Basic Materials": {
-      "score_5d": 0.1369,
-      "score_30d": 0.1002,
+      "score_5d": 0.1498,
+      "score_30d": 0.1066,
       "count": 20,
-      "top_stock": "MOS",
-      "rank": 6
+      "top_stock": "FCX",
+      "rank": 5
     },
     "Communication Services": {
-      "score_5d": 0.1647,
-      "score_30d": 0.1106,
+      "score_5d": 0.1639,
+      "score_30d": 0.1124,
       "count": 24,
       "top_stock": "TTD",
       "rank": 3
     },
     "Consumer Cyclical": {
-      "score_5d": 0.1567,
-      "score_30d": 0.1084,
+      "score_5d": 0.1513,
+      "score_30d": 0.1031,
       "count": 54,
-      "top_stock": "NCLH",
+      "top_stock": "LULU",
       "rank": 4
     },
     "Consumer Defensive": {
-      "score_5d": 0.1301,
-      "score_30d": 0.0803,
+      "score_5d": 0.132,
+      "score_30d": 0.0836,
       "count": 35,
-      "top_stock": "EL",
+      "top_stock": "CPB",
       "rank": 7
     },
     "Energy": {
-      "score_5d": 0.1232,
-      "score_30d": 0.0851,
+      "score_5d": 0.127,
+      "score_30d": 0.0876,
       "count": 21,
-      "top_stock": "TPL",
+      "top_stock": "APA",
       "rank": 9
     },
     "Financial Services": {
-      "score_5d": 0.1161,
-      "score_30d": 0.0633,
+      "score_5d": 0.1179,
+      "score_30d": 0.0621,
       "count": 70,
       "top_stock": "COIN",
       "rank": 10
     },
     "Healthcare": {
-      "score_5d": 0.1449,
-      "score_30d": 0.0907,
+      "score_5d": 0.1364,
+      "score_30d": 0.0873,
       "count": 59,
       "top_stock": "MRNA",
-      "rank": 5
+      "rank": 6
     },
     "Industrials": {
-      "score_5d": 0.1272,
-      "score_30d": 0.0745,
+      "score_5d": 0.1314,
+      "score_30d": 0.0754,
       "count": 74,
       "top_stock": "BLDR",
       "rank": 8
     },
     "Real Estate": {
-      "score_5d": 0.0887,
-      "score_30d": 0.0434,
+      "score_5d": 0.0943,
+      "score_30d": 0.0392,
       "count": 31,
-      "top_stock": "CSGP",
+      "top_stock": "ARE",
       "rank": 11
     },
     "Technology": {
-      "score_5d": 0.2001,
-      "score_30d": 0.1174,
+      "score_5d": 0.2181,
+      "score_30d": 0.1314,
       "count": 82,
-      "top_stock": "INTC",
-      "rank": 2
-    },
-    "Unknown": {
-      "score_5d": 0.2172,
-      "score_30d": 0.2086,
-      "count": 1,
-      "top_stock": "FISV",
+      "top_stock": "SMCI",
       "rank": 1
     },
+    "Unknown": {
+      "score_5d": 0.2133,
+      "score_30d": 0.1911,
+      "count": 1,
+      "top_stock": "FISV",
+      "rank": 2
+    },
     "Utilities": {
-      "score_5d": 0.0814,
-      "score_30d": 0.0318,
+      "score_5d": 0.0796,
+      "score_30d": 0.0273,
       "count": 31,
       "top_stock": "CEG",
       "rank": 12
