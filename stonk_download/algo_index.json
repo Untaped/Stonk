@@ -719,7 +719,7 @@
       "current_conf": 0.943,
       "current_pnl": 0.076128,
       "current_dollar_pnl": 38.0639,
-      "days_elapsed": 8,
+      "days_elapsed": 9,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -986,10 +986,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 47.41,
-      "current_conf": 0.4625,
+      "current_conf": 0.4235,
       "current_pnl": -0.032844,
       "current_dollar_pnl": -16.4219,
-      "days_elapsed": 3,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1013,10 +1013,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 267.0,
-      "current_conf": 0.3554,
+      "current_conf": 0.3555,
       "current_pnl": -0.052419,
       "current_dollar_pnl": -26.2093,
-      "days_elapsed": 3,
+      "days_elapsed": 4,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1094,10 +1094,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 145.76,
-      "current_conf": 0.8342,
+      "current_conf": 0.8389,
       "current_pnl": -0.013068,
       "current_dollar_pnl": -6.5339,
-      "days_elapsed": 2,
+      "days_elapsed": 3,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1124,7 +1124,7 @@
       "current_conf": 0.8382,
       "current_pnl": 0.000993,
       "current_dollar_pnl": 0.4965,
-      "days_elapsed": 2,
+      "days_elapsed": 3,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1175,10 +1175,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 30.12,
-      "current_conf": 0.994,
+      "current_conf": 0.9893,
       "current_pnl": -0.011162,
       "current_dollar_pnl": -5.5811,
-      "days_elapsed": 1,
+      "days_elapsed": 2,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1202,10 +1202,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 47.86,
-      "current_conf": 0.8628,
+      "current_conf": 0.7981,
       "current_pnl": -0.018659,
       "current_dollar_pnl": -9.3295,
-      "days_elapsed": 1,
+      "days_elapsed": 2,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1232,7 +1232,7 @@
       "current_conf": 0.8389,
       "current_pnl": -0.043712,
       "current_dollar_pnl": -21.856,
-      "days_elapsed": 1,
+      "days_elapsed": 2,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1259,7 +1259,7 @@
       "current_conf": 0.7253,
       "current_pnl": 0.077046,
       "current_dollar_pnl": 38.5229,
-      "days_elapsed": 1,
+      "days_elapsed": 2,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1286,7 +1286,7 @@
       "current_conf": 0.7736,
       "current_pnl": 0.034951,
       "current_dollar_pnl": 17.4757,
-      "days_elapsed": 1,
+      "days_elapsed": 2,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1313,7 +1313,7 @@
       "current_conf": 0.4167,
       "current_pnl": 0.019273,
       "current_dollar_pnl": 9.6366,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1394,7 +1394,7 @@
       "current_conf": 0.3443,
       "current_pnl": -0.004608,
       "current_dollar_pnl": -2.3041,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1417,11 +1417,11 @@
       "shares": 1.192407,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 409.82,
+      "current_price": 409.5,
       "current_conf": 0.3318,
-      "current_pnl": -0.022656,
-      "current_dollar_pnl": -11.3278,
-      "days_elapsed": 0,
+      "current_pnl": -0.023419,
+      "current_dollar_pnl": -11.7093,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1445,10 +1445,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 9.94,
-      "current_conf": 0.9505,
+      "current_conf": 0.9561,
       "current_pnl": -0.004008,
       "current_dollar_pnl": -2.004,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1475,7 +1475,7 @@
       "current_conf": 0.8389,
       "current_pnl": 8.9e-05,
       "current_dollar_pnl": 0.0448,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1502,7 +1502,7 @@
       "current_conf": 0.818,
       "current_pnl": 0.007564,
       "current_dollar_pnl": 3.782,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1525,11 +1525,11 @@
       "shares": 35.816619,
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
-      "current_price": 14.04,
-      "current_conf": 0.7752,
-      "current_pnl": 0.005731,
-      "current_dollar_pnl": 2.8653,
-      "days_elapsed": 0,
+      "current_price": 14.06,
+      "current_conf": 0.784,
+      "current_pnl": 0.007163,
+      "current_dollar_pnl": 3.5817,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1556,7 +1556,7 @@
       "current_conf": 0.8313,
       "current_pnl": -0.010035,
       "current_dollar_pnl": -1.1004,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1583,7 +1583,7 @@
       "current_conf": 0.5199,
       "current_pnl": 0.0,
       "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1607,10 +1607,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 30.66,
-      "current_conf": 0.5075,
+      "current_conf": 0.4909,
       "current_pnl": 0.0,
-      "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "current_dollar_pnl": -0.0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1634,10 +1634,10 @@
       "cost_basis": 500.0,
       "alloc_dollars": 500.0,
       "current_price": 850.0,
-      "current_conf": 0.5015,
+      "current_conf": 0.4721,
       "current_pnl": 0.0,
-      "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "current_dollar_pnl": -0.0003,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1663,8 +1663,8 @@
       "current_price": 127.98,
       "current_conf": 0.4768,
       "current_pnl": 0.0,
-      "current_dollar_pnl": 0.0,
-      "days_elapsed": 0,
+      "current_dollar_pnl": -0.0,
+      "days_elapsed": 1,
       "price_is_fresh": true,
       "exit_date": null,
       "exit_price": null,
@@ -1675,16 +1675,16 @@
       "dollar_pnl": null
     }
   ],
-  "last_pick_date": "2026-06-18",
+  "last_pick_date": "2026-06-19",
   "start_date": "2026-05-28",
-  "last_run": "2026-06-18T13:19:45",
+  "last_run": "2026-06-19T14:42:03",
   "portfolio": {
     "starting_balance": 10000.0,
     "cash": 0.0,
-    "invested": 10280.6038,
+    "invested": 10280.9386,
     "realized_pnl": 272.3843,
-    "total_value": 10280.6038,
-    "total_return_pct": 0.02806
+    "total_value": 10280.9386,
+    "total_return_pct": 0.028094
   },
   "nav_history": [
     {
@@ -1746,9 +1746,13 @@
     {
       "date": "2026-06-18",
       "total_value": 10280.6038
+    },
+    {
+      "date": "2026-06-19",
+      "total_value": 10280.9386
     }
   ],
-  "last_scan_date": "2026-06-18",
+  "last_scan_date": "2026-06-19",
   "stats": {
     "active_5d": 9,
     "active_30d": 13,
@@ -1764,16 +1768,24 @@
     "avg_pnl_usd": 6.8096,
     "best_trade_usd": 163.7911,
     "worst_trade_usd": -139.8868,
-    "unrealized_pnl_usd": 8.2197,
+    "unrealized_pnl_usd": 8.5543,
     "starting_balance": 10000.0,
-    "total_value": 10280.6038,
+    "total_value": 10280.9386,
     "cash": 0.0,
-    "invested": 10280.6038,
-    "total_return_pct": 0.02806,
-    "total_gain_usd": 280.6038
+    "invested": 10280.9386,
+    "total_return_pct": 0.028094,
+    "total_gain_usd": 280.9386
   },
   "top_picks": {
     "5d": [
+      {
+        "symbol": "MRVL",
+        "name": "Marvell Technology, Inc.",
+        "sector": "Technology",
+        "price": 310.58,
+        "score": 0.5687,
+        "score_30d": 0.6682
+      },
       {
         "symbol": "CTSH",
         "name": "Cognizant Technology Solutions ",
@@ -1787,16 +1799,8 @@
         "name": "Super Micro Computer, Inc.",
         "sector": "Technology",
         "price": 30.66,
-        "score": 0.5075,
+        "score": 0.4909,
         "score_30d": 0.7724
-      },
-      {
-        "symbol": "LITE",
-        "name": "Lumentum Holdings Inc.",
-        "sector": "Technology",
-        "price": 850.0,
-        "score": 0.5015,
-        "score_30d": 0.7322
       },
       {
         "symbol": "ACN",
@@ -1815,28 +1819,36 @@
         "score_30d": 0.7253
       },
       {
-        "symbol": "HPE",
-        "name": "Hewlett Packard Enterprise Comp",
+        "symbol": "LITE",
+        "name": "Lumentum Holdings Inc.",
         "sector": "Technology",
-        "price": 47.41,
-        "score": 0.4625,
-        "score_30d": 0.7934
+        "price": 850.0,
+        "score": 0.4721,
+        "score_30d": 0.7283
+      },
+      {
+        "symbol": "MPWR",
+        "name": "Monolithic Power Systems, Inc.",
+        "sector": "Technology",
+        "price": 1563.7,
+        "score": 0.4368,
+        "score_30d": 0.584
       },
       {
         "symbol": "INTC",
         "name": "Intel Corporation",
         "sector": "Technology",
         "price": 133.99,
-        "score": 0.4582,
+        "score": 0.4329,
         "score_30d": 0.7498
       },
       {
-        "symbol": "WDAY",
-        "name": "Workday, Inc.",
+        "symbol": "HPE",
+        "name": "Hewlett Packard Enterprise Comp",
         "sector": "Technology",
-        "price": 116.93,
-        "score": 0.4292,
-        "score_30d": 0.736
+        "price": 47.41,
+        "score": 0.4235,
+        "score_30d": 0.7934
       },
       {
         "symbol": "TTD",
@@ -1851,16 +1863,24 @@
         "name": "Micron Technology, Inc.",
         "sector": "Technology",
         "price": 1133.99,
-        "score": 0.4153,
-        "score_30d": 0.4883
+        "score": 0.4113,
+        "score_30d": 0.4902
       },
       {
-        "symbol": "IT",
-        "name": "Gartner, Inc.",
+        "symbol": "WDAY",
+        "name": "Workday, Inc.",
         "sector": "Technology",
-        "price": 127.49,
-        "score": 0.4108,
-        "score_30d": 0.6985
+        "price": 116.93,
+        "score": 0.409,
+        "score_30d": 0.736
+      },
+      {
+        "symbol": "SATS",
+        "name": "EchoStar Corporation",
+        "sector": "Communication Services",
+        "price": 109.17,
+        "score": 0.4086,
+        "score_30d": 0.758
       },
       {
         "symbol": "SNDK",
@@ -1871,28 +1891,12 @@
         "score_30d": 0.4883
       },
       {
-        "symbol": "COHR",
-        "name": "Coherent Corp.",
+        "symbol": "FLEX",
+        "name": "Flex Ltd.",
         "sector": "Technology",
-        "price": 389.57,
-        "score": 0.3925,
-        "score_30d": 0.6595
-      },
-      {
-        "symbol": "SWKS",
-        "name": "Skyworks Solutions, Inc.",
-        "sector": "Technology",
-        "price": 72.45,
-        "score": 0.3887,
-        "score_30d": 0.7718
-      },
-      {
-        "symbol": "SATS",
-        "name": "EchoStar Corporation",
-        "sector": "Communication Services",
-        "price": 109.17,
-        "score": 0.3875,
-        "score_30d": 0.758
+        "price": 147.61,
+        "score": 0.395,
+        "score_30d": 0.7139
       }
     ],
     "30d": [
@@ -1901,7 +1905,7 @@
         "name": "CoStar Group, Inc.",
         "sector": "Real Estate",
         "price": 30.12,
-        "score": 0.994,
+        "score": 0.9893,
         "score_5d": 0.3444
       },
       {
@@ -1917,7 +1921,7 @@
         "name": "Paramount Skydance Corporation",
         "sector": "Communication Services",
         "price": 9.94,
-        "score": 0.9505,
+        "score": 0.9561,
         "score_5d": 0.3031
       },
       {
@@ -1926,23 +1930,23 @@
         "sector": "Basic Materials",
         "price": 22.9,
         "score": 0.943,
-        "score_5d": 0.2512
-      },
-      {
-        "symbol": "FISV",
-        "name": "Fiserv, Inc.",
-        "sector": "Unknown",
-        "price": 47.86,
-        "score": 0.8628,
-        "score_5d": 0.2985
+        "score_5d": 0.2455
       },
       {
         "symbol": "CMG",
         "name": "Chipotle Mexican Grill, Inc.",
         "sector": "Consumer Cyclical",
-        "price": 32.48,
+        "price": 32.49,
         "score": 0.8574,
-        "score_5d": 0.2312
+        "score_5d": 0.2044
+      },
+      {
+        "symbol": "PODD",
+        "name": "Insulet Corporation",
+        "sector": "Healthcare",
+        "price": 145.76,
+        "score": 0.8389,
+        "score_5d": 0.3829
       },
       {
         "symbol": "CHTR",
@@ -1966,15 +1970,7 @@
         "sector": "Consumer Cyclical",
         "price": 30.24,
         "score": 0.8382,
-        "score_5d": 0.2507
-      },
-      {
-        "symbol": "PODD",
-        "name": "Insulet Corporation",
-        "sector": "Healthcare",
-        "price": 145.76,
-        "score": 0.8342,
-        "score_5d": 0.3593
+        "score_5d": 0.2445
       },
       {
         "symbol": "INTU",
@@ -1982,7 +1978,7 @@
         "sector": "Technology",
         "price": 267.0,
         "score": 0.8313,
-        "score_5d": 0.3554
+        "score_5d": 0.3555
       },
       {
         "symbol": "COIN",
@@ -1990,7 +1986,15 @@
         "sector": "Financial Services",
         "price": 163.26,
         "score": 0.8313,
-        "score_5d": 0.3479
+        "score_5d": 0.3236
+      },
+      {
+        "symbol": "BLDR",
+        "name": "Builders FirstSource, Inc.",
+        "sector": "Industrials",
+        "price": 80.59,
+        "score": 0.8241,
+        "score_5d": 0.2627
       },
       {
         "symbol": "BSX",
@@ -1998,23 +2002,23 @@
         "sector": "Healthcare",
         "price": 45.29,
         "score": 0.818,
-        "score_5d": 0.2391
+        "score_5d": 0.2375
       },
       {
-        "symbol": "GDDY",
-        "name": "GoDaddy Inc.",
-        "sector": "Technology",
-        "price": 77.04,
-        "score": 0.807,
-        "score_5d": 0.3181
+        "symbol": "APA",
+        "name": "APA Corporation",
+        "sector": "Energy",
+        "price": 33.03,
+        "score": 0.8158,
+        "score_5d": 0.2535
       },
       {
-        "symbol": "HPE",
-        "name": "Hewlett Packard Enterprise Comp",
-        "sector": "Technology",
-        "price": 47.41,
-        "score": 0.7934,
-        "score_5d": 0.4625
+        "symbol": "CPRT",
+        "name": "Copart, Inc.",
+        "sector": "Industrials",
+        "price": 30.23,
+        "score": 0.8001,
+        "score_5d": 0.1973
       }
     ]
   }
