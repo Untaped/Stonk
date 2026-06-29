@@ -637,11 +637,13 @@ def sp500_list():
     """
     Display S&P 500 predictions.
 
-    score_5d and score_30d in the CSV are now AUC-weighted means computed
-    by predict_single_stock.py using each model's real calibrated_auc from
-    its _info.pkl.  We read them directly — no re-weighting needed here —
-    so the score, recommendation label, and algo index threshold are all
-    derived from the exact same number.
+    score_5d and score_30d in the CSV are produced by predict_single_stock.py
+    — a stacking meta-learner blend when stock_ai/ensemble_stacker_{5d,30d}.pkl
+    is present (see train_model.py: train_ensemble_stacker), falling back to
+    an AUC-weighted mean of each model's calibrated_auc otherwise. Either way
+    we read the value directly — no re-weighting needed here — so the score,
+    recommendation label, and algo index threshold are all derived from the
+    exact same number.
     """
     preds = load_predictions(PREDICTIONS_CSV)
 
@@ -649,7 +651,8 @@ def sp500_list():
     formatted_stocks_30d = []
 
     for p in preds:
-        # Use the AUC-weighted scores written by the predictor
+        # score_5d/score_30d already reflect the predictor's best available
+        # blend (stacker if loaded, else AUC-weighted mean) — see docstring.
         prob_5d  = float(p.get('score_5d',  0) or 0)
         prob_30d = float(p.get('score_30d', 0) or 0)
 
