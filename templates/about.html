@@ -4,293 +4,260 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Creator's Notes - Strategy AI</title>
-    
-    <meta name="theme-color" content="#1a202c">
+    <title>LitlGuy Terminal — Creator's Notes</title>
+    <meta name="theme-color" content="#0d0f12">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            --secondary-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-            --card-bg: rgba(26, 32, 44, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --bg:       #0d0f12;
+            --bg2:      #13161b;
+            --bg3:      #1a1e26;
+            --border:   #2a2f3a;
+            --border2:  #363c4a;
+            --text:     #c8cdd8;
+            --text-dim: #5a6070;
+            --text-hdr: #7a8494;
+            --accent:   #f5a623;
+            --green:    #00c48c;
+            --red:      #e84545;
+            --blue:     #3a8ef6;
+            --purple:   #9b72f5;
         }
 
         body {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* --- Glass Cards --- */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
+        .mono { font-family: 'IBM Plex Mono', monospace; }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        /* ── Top bar ── */
+        .top-bar { background: var(--bg); border-bottom: 2px solid var(--accent); padding: 0 16px; position: sticky; top: 0; z-index: 100; }
+        .top-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 38px; }
+        .top-bar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.08em; }
+        .top-bar-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; }
 
-        /* --- Orbs --- */
-        .floating-orb {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-        .floating-orb:nth-child(1) { width: 80px; height: 80px; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); top: 10%; left: 10%; }
-        .floating-orb:nth-child(2) { width: 120px; height: 120px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); top: 70%; right: 10%; animation-delay: 2s; }
-        .floating-orb:nth-child(3) { width: 60px; height: 60px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); top: 40%; left: 70%; animation-delay: 4s; }
-        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 33% { transform: translateY(-20px) rotate(120deg); } 66% { transform: translateY(-10px) rotate(240deg); } }
+        /* ── Layout ── */
+        .layout { display: flex; min-height: calc(100vh - 38px); }
 
-        @media (max-width: 768px) {
-            .floating-orb { display: none; }
-        }
+        /* ── Sidebar ── */
+        .sidebar { width: 200px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: none; flex-direction: column; padding: 16px 0; }
+        @media (min-width: 768px) { .sidebar { display: flex; } }
+
+        .sidebar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; padding: 0 16px 14px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--text-dim); text-decoration: none; border-left: 2px solid transparent; transition: color 0.1s, border-color 0.1s, background 0.1s; }
+        .nav-link:hover { color: var(--text); background: var(--bg3); }
+        .nav-link.active-dash  { color: var(--blue);   border-left-color: var(--blue);   background: rgba(58,142,246,0.07); }
+        .nav-link.active-sp    { color: var(--green);  border-left-color: var(--green);  background: rgba(0,196,140,0.07); }
+        .nav-link.active-about { color: var(--red);    border-left-color: var(--red);    background: rgba(232,69,69,0.07); }
+
+        /* ── Main ── */
+        .main { flex: 1; padding: 0 16px 48px; min-width: 0; }
+
+        /* ── Section header ── */
+        .section-hdr { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 5px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hdr); }
+
+        /* ── Page title ── */
+        .page-title-row { border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #e8ecf4; letter-spacing: 0.02em; }
+
+        /* ── Log entry card ── */
+        .log-card { background: var(--bg2); border: 1px solid var(--border); margin-top: 2px; }
+        .log-card:hover { border-color: var(--border2); }
+        .log-card-hdr { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 7px 12px; display: flex; align-items: center; gap: 10px; }
+        .log-card-hdr-dot { width: 6px; height: 6px; flex-shrink: 0; }
+        .log-card-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+        .log-card-body { padding: 12px 14px; font-size: 12px; color: var(--text); line-height: 1.7; }
+
+        /* ── Accent variants ── */
+        .accent-blue  .log-card-hdr { border-left: 3px solid var(--blue); }
+        .accent-blue  .log-card-hdr-dot { background: var(--blue); }
+        .accent-blue  .log-card-label { color: var(--blue); }
+        .accent-red   .log-card-hdr { border-left: 3px solid var(--red); }
+        .accent-red   .log-card-hdr-dot { background: var(--red); }
+        .accent-red   .log-card-label { color: var(--red); }
+        .accent-green .log-card-hdr { border-left: 3px solid var(--green); }
+        .accent-green .log-card-hdr-dot { background: var(--green); }
+        .accent-green .log-card-label { color: var(--green); }
+        .accent-purple .log-card-hdr { border-left: 3px solid var(--purple); }
+        .accent-purple .log-card-hdr-dot { background: var(--purple); }
+        .accent-purple .log-card-label { color: var(--purple); }
+
+        /* Contact block */
+        .contact-block { background: var(--bg3); border: 1px solid var(--border); padding: 10px 14px; display: inline-flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .contact-icon { background: var(--border); color: var(--text-hdr); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .contact-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hdr); margin-bottom: 2px; }
+        .contact-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text); }
+
+        /* ── Mobile nav ── */
+        .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bg2); border-top: 1px solid var(--border); }
+        @media (min-width: 768px) { .mobile-nav { display: none; } }
+        .mobile-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; gap: 3px; border-top: 2px solid transparent; }
+        .mobile-nav-item.active-about { color: var(--red); border-top-color: var(--red); }
+        .mobile-nav-item:hover { color: var(--text); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
     </style>
 </head>
-<body class="text-white">
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
+<body>
 
-    <div class="flex flex-col md:flex-row min-h-screen">
+<!-- Layout -->
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">LITLGUY.INC</div>
+        <a href="/"      class="nav-link"><i class="fas fa-search-dollar" style="width:14px;"></i> DASHBOARD</a>
+        <a href="/sp500" class="nav-link"><i class="fas fa-layer-group"   style="width:14px;"></i> TOP S&amp;P 500</a>
+        <a href="/about" class="nav-link active-about"><i class="fas fa-laptop-code" style="width:14px;"></i> CREATOR'S NOTES</a>
         
-        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
-            <div>
-                <h1 class="text-3xl font-black mb-8 gradient-text">
-                    <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
-                </h1>
-                <nav class="space-y-2">
-                    <a href="/" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
-                    </a>
-                    <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
-                    </a>
-                    <a href="/about" class="flex items-center px-4 py-3 bg-red-500/10 rounded-xl text-red-400 font-bold border-l-4 border-red-500">
-                        <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <main class="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto relative z-10 pb-28 md:pb-6">
-
-            <div class="md:hidden flex justify-between items-center mb-4">
-                <h1 class="text-2xl font-black gradient-text"><i class="fas fa-code mr-2"></i>Dev Notes</h1>
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span class="text-xs text-gray-400 font-mono hidden sm:inline">AI ONLINE</span>
-                    </div>
-                    {% if current_user.is_authenticated %}
-                        <a href="/logout" class="text-green-400 hover:text-green-300 transition-colors"><i class="fas fa-user-check text-xl"></i></a>
-                    {% else %}
-                        <a href="/login" class="text-blue-400 hover:text-blue-300 transition-colors"><i class="fas fa-user-circle text-xl"></i></a>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="max-w-3xl mx-auto space-y-6 animate-fade-in mt-8 md:mt-2">
-                <h2 class="text-3xl md:text-4xl font-black mb-8 gradient-text text-center hidden md:block">Creator's Notes</h2>
-
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-blue-500/20 p-2 rounded-lg">
-                            <i class="fas fa-laptop-code text-blue-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">Dev Notes:</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                        This website is still in beta and has such will have glitches and inaccuracies. Use the Search Bar for a Deeper Analysis Outside of the Base Reccomendations. Data is updated daily and I am always working on it, I hope to launch soon. <strong class="text-white">The five day AUC (Accuracy) of 3% is 0.51, 5% is 0.62, 10% is 0.76, and 15% is 0.78. The 30 Day AUC (Accuracy) of 15% is 0.65, 20% is 0.75, 25% is 0.80, and 30% is 0.84.</strong>
-                    </p>
-                </div>
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-red-500/20 p-2 rounded-lg">
-                            <i class="fas fa-layer-group text-red-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-red-400 font-bold text-sm uppercase tracking-widest">Investing Strategy Recommendation</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                        <class="text-white"> The strategy that I found most successful is to take the top 10 recommendations—as long as they have high confidence levels from both the 5-and 30-day lists, narrow that list down through research, and invest. Every day, check the news for qualitatitve factors and check the website to see if the algorithm's confidence in those specific stocks changes. If that confidence is low, sell, and if that confidence is high, hold. As you sell, continue to find good stocks to refill your portfolio.
-                    </p>
-                </div>
-
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-green-500/20 p-2 rounded-lg">
-                            <i class="fas fa-layer-group text-green-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-green-400 font-bold text-sm uppercase tracking-widest">Log Update: April 8, 2025</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                        <class="text-white"> Added Sound Effects.
-                    </p>
-                </div>
-                
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-green-500/20 p-2 rounded-lg">
-                            <i class="fas fa-layer-group text-green-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-green-400 font-bold text-sm uppercase tracking-widest">Log Update: April 5, 2025</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                        <class="text-white"> Added Username and Login System as well as Stock Tracking.
-                    </p>
-                </div>
-
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-green-500/20 p-2 rounded-lg">
-                            <i class="fas fa-shield-alt text-green-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-green-400 font-bold text-sm uppercase tracking-widest">Log Update: April 1, 2025</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                        <class="text-white">Implemented Dynamic Market Trend Identification and Increased Data Collection for Higher AUC and more Accurate Algorithm Results. Added Web Protection and Anti-Bot measures to Prevent Web Scanning and Spamming.
-                    </p>
-                </div>
-
-                <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-green-500/20 p-2 rounded-lg">
-                            <i class="fas fa-chart-pie text-green-400 text-lg"></i>
-                        </div>
-                        <h3 class="text-green-400 font-bold text-sm uppercase tracking-widest">Log Update: Mar 14, 2025</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
-                        <class="text-white">Added in Depth 30-day Market Prediction Analysis for the S&P 500.
-                    </p>
-                    <center><div class="inline-flex items-center gap-3 bg-gray-900/50 px-4 py-3 rounded-xl border border-gray-700/50">
-                        <div class="bg-gray-800 p-2 rounded-lg">
-                            <i class="fas fa-envelope text-gray-400"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Business Inquiries</p>
-                            <span class="text-sm font-mono text-gray-300">jpallen783@gmail.com</span>
-                        </div>
-                    </div></center>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
-        <div class="flex justify-around items-center h-16">
-            <a href="/" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-400 transition-colors">
-                <i class="fas fa-search-dollar text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
-            </a>
-
-            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-green-400 transition-colors">
-                <i class="fas fa-layer-group text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
-            </a>
-            <a href="/about" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-laptop-code text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">About</span>
-            </a>
+        {% if current_user.is_authenticated %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/logout" class="nav-link" style="padding:6px 0; border:none; color:var(--red);"><i class="fas fa-sign-out-alt" style="width:14px;"></i> LOGOUT</a>
         </div>
-    </nav>
-</body>
-</html>
-    <script>
-    // --- UI Sound Effects (Web Audio API) ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
+        {% else %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/login" class="nav-link" style="padding:6px 0; border:none; color:var(--blue);"><i class="fas fa-user-circle" style="width:14px;"></i> LOG IN</a>
+        </div>
+        {% endif %}
+    </aside>
 
-    function playClickSound() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        
-        const now = audioCtx.currentTime;
+    <!-- Main -->
+    <main class="main">
+        <!-- Dev Notes -->
+        <div class="log-card accent-blue" style="margin-top:12px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-laptop-code" style="font-size:11px; color:var(--blue);"></i>
+                <span class="log-card-label">DEV NOTES — CURRENT</span>
+            </div>
+            <div class="log-card-body">
+                This website is still in beta and will have glitches and inaccuracies. Use the Search Bar for a deeper analysis
+                outside of the base recommendations. Data is updated daily and I am always working on it — I hope to launch soon.
+                <br><br>
+            <center><strong style="color:#e8ecf4;">5 Day AUC: 3%→0.51 &nbsp;/&nbsp; 5%→0.62 &nbsp;/&nbsp; 10%→0.76 &nbsp;/&nbsp; 15%→0.78</strong><br>
+                <strong style="color:#e8ecf4;">30 Day AUC: 15%→0.65 &nbsp;/&nbsp; 20%→0.75 &nbsp;/&nbsp; 25%→0.80 &nbsp;/&nbsp; 30%→0.84</strong> </center>
+            </div>
+        </div>
 
-        // Tone 1: The High "Click"
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine'; 
-        osc1.frequency.setValueAtTime(400, now); 
-        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03); 
-        gain1.gain.setValueAtTime(0.15, now); 
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03); 
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(now);
-        osc1.stop(now + 0.02); 
+        <!-- Strategy -->
+        <div class="log-card accent-red" style="margin-top:2px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-layer-group" style="font-size:11px; color:var(--red);"></i>
+                <span class="log-card-label">INVESTING STRATEGY RECOMMENDATION</span>
+            </div>
+            <div class="log-card-body">
+                The strategy I found most successful is to take the top 10 recommendations — as long as they have high confidence
+                from both the 5-day and 30-day lists — narrow the list down through research, and invest. Check the news daily for
+                qualitative factors and revisit the site to see if the algorithm's confidence in those stocks changes. If confidence
+                drops, sell. If it holds, hold. As you exit positions, rotate into new high-confidence picks.
+            </div>
+        </div>
 
-        // Tone 2: The Low "Thock"
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        const delay = 0.0005; 
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(300, now + delay); 
-        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04); 
-        gain2.gain.setValueAtTime(0, now); 
-        gain2.gain.setValueAtTime(0.15, now + delay); 
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04); 
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(now + delay);
-        osc2.stop(now + delay + 0.04); 
-    }
+        <!-- Log header -->
+        <div class="section-hdr" style="margin-top:14px;">CHANGELOG</div>
 
-    // Automatically attach the sound to tabs, buttons, and links
-    document.addEventListener('DOMContentLoaded', () => {
-        // I added 'li' and '.nav-item' here just in case your tabs use list elements
-        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
-        
-        clickableElements.forEach(el => {
-            el.addEventListener('click', function(e) {
-                // 1. Play the sound immediately
-                playClickSound();
+        <!-- Log entries -->
+        <div class="log-card accent-green" style="margin-top:2px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-volume-up" style="font-size:11px; color:var(--green);"></i>
+                <span class="log-card-label">LOG UPDATE — 2025-04-12</span>
+            </div>
+            <div class="log-card-body">Added sound effects.</div>
+        </div>
 
-                // 2. Check if this element is a link going to another page
-                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
-                    // Stop the browser from leaving the page instantly
-                    e.preventDefault();
-                    
-                    const targetUrl = this.href;
+        <div class="log-card accent-green" style="margin-top:2px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-layer-group" style="font-size:11px; color:var(--green);"></i>
+                <span class="log-card-label">LOG UPDATE — 2025-04-05</span>
+            </div>
+            <div class="log-card-body">Added username and login system as well as stock tracking / watchlist.</div>
+        </div>
 
-                    // Wait 100 milliseconds for the sound to finish, then go to the new page
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 100);
-                }
-            });
+        <div class="log-card accent-green" style="margin-top:2px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-shield-alt" style="font-size:11px; color:var(--green);"></i>
+                <span class="log-card-label">LOG UPDATE — 2025-04-01</span>
+            </div>
+            <div class="log-card-body">
+                Implemented dynamic market trend identification and increased data collection for higher AUC and more accurate
+                algorithm results. Added web protection and anti-bot measures to prevent scanning and spamming.
+            </div>
+        </div>
+
+        <div class="log-card accent-green" style="margin-top:2px;">
+            <div class="log-card-hdr">
+                <div class="log-card-hdr-dot"></div>
+                <i class="fas fa-chart-pie" style="font-size:11px; color:var(--green);"></i>
+                <span class="log-card-label">LOG UPDATE — 2025-03-14</span>
+            </div>
+            <div class="log-card-body">
+                Added in-depth 30-day market prediction analysis for the S&amp;P 500.
+            </div>
+        </div>
+                <center><div class="contact-block">
+                    <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <div class="contact-label">Business Inquiries</div>
+                        <div class="contact-val">jpallen783@gmail.com</div>
+                    </div>
+                </div> </center>
+    </main>
+</div>
+
+<!-- Mobile nav -->
+<nav class="mobile-nav">
+    <a href="/"      class="mobile-nav-item"><i class="fas fa-search-dollar" style="font-size:16px;"></i>DASHBOARD</a>
+    <a href="/sp500" class="mobile-nav-item"><i class="fas fa-layer-group"   style="font-size:16px;"></i>S&amp;P 500</a>
+    <a href="/about" class="mobile-nav-item active-about"><i class="fas fa-laptop-code" style="font-size:16px;"></i>NOTES</a>
+</nav>
+
+<script>
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playClickSound() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const osc1 = audioCtx.createOscillator(), gain1 = audioCtx.createGain();
+    osc1.type='sine'; osc1.frequency.setValueAtTime(400,now); osc1.frequency.exponentialRampToValueAtTime(800,now+0.03);
+    gain1.gain.setValueAtTime(0.15,now); gain1.gain.exponentialRampToValueAtTime(0.001,now+0.03);
+    osc1.connect(gain1); gain1.connect(audioCtx.destination); osc1.start(now); osc1.stop(now+0.02);
+    const osc2 = audioCtx.createOscillator(), gain2 = audioCtx.createGain(), delay=0.0005;
+    osc2.type='sine'; osc2.frequency.setValueAtTime(300,now+delay); osc2.frequency.exponentialRampToValueAtTime(150,now+delay+0.04);
+    gain2.gain.setValueAtTime(0,now); gain2.gain.setValueAtTime(0.15,now+delay); gain2.gain.exponentialRampToValueAtTime(0.001,now+delay+0.04);
+    osc2.connect(gain2); gain2.connect(audioCtx.destination); osc2.start(now+delay); osc2.stop(now+delay+0.04);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button,a,.cursor-pointer').forEach(el => {
+        el.addEventListener('click', function(e) {
+            playClickSound();
+            if (this.tagName.toLowerCase()==='a' && this.href && !this.href.includes('#')) {
+                e.preventDefault(); const url=this.href; setTimeout(()=>{window.location.href=url;},100);
+            }
         });
     });
+});
 </script>
+</body>
+</html>

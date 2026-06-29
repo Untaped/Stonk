@@ -5,9 +5,8 @@
     <meta name="google-site-verification" content="-EYeOaB9zf9RqlD7LYWpstpmfwJTpBdHsQxGkygG2FQ" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>LitlGuy - Pocket Quant</title>
-    
-    <meta name="theme-color" content="#1a202c">
+    <title>LitlGuy Terminal — Dashboard</title>
+    <meta name="theme-color" content="#0d0f12">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +17,6 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
       if ('serviceWorker' in navigator) {
@@ -27,1094 +25,1035 @@
         });
       }
     </script>
+
     <style>
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            --secondary-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-            --card-bg: rgba(26, 32, 44, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --bg:       #0d0f12;
+            --bg2:      #13161b;
+            --bg3:      #1a1e26;
+            --border:   #2a2f3a;
+            --border2:  #363c4a;
+            --text:     #c8cdd8;
+            --text-dim: #5a6070;
+            --text-hdr: #7a8494;
+            --accent:   #f5a623;
+            --green:    #00c48c;
+            --red:      #e84545;
+            --blue:     #3a8ef6;
+            --purple:   #9b72f5;
         }
 
         body {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
-            /* Fix for iOS bottom safe area */
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* --- Animations --- */
-        .animate-spin-slow { animation: spin 3s linear infinite; }
-        .animate-spin-reverse { animation: spin-reverse 2s linear infinite; }
-        @keyframes spin-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-        .loading-text-fade { animation: textFade 0.5s ease-in-out; }
-        @keyframes textFade { 0% { opacity: 0; transform: translateY(5px); } 80% { opacity: 1; transform: translateY(0); } }
+        .mono { font-family: 'IBM Plex Mono', monospace; }
 
-        /* --- Glass Cards --- */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+        /* ── Top bar ── */
+        .top-bar {
+            background: var(--bg);
+            border-bottom: 2px solid var(--accent);
+            padding: 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 38px;
+        }
+        .top-bar-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+        }
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .top-bar-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        /* ── Layout ── */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 38px);
         }
 
-        /* --- Orbs --- */
-        .floating-orb {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 200px;
+            flex-shrink: 0;
+            background: var(--bg2);
+            border-right: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            padding: 16px 0;
         }
-        .floating-orb:nth-child(1) { width: 80px; height: 80px; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); top: 10%; left: 10%; }
-        .floating-orb:nth-child(2) { width: 120px; height: 120px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); top: 70%; right: 10%; animation-delay: 2s; }
-        .floating-orb:nth-child(3) { width: 60px; height: 60px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); top: 40%; left: 70%; animation-delay: 4s; }
-        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 33% { transform: translateY(-20px) rotate(120deg); } 66% { transform: translateY(-10px) rotate(240deg); } }
+        @media (min-width: 768px) { .sidebar { display: flex; } }
 
-        /* --- Form Elements --- */
-        .form-input {
-            background: rgba(26, 32, 44, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            transition: all 0.3s ease;
+        .sidebar-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.06em;
+            padding: 0 16px 14px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 8px;
         }
-        .form-input:focus {
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 30px rgba(74, 85, 104, 0.5);
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: color 0.1s, border-color 0.1s, background 0.1s;
+        }
+        .nav-link:hover { color: var(--text); background: var(--bg3); }
+        .nav-link.active-dash { color: var(--blue); border-left-color: var(--blue); background: rgba(58,142,246,0.07); }
+        .nav-link.active-sp   { color: var(--green); border-left-color: var(--green); background: rgba(0,196,140,0.07); }
+        .nav-link.active-about { color: var(--red); border-left-color: var(--red); background: rgba(232,69,69,0.07); }
+        .nav-link.active-algo { color: var(--accent); border-left-color: var(--accent); background: rgba(245,166,35,0.07); }
+
+        /* Algo widget in sidebar */
+        .algo-widget {
+            margin: 12px 10px 0;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            padding: 10px 12px;
+            text-decoration: none;
+            display: block;
+            transition: border-color 0.1s;
+        }
+        .algo-widget:hover { border-color: var(--border2); }
+        .algo-widget-hdr {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: var(--text-hdr);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .algo-widget-val {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .algo-widget-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+        .algo-widget-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+
+        /* ── Main content ── */
+        .main { flex: 1; padding: 0 16px 32px; min-width: 0; }
+
+        /* ── Section header ── */
+        .section-hdr {
+            background: var(--bg3);
+            border-bottom: 1px solid var(--border);
+            padding: 5px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-hdr);
+        }
+
+        /* ── Search form ── */
+        .search-wrap {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 11px;
+        }
+        .search-input {
+            width: 100%;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            color: #e8ecf4;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            padding: 8px 12px 8px 30px;
             outline: none;
+            transition: border-color 0.1s;
         }
-        .btn-primary {
-            background: var(--primary-gradient);
+        .search-input::placeholder { color: var(--text-dim); }
+        .search-input:focus { border-color: var(--accent); }
+        .search-btn {
+            background: var(--accent);
+            color: #000;
             border: none;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            /* Ensure buttons are clickable */
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            padding: 8px 20px;
             cursor: pointer;
-            z-index: 1; 
+            white-space: nowrap;
+            transition: background 0.1s;
+        }
+        .search-btn:hover { background: #e0961e; }
+
+        /* ── Auth buttons ── */
+        .auth-btn {
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 7px 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: border-color 0.1s, background 0.1s;
+        }
+        .auth-btn:hover { border-color: var(--border2); background: var(--bg3); }
+        .auth-btn-primary {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
+        }
+        .auth-btn-primary:hover { background: #2a7ee0; border-color: #2a7ee0; }
+        .auth-btn-danger { color: var(--red); border-color: rgba(232,69,69,0.3); }
+        .auth-btn-danger:hover { background: rgba(232,69,69,0.08); border-color: var(--red); }
+
+        /* ── Watchlist stocks ── */
+        .watchlist-grid { display: flex; flex-wrap: wrap; gap: 2px; padding: 10px 0; }
+        .watchlist-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            min-width: 150px;
+            display: flex;
+            align-items: stretch;
+        }
+        .watchlist-card:hover { border-color: var(--border2); }
+        .watchlist-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+        .watchlist-symbol {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e8ecf4;
+        }
+        .watchlist-price {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-hdr);
+        }
+        .watchlist-pnl {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .watchlist-remove {
+            background: transparent;
+            border: none;
+            border-left: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0 10px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: color 0.1s;
+        }
+        .watchlist-remove:hover { color: var(--red); }
+
+        /* ── Login CTA ── */
+        .login-cta {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .login-cta-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-hdr);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .login-cta-text { font-size: 11px; color: var(--text-dim); margin-bottom: 14px; }
+        .login-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--blue);
+            color: #fff;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            padding: 8px 20px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .login-cta-btn:hover { background: #2a7ee0; }
+
+        /* ── Result cards ── */
+        .result-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+        .result-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e8ecf4;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .result-title a { color: inherit; }
+
+        /* Timeframe toggle */
+        .tf-toggle {
+            display: flex;
+            gap: 2px;
+            margin: 12px 0;
+        }
+        .tf-btn {
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--text-dim);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            padding: 6px 18px;
+            cursor: pointer;
+            transition: background 0.1s, color 0.1s, border-color 0.1s;
+        }
+        .tf-btn.active-5d { background: rgba(0,196,140,0.15); color: var(--green); border-color: var(--green); }
+        .tf-btn.active-30d { background: rgba(155,114,245,0.15); color: var(--purple); border-color: var(--purple); }
+        .tf-btn:not(.active-5d):not(.active-30d):hover { background: var(--bg3); color: var(--text); }
+
+        /* Probability grid */
+        .prob-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 2px; }
+        .prob-cell {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+        }
+        .prob-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-hdr);
+            margin-bottom: 4px;
+        }
+        .prob-val {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e8ecf4;
+        }
+        .prob-bar { height: 3px; background: var(--border); margin-top: 6px; }
+        .prob-fill { height: 100%; }
+
+        /* Error card */
+        .error-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--red);
+            padding: 14px 16px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .error-card-icon { color: var(--red); font-size: 14px; }
+
+        /* Dev note card */
+        .note-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--blue);
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+        .note-card-hdr {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .note-card-body { font-size: 12px; color: var(--text); line-height: 1.6; }
+
+        /* Page title row */
+        .page-title-row {
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .page-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #e8ecf4;
+            letter-spacing: 0.02em;
+        }
+        .user-greeting {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--green);
         }
 
-        /* --- Popups --- */
-        .popup-overlay {
+        /* ── Loading overlay ── */
+        #loading-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden;
-            transition: all 0.3s ease;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(13,15,18,0.97);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #loading-overlay.active { display: flex; }
+        .loading-inner {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 32px 48px;
+            text-align: center;
+        }
+        .loading-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #e8ecf4;
+            text-transform: uppercase;
+            margin-top: 16px;
+        }
+        .loading-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 0.06em;
+            margin-top: 6px;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spin { animation: spin 1s linear infinite; }
+
+        /* ── Popup ── */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.2s;
         }
         .popup-overlay.active { opacity: 1; visibility: visible; }
         .popup-container {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            width: 90%; max-width: 500px;
-            transform: scale(0.7) translateY(50px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg2);
+            border: 1px solid var(--border2);
+            padding: 24px;
+            width: 90%; max-width: 480px;
+            transform: scale(0.9);
+            transition: transform 0.2s;
         }
-        .popup-overlay.active .popup-container { transform: scale(1) translateY(0); }
-
+        .popup-overlay.active .popup-container { transform: scale(1); }
+        .popup-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #e8ecf4;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .popup-body { font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 16px; }
+        .popup-actions { display: flex; gap: 6px; justify-content: flex-end; }
         .popup-btn {
-            padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 7px 16px;
+            cursor: pointer;
         }
-        .popup-btn-primary { background: var(--primary-gradient); color: white; }
+        .popup-btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
 
-        @media (max-width: 768px) {
-            .floating-orb { display: none; }
+        /* ── Mobile nav ── */
+        .mobile-nav {
+            display: flex;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 100;
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
         }
+        @media (min-width: 768px) { .mobile-nav { display: none; } }
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-decoration: none;
+            gap: 3px;
+            border-top: 2px solid transparent;
+        }
+        .mobile-nav-item.active-dash { color: var(--blue); border-top-color: var(--blue); }
+        .mobile-nav-item.active-sp   { color: var(--green); border-top-color: var(--green); }
+        .mobile-nav-item.active-about { color: var(--red); border-top-color: var(--red); }
+        .mobile-nav-item:hover { color: var(--text); }
+
+        /* scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
+
+        /* Star icons */
+        .star-saved { color: #f5c518; }
+        .star-unsaved { color: var(--text-dim); }
+        .star-unsaved:hover { color: #f5c518; }
     </style>
 </head>
-<body class="text-white">
+<body>
 
-    <div id="loading-overlay" class="fixed inset-0 z-[99999] hidden flex-col items-center justify-center bg-[#1a202c]/95 backdrop-blur-md transition-opacity duration-300">    
-        <div class="relative w-32 h-32 mb-8">
-            <div class="absolute inset-0 border-4 border-t-blue-500 border-r-transparent border-b-purple-500 border-l-transparent rounded-full animate-spin"></div>
-            <div class="absolute inset-4 border-4 border-t-transparent border-r-teal-400 border-b-transparent border-l-blue-400 rounded-full animate-spin-reverse"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <i class="fas fa-brain text-4xl text-blue-200 animate-pulse"></i>
-            </div>
+<!-- Loading overlay -->
+<div id="loading-overlay">
+    <div class="loading-inner">
+        <i class="fas fa-circle-notch spin" style="font-size:24px; color:var(--accent);"></i>
+        <div class="loading-title" id="loading-title">INITIALIZING</div>
+        <div class="loading-sub" id="loading-subtitle">ESTABLISHING SECURE CONNECTION...</div>
+    </div>
+</div>
+
+<!-- Popup -->
+<div id="popupOverlay" class="popup-overlay">
+    <div class="popup-container" id="popupContainer">
+        <div class="popup-title">
+            <span id="popupIcon"><i class="fas fa-info-circle" style="color:var(--blue)"></i></span>
+            <span id="popupTitle">NOTIFICATION</span>
+            <button onclick="document.getElementById('popupOverlay').classList.remove('active')"
+                style="margin-left:auto; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:12px;">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="text-center z-10">
-            <h2 id="loading-title" class="text-3xl font-black mb-2 gradient-text tracking-wide loading-text-fade">INITIALIZING</h2>
-            <p id="loading-subtitle" class="text-blue-300/70 font-mono text-sm uppercase tracking-widest loading-text-fade">establishing secure connection...</p>
+        <div class="popup-body" id="popupBody"></div>
+        <div class="popup-actions">
+            <button class="popup-btn" id="popupDismiss">DISMISS</button>
+            <button class="popup-btn popup-btn-primary" id="popupAction">OK</button>
         </div>
     </div>
+</div>
 
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
+<!-- Top bar -->
 
-    <div id="popupOverlay" class="popup-overlay">
-        <div class="popup-container" id="popupContainer">
-            <div class="flex justify-between items-start mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center" id="popupIcon"><i class="fas fa-info-circle"></i></div>
-                    <h3 class="text-xl font-bold" id="popupTitle">Notification</h3>
-                </div>
-                <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors" id="popupClose"><i class="fas fa-times"></i></button>
+<!-- Layout -->
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">LITLGUY.INC</div>
+        <a href="/" class="nav-link active-dash"><i class="fas fa-search-dollar" style="width:14px;"></i> DASHBOARD</a>
+        <a href="/sp500" class="nav-link"><i class="fas fa-layer-group" style="width:14px;"></i> TOP S&P 500</a>
+        <a href="/about" class="nav-link"><i class="fas fa-laptop-code" style="width:14px;"></i> CREATOR'S NOTES</a>
+
+        <!-- Algo widget -->
+        {% if algo_widget %}
+        <a href="/algoindex" class="algo-widget no-click-sound" onclick="(function(){playClickSound();setTimeout(()=>{window.location.href='/algoindex'},100)})();return false;">
+            <div class="algo-widget-hdr">
+                <span>LITLGUY INDEX</span>
+                <i class="fas fa-chevron-right" style="color:var(--text-dim);font-size:9px;"></i>
             </div>
-            <div class="text-gray-300 mb-6 leading-relaxed" id="popupBody"></div>
-            <div class="flex justify-end gap-3">
-                <button class="popup-btn bg-white/10 hover:bg-white/20 text-gray-300" id="popupDismiss">Dismiss</button>
-                <button class="popup-btn popup-btn-primary" id="popupAction">Got it</button>
+            <div class="algo-widget-val
+                {% if algo_widget.total_pnl is not none and algo_widget.total_pnl > 0 %}style="color:var(--green)"
+                {% elif algo_widget.total_pnl is not none and algo_widget.total_pnl < 0 %}style="color:var(--red)"
+                {% else %}style="color:var(--text-dim)"{% endif %}">
+                {% if algo_widget.total_pnl is not none %}
+                    {{ "+" if algo_widget.total_pnl > 0 else "" }}{{ "%.1f"|format(algo_widget.total_pnl * 100) }}%
+                {% else %}—{% endif %}
             </div>
-        </div>
-    </div>
-
-    <div class="flex flex-col md:flex-row min-h-screen">
-        
-        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
-            <div>
-                <h1 class="text-3xl font-black mb-8 gradient-text">
-                    <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
-                </h1>
-                <nav class="space-y-2">
-                    <a class="flex items-center px-4 py-3 bg-blue-500/10 rounded-xl text-blue-400 font-bold border-l-4 border-blue-500">
-                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
-                    </a>
-                    <a href="/sp500" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
-                    </a>
-                    <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
-                    </a>
-                </nav>
-
-                <!-- Algo Index Fund Widget -->
-                {% if algo_widget %}
-                <a href="/algoindex" class="block mt-6 no-click-sound group" onclick="(function(){playClickSound();setTimeout(()=>{window.location.href='/algoindex'},100)})();return false;">
-                    <div class="rounded-2xl p-4 border transition-all duration-300 cursor-pointer
-                        {% if algo_widget.total_pnl is not none and algo_widget.total_pnl > 0 %}
-                            border-green-500/5 bg-green-500/5 hover:bg-green-500/10
-                        {% elif algo_widget.total_pnl is not none and algo_widget.total_pnl < 0 %}
-                            border-red-500/5 bg-red-500/5 hover:bg-red-500/10
-                        {% else %}
-                            border-white/10 bg-white/5 hover:bg-white/10
-                        {% endif %}">
-
-                        <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-semibold text-gray-300">Litlguy Index</span>
-                            <i class="fas fa-chevron-right text-xs text-gray-600 group-hover:text-gray-400 transition-colors"></i>
-                        </div>
-
-                        <!-- Realized P&L — the headline number -->
-                        <div class="mb-2">
-                            <div class="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Realized P&L</div>
-                            <div class="text-xl font-black
-                                {% if algo_widget.total_pnl is not none and algo_widget.total_pnl > 0 %}text-green-400
-                                {% elif algo_widget.total_pnl is not none and algo_widget.total_pnl < 0 %}text-red-400
-                                {% else %}text-gray-400{% endif %}">
-                                {% if algo_widget.total_pnl is not none %}
-                                    {% if algo_widget.total_pnl > 0 %}+{% endif %}{{ "%.1f"|format(algo_widget.total_pnl * 100) }}%
-                                {% else %}
-                                    No data yet
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Unrealized P&L -->
-                        {% if algo_widget.total_unrealized is not none %}
-                        <div class="mb-3">
-                            <div class="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">Unrealized</div>
-                            <div class="text-sm font-semibold
-                                {% if algo_widget.total_unrealized > 0 %}text-green-400/80
-                                {% elif algo_widget.total_unrealized < 0 %}text-red-400/80
-                                {% else %}text-gray-400{% endif %}">
-                                {% if algo_widget.total_unrealized > 0 %}+{% endif %}{{ "%.1f"|format(algo_widget.total_unrealized * 100) }}%
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <!-- Stats row -->
-                        <div class="flex items-center justify-between text-[10px] text-gray-500 pt-2 border-t border-white/5">
-                            <span>
-                                <span class="text-indigo-400 font-medium">{{ algo_widget.active_count }}</span> active
-                            </span>
-                            <span>
-                                {% if algo_widget.win_rate is not none %}
-                                    <span class="{% if algo_widget.win_rate >= 0.5 %}text-green-400{% else %}text-red-400{% endif %} font-medium">
-                                        {{ "%.0f"|format(algo_widget.win_rate * 100) }}%
-                                    </span> win rate
-                                {% else %}
-                                    — win rate
-                                {% endif %}
-                            </span>
-                            <span>{{ algo_widget.closed_count }} closed</span>
-                        </div>
-                    </div>
-                </a>
-                {% else %}
-                <a href="/algoindex" class="block mt-6 no-click-sound group" onclick="(function(){playClickSound();setTimeout(()=>{window.location.href='/algoindex'},100)})();return false;">
-                    <div class="rounded-2xl p-4 border border-white/10 bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-robot text-xs text-gray-500"></i>
-                                <span class="text-xs font-semibold text-gray-400">Algo Index</span>
-                            </div>
-                            <i class="fas fa-chevron-right text-xs text-gray-600 group-hover:text-gray-400 transition-colors"></i>
-                        </div>
-                        <div class="text-xs text-gray-600 italic">Run a scan to activate</div>
-                    </div>
-                </a>
+            <div class="algo-widget-sub">REALIZED P&L</div>
+            {% if algo_widget.total_unrealized is not none %}
+            <div class="algo-widget-sub" style="margin-top:4px;">
+                UNREAL: <span style="{% if algo_widget.total_unrealized > 0 %}color:var(--green){% elif algo_widget.total_unrealized < 0 %}color:var(--red){% else %}color:var(--text-dim){% endif %}">
+                    {{ "+" if algo_widget.total_unrealized > 0 else "" }}{{ "%.1f"|format(algo_widget.total_unrealized * 100) }}%
+                </span>
+            </div>
+            {% endif %}
+            <div class="algo-widget-row">
+                <span style="color:var(--blue)">{{ algo_widget.active_count }} ACTIVE</span>
+                {% if algo_widget.win_rate is not none %}
+                <span style="{% if algo_widget.win_rate >= 0.5 %}color:var(--green){% else %}color:var(--red){% endif %}">
+                    {{ "%.0f"|format(algo_widget.win_rate * 100) }}% WIN
+                </span>
                 {% endif %}
-
+                <span>{{ algo_widget.closed_count }} CLOSED</span>
             </div>
-        </aside>
-
-        <main class="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto relative z-10 pb-28 md:pb-6">
-                    <div>
-                        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-4 mb-8">
-                            
-                            <form id="prediction-form" method="POST" action="/" class="relative flex-grow w-full">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <div class="relative group">
-                                    <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                                    <div class="relative flex items-center">
-                                        <div class="absolute left-5 text-gray-400">
-                                            <i class="fas fa-search"></i>
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            id="symbol-input"
-                                            name="symbol" 
-                                            placeholder="Enter Ticker (e.g. AAPL)" 
-                                            class="w-full bg-gray-900/90 border border-gray-700/50 text-white text-base px-12 py-4 rounded-2xl focus:outline-none focus:border-blue-500 transition-all placeholder-gray-500"
-                                            required
-                                            autocomplete="off"
-                                            appearance-none
-                                            bg-gray-800
-                                        >
-                                    </div>
-                                </div>
-                            </form>
-
-                            <div class="flex items-center gap-3 shrink-0">
-                                {% if current_user.is_authenticated %}
-                                    <div class="hidden md:block h-8 w-[1px] bg-gray-700 mx-2"></div>
-                                    <span class="text-green-400 text-sm font-medium mr-2 hidden lg:inline">Hi, {{ current_user.username }}</span>
-                                    <a href="{{ url_for('logout') }}" class="bg-gray-800 hover:bg-red-900/30 text-red-400 border border-red-500/30 px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
-                                        <i class="fas fa-sign-out-alt"></i> Logout
-                                    </a>
-                                {% else %}
-                                    <a href="{{ url_for('login') }}" class="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 px-5 py-3 rounded-xl text-sm font-bold transition-all">
-                                        Log In
-                                    </a>
-                                    <a href="{{ url_for('register') }}" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-500/20">
-                                        Sign Up
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                                        {% if current_user.is_authenticated %}
-                                                <center><h3 class="text-xl font-bold text-blue-400 mb-4"></h3></center>
-                                                {% if saved_stocks %}
-                                                    <div id="saved-stocks" class="flex flex-wrap gap-4">
-                                                    {% for stock in saved_stocks %}
-                                                        {% set current_price = stock.price|float %}
-                                                        {% set saved_price = stock.saved_price|float %}
-                                                        {% set diff = current_price - saved_price %}
-                                                        {% set pct = (diff / saved_price * 100) if saved_price > 0 else 0 %}
-                                                        
-                                                        <div id="saved-{{ stock.symbol }}" class="bg-gray-700 px-4 py-3 rounded shadow border border-gray-600 flex items-center justify-between transition-all hover:bg-gray-600 w-full sm:w-auto min-w-[200px]">
-                                                            
-                                                            <button onclick="searchWatchlistStock('{{ stock.symbol }}')" class="no-click-sound flex flex-col text-left focus:outline-none flex-grow">
-                                                                <div class="flex items-center justify-between gap-4">
-                                                                    <span class="text-white font-bold text-lg">{{ stock.symbol }}</span>
-                                                                    <span class="text-gray-300 font-mono text-sm">${{ "%.2f"|format(current_price) }}</span>
-                                                                </div>
-                                                                
-                                                                {% if saved_price > 0 %}
-                                                                    <div class="text-xs font-mono mt-1 {% if diff >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
-                                                                        {% if diff >= 0 %}<i class="fas fa-caret-up"></i> +{% else %}<i class="fas fa-caret-down"></i> {% endif %}${{ "%.2f"|format(diff|abs) }} 
-                                                                        ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
-                                                                        <span class="text-gray-500 ml-1 block mt-0.5 text-[10px]"></span>
-                                                                    </div>
-                                                                {% else %}
-                                                                    <div class="text-xs text-gray-500 mt-1 italic">Price history unavailable</div>
-                                                                {% endif %}
-                                                            </button>
-                                                            
-                                                            <button onclick="removeSavedStock('{{ stock.symbol }}')" class="text-gray-400 hover:text-red-400 transition-colors flex items-center justify-center ml-3 border-l border-gray-500 pl-3 self-stretch">
-                                                                <i class="fas fa-times"></i>
-                                                            </button>
-                                                        </div>
-                                                    {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p class="text-gray-400">You haven't saved any stocks yet.</p>
-                                                {% endif %}
-                                        {% endif %}
-                </div>
-                                        {% if current_user.is_authenticated %}
-                                            <h1> </h1>
-                                        {% else %}
-                                            <div class="glass-card rounded-2xl p-6 md:p-8 text-center popup-trigger">
-                                                <h2 class="text-2xl font-bold mb-2 text-gray-400"><center>Your Watchlist</center></h2>
-                                                <div class="w-16 h-16 bg-gray-900/50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
-                                                    <i class="fas fa-lock text-2xl text-gray-500"></i>
-                                                </div>
-                                                <p class="text-gray-300 mb-6 max-w-md mx-auto">Create a custom portfolio to track your AI predictions for your favorite stocks.</p>
-                                                <center><a href="/login" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full transition-all duration-200 shadow-[0_0_15px_rgba(37,99,235,0.3)]">
-                                                    <i class="fas fa-sign-in-alt"></i> Log In to Build Watchlist
-                                                </a></center>
-                                            </div>
-                                        {% endif %}
-            
-{% if prediction %}
-                {% macro probability_card(label, value, color_class='blue') %}
-                    {% set val = value|float * 100 %}
-                    <div class="bg-gray-800/40 border border-gray-700/50 rounded-xl p-3">
-                        <div class="text-[10px] text-gray-400 font-medium uppercase mb-1">{{ label }}</div>
-                        <div class="text-xl font-bold text-white mb-1">{{ "%.1f"|format(val) }}%</div>
-                        <div class="w-full bg-gray-700/50 rounded-full h-1">
-                            <div class="h-full rounded-full bg-{{ color_class }}-500" style="width: {{ val }}%"></div>
-                        </div>
-                    </div>
-                {% endmacro %}
-
-                <div id="view-5d" class="mt-8 w-full animate-fade-in">
-                    <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                        <div class="flex items-center justify-center gap-3">
-                            <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (5 Days)</h2>
-                            {% if current_user.is_authenticated %}
-                                {# Check if the current searched stock is already in the user's saved list #}
-                                {% set ns = namespace(is_saved=false) %}
-                                {% for s in saved_stocks %}
-                                    {% if s.symbol == prediction.symbol %}
-                                        {% set ns.is_saved = true %}
-                                    {% endif %}
-                                {% endfor %}
-                                
-                                <i onclick="toggleStock('{{ prediction.symbol }}', this)" 
-                                class="cursor-pointer transition-all duration-200 text-2xl
-                                {% if ns.is_saved %}
-                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                {% else %}
-                                    far fa-star text-gray-600 hover:text-yellow-400/70
-                                {% endif %}">
-                                </i>
-                            {% else %}
-                                <a href="/login" title="Login to favorite">
-                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-2xl"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
-                            <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">                   
-                                <button id="btn-5d" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
-                                    <i class="fas fa-bolt mr-2"></i>5 Days
-                                </button>
-                                <button id="btn-30d" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
-                                    <i class="fas fa-calendar-alt mr-2"></i>30 Days
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            {{ probability_card('+3% (1.5% Stop Loss)', prediction['3pct'], 'green') }}
-                            {{ probability_card('+5% (2.5% Stop Loss)', prediction['5pct'], 'teal') }}
-                            {{ probability_card('+10% (5.0% Stop Loss)', prediction['10pct'], 'blue') }}
-                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['1mo'], 'indigo') }}
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-30d" class="mt-8 w-full animate-fade-in hidden">
-                    <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden">
-                        <div class="flex items-center justify-center gap-3">
-                            <h2 class="text-2xl font-black gradient-text">{{ prediction.symbol }} Analysis (30 Days)</h2>
-                            {% if current_user.is_authenticated %}
-                                {% set ns = namespace(is_saved=false) %}
-                                {% for s in saved_stocks %}
-                                    {% if s.symbol == prediction.symbol %}
-                                        {% set ns.is_saved = true %}
-                                    {% endif %}
-                                {% endfor %}
-                                
-                                <i onclick="toggleStock('{{ prediction.symbol }}', this)" 
-                                class="cursor-pointer transition-all duration-200 text-2xl
-                                {% if ns.is_saved %}
-                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                {% else %}
-                                    far fa-star text-gray-600 hover:text-yellow-400/70
-                                {% endif %}">
-                                </i>
-                            {% else %}
-                                <a href="/login" title="Login to favorite">
-                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-2xl"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                        <div class="flex justify-center mt-8 mb-6 z-20 relative w-full">
-                            <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">                   
-                                <button id="btn-5d-b" onclick="toggleTimeframe('5d')" class="px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
-                                    <i class="fas fa-bolt mr-2"></i>5 Days
-                                </button>
-                                <button id="btn-30d-b" onclick="toggleTimeframe('30d')" class="px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm">
-                                    <i class="fas fa-calendar-alt mr-2"></i>30 Days
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            {{ probability_card('+15% (7.5% Stop Loss)', prediction['30_3pct'], 'green') }}
-                            {{ probability_card('+20% (10% Stop Loss)', prediction['30_5pct'], 'teal') }}
-                            {{ probability_card('+25% (12.5% Stop Loss)', prediction['30_10pct'], 'blue') }}
-                            {{ probability_card('+30% (15% Stop Loss)', prediction['30_1mo'], 'indigo') }}
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-
-            {% if error %}
-                <div class="mt-8 w-full animate-fade-in">
-                    <div class="glass-card rounded-2xl shadow-2xl p-6 relative overflow-hidden border border-red-500/30">
-                        <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-red-500/20 p-3 rounded-xl shrink-0">
-                                <i class="fas fa-circle-xmark text-red-400 text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-red-400 font-bold text-base uppercase tracking-widest mb-1">Stock Not Found</h3>
-                                <p class="text-gray-300 text-sm leading-relaxed">
-                                    <strong class="text-white">{{ symbol }}</strong> could not be found in our S&amp;P 500 or NASDAQ databases.
-                                    Double-check the ticker symbol and try again, or browse the
-                                    <a href="/sp500" class="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors">Top S&amp;P 500</a>
-                                    list for supported stocks.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-
-                        <div class="max-w-3xl mx-auto space-y-6 animate-fade-in mt-8 md:mt-2">
-
-                            <div class="glass-card rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="bg-blue-500/20 p-2 rounded-lg">
-                                        <i class="fas fa-laptop-code text-blue-400 text-lg"></i>
-                                    </div
-                                    <h3 class="text-blue-400 font-bold text-sm uppercase tracking-widest">John Allen Dev Note: June 18, 2025</h3>
-                                </div>
-                                <p class="text-gray-300 text-sm md:text-base leading-relaxed">
-                                    This website is still in beta and has such will have glitches and inaccuracies. Use the Search Bar for a Deeper Analysis Outside of the Base Reccomendations. Data is updated daily and I am always working on it, I hope to launch soon. <strong class="text-white">The five day AUC (Accuracy) of 3% is 0.58, 5% is 0.67, 10% is 0.79, and 15% is 0.83. The 30 Day AUC (Accuracy) of 15% is 0.67, 20% is 0.76, 25% is 0.81, and 30% is 0.85.</strong>
-                                </p>
-                            </div>
-
-            <script>
-                function toggleTimeframe(view) {
-                    const btn5d = document.getElementById('btn-5d');
-                    const btn30d = document.getElementById('btn-30d');
-                    const btn5dB = document.getElementById('btn-5d-b');
-                    const btn30dB = document.getElementById('btn-30d-b');
-                    const view5d = document.getElementById('view-5d');
-                    const view30d = document.getElementById('view-30d');
-
-                    if (!view5d || !view30d) return;
-
-                    if (view === '5d') {
-                        if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                        if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                        if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                        if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                        view5d.classList.remove('hidden');
-                        view30d.classList.add('hidden');
-                    } else {
-                        if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                        if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                        if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                        if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                        view30d.classList.remove('hidden');
-                        view5d.classList.add('hidden');
-                    }
-                }
-            </script>
-            <!----    <center>
-                <div class="w-full max-w-2xl mb-8">
-                    <a href="https://instagram.com/LitlGuy.inc" target="_blank" class="block bg-gray-800/50 border border-gray-700 hover:border-pink-500/50 rounded-xl p-4 backdrop-blur-sm shadow-xl transition-all duration-300 group hover:bg-gray-800/70 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-purple-500/0 to-yellow-500/0 group-hover:from-pink-500/5 group-hover:via-purple-500/5 group-hover:to-yellow-500/5 transition-all duration-500"></div>
-                        
-                        <div class="flex items-center gap-4 relative z-10">
-                            <div class="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-3 rounded-xl shadow-[0_0_15px_rgba(236,72,153,0.3)] group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                                <i class="fab fa-instagram text-white text-2xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h3 class="text-white font-bold text-xs uppercase tracking-widest mb-1 flex items-center gap-2">
-                                    Simulator Tracking <i class="fas fa-external-link-alt text-[10px] text-gray-500"></i>
-                                </h3>
-                                <p class="text-gray-300 text-sm leading-relaxed">
-                                    Follow the journey on Instagram. This is where I track the weekly paper-trading simulator based directly on these AI recommendations.
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </center>
-        </main> -->
-    </div>
-
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
-        <div class="flex justify-around items-center h-16">
-            <a class="flex flex-col items-center justify-center w-full h-full text-blue-400">
-                <i class="fas fa-search-dollar text-xl mb-1"></i>
-                <span class="text-[10px] font-bold tracking-wide">Dashboard</span>
-                <span class="absolute top-0 w-12 h-1 bg-blue-500 rounded-b-lg shadow-[0_0_10px_#3b82f6]"></span>
-            </a>
-
-            <a href="/sp500" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-green-400 transition-colors">
-                <i class="fas fa-layer-group text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Top S&P 500</span>
-            </a>
-            <a href="/about" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-laptop-code text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">About</span>
-            </a>
+        </a>
+        {% else %}
+        <a href="/algoindex" class="algo-widget no-click-sound" onclick="(function(){playClickSound();setTimeout(()=>{window.location.href='/algoindex'},100)})();return false;">
+            <div class="algo-widget-hdr"><span>ALGO INDEX</span></div>
+            <div class="algo-widget-sub" style="font-style:italic;">RUN A SCAN TO ACTIVATE</div>
+        </a>
+        {% endif %}
+        {% if current_user.is_authenticated %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/logout" class="nav-link" style="padding:6px 0; border:none; color:var(--red);"><i class="fas fa-sign-out-alt" style="width:14px;"></i> LOGOUT</a>
         </div>
-    </nav>
+        {% else %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/login" class="nav-link" style="padding:6px 0; border:none; color:var(--blue);"><i class="fas fa-user-circle" style="width:14px;"></i> LOG IN</a>
+        </div>
+        {% endif %}
+    </aside>
 
-    <script>
-        function searchWatchlistStock(symbol) {
-            const input = document.getElementById('symbol-input');
-            const form = input ? input.closest('form') : null;
-            
-            if (input && form) {
-                // Set the value to the clicked stock
-                input.value = symbol;
-                
-                // Use requestSubmit() to trigger the 'submit' event 
-                // and start your "Analyzing Data" animation.
-                form.requestSubmit();
-            }
-        }
-        // --- Toggle Stock from Search Results ---
-        function toggleStock(symbol, element) {
-            // Add a quick pop animation
-            element.style.transform = 'scale(1.3)';
-            setTimeout(() => element.style.transform = 'scale(1)', 200);
+    <!-- Main -->
+    <main class="main">
 
-            fetch('/toggle_stock', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ symbol: symbol })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'added') {
-                    // Switch to solid yellow star
-                    element.classList.remove('far', 'text-gray-600', 'hover:text-yellow-400/70');
-                    element.classList.add('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
-                    
-                    // Reload the page so the newly saved stock appears in the top Watchlist UI immediately
-                    setTimeout(() => window.location.reload(), 400);
+        <!-- Page title row -->
+        <div class="page-title-row">
+            <div class="page-title">DASHBOARD</div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                {% if current_user.is_authenticated %}
+                    <span class="user-greeting">{{ current_user.username|upper }}</span>
+                    <a href="{{ url_for('logout') }}" class="auth-btn auth-btn-danger"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="auth-btn">LOG IN</a>
+                    <a href="{{ url_for('register') }}" class="auth-btn auth-btn-primary">SIGN UP</a>
+                {% endif %}
+            </div>
+        </div>
 
-                } else if (data.status === 'removed') {
-                    // Switch to empty gray star
-                    element.classList.remove('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
-                    element.classList.add('far', 'text-gray-600', 'hover:text-yellow-400/70');
-                    
-                    // If they unsave it, remove it from the top Watchlist UI instantly
-                    const el = document.getElementById('saved-' + symbol);
-                    if (el) {
-                        el.style.opacity = '0';
-                        setTimeout(() => el.remove(), 300);
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                element.style.transform = 'scale(1)'; 
-            });
-        }
-        // --- Remove Stock from Watchlist ---
-        function removeSavedStock(symbol) {
-            fetch('/toggle_stock', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ symbol: symbol })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'removed') {
-                    // Find the element and fade it out before removing
-                    const el = document.getElementById('saved-' + symbol);
-                    if (el) {
-                        el.style.opacity = '0';
-                        setTimeout(() => el.remove(), 300);
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error removing stock:', error);
-            });
-        }
-        // --- 1. Welcome Popup Logic ---
-        function showWelcomePopup() {
-            // Check if already seen
-            if (sessionStorage.getItem('disclaimerSeen')) return;
+        <!-- Search -->
+        <form id="prediction-form" method="POST" action="/">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="search-wrap">
+                <div class="search-input-wrap">
+                    <i class="fas fa-search search-icon"></i>
+                    <input
+                        type="text"
+                        id="symbol-input"
+                        name="symbol"
+                        placeholder="ENTER TICKER — E.G. AAPL"
+                        class="search-input"
+                        required
+                        autocomplete="off">
+                </div>
+                <button type="submit" class="search-btn"><i class="fas fa-bolt" style="margin-right:6px;"></i>ANALYZE</button>
+            </div>
+        </form>
 
-            const welcomeOverlay = document.createElement('div');
-            welcomeOverlay.id = 'welcomeOverlay';
-            welcomeOverlay.className = 'popup-overlay active';
-            welcomeOverlay.style.zIndex = '20000';
-            
-            welcomeOverlay.innerHTML = `
-                <div class="popup-container" style="transform: scale(1) translateY(0); max-height: 90vh; overflow-y: auto;">
-                    <div class="flex items-center gap-3 mb-4 sticky top-0 bg-[#1a202c] py-2 z-10">
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                            <i class="fas fa-shield-alt text-yellow-400"></i>
-                        </div>
-                        <h3 class="text-xl font-bold">Financial Disclaimer</h3>
-                    </div>
-                    
-                    <div class="text-gray-300 mb-6 text-sm leading-relaxed space-y-4">
-                        <section>
-                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">1. Not Financial Advice</p>
-                            <p>The information provided by LitlGuy, including stock predictions and confidence scores, is for <strong>educational and informational purposes only</strong>. This website may be out of date and only may update for Open Bell following the NASDAQ trading day. It should not be considered professional financial investment advice.</p>
-                        </section>
-
-                        <section>
-                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">2. AI & Market Risk</p>
-                            <p>Stock markets are inherently volatile. Models analyze historical patterns which do not guarantee future results. Algorithms can fail, and "Confidence Levels" represent mathematical probability, not certainty.</p>
-                        </section>
-
-                        <section>
-                            <p class="font-bold text-white mb-1 uppercase text-[10px] tracking-widest">3. Data Accuracy</p>
-                            <p>While we strive for accuracy, market data may be delayed or contain errors. LitlGuy is not responsible for any trading losses incurred through the use of this tool.</p>
-                        </section>
-
-                        <div class="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                            <p class="text-[11px] text-yellow-200">
-                                <i class="fas fa-exclamation-triangle mr-1"></i> 
-                                <strong>Warning:</strong> Never invest money you cannot afford to lose. Always consult with a licensed financial advisor before making investment decisions. To maintain platform integrity, we log visitor IP addresses for security and anti-bot verification. <strong>We do not sell or distribute your data to third parties</strong>.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-center sticky bottom-0 bg-[#1a202c] pt-2">
-                        <button class="popup-btn popup-btn-primary w-full py-4 rounded-xl font-black tracking-widest uppercase text-xs shadow-lg shadow-blue-500/20" id="welcomeUnderstand">
-                            Accept & Continue
+        <!-- Watchlist -->
+        {% if current_user.is_authenticated %}
+            {% if saved_stocks %}
+            <div style="margin-top:10px;">
+                <div class="section-hdr">WATCHLIST</div>
+                <div class="watchlist-grid">
+                {% for stock in saved_stocks %}
+                    {% set current_price = stock.price|float %}
+                    {% set saved_price = stock.saved_price|float %}
+                    {% set diff = current_price - saved_price %}
+                    {% set pct = (diff / saved_price * 100) if saved_price > 0 else 0 %}
+                    <div id="saved-{{ stock.symbol }}" class="watchlist-card">
+                        <button onclick="searchWatchlistStock('{{ stock.symbol }}')" class="no-click-sound watchlist-btn">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span class="watchlist-symbol">{{ stock.symbol }}</span>
+                                <span class="watchlist-price">${{ "%.2f"|format(current_price) }}</span>
+                            </div>
+                            {% if saved_price > 0 %}
+                            <div class="watchlist-pnl {% if diff >= 0 %}style="color:var(--green)"{% else %}style="color:var(--red)"{% endif %}">
+                                <span style="color:{% if diff >= 0 %}#00c48c{% else %}#e84545{% endif %}; font-family:'IBM Plex Mono',monospace; font-size:10px;">
+                                    {% if diff >= 0 %}+{% endif %}${{ "%.2f"|format(diff|abs) }} ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
+                                </span>
+                            </div>
+                            {% endif %}
                         </button>
+                        <button onclick="removeSavedStock('{{ stock.symbol }}')" class="watchlist-remove"><i class="fas fa-times"></i></button>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="login-cta">
+                <div class="login-cta-title">YOUR WATCHLIST</div>
+                <div class="login-cta-title" style="font-size:18px; color:var(--text-hdr); margin-bottom:6px;"><i class="fas fa-lock"></i></div>
+                <div class="login-cta-text">Create a custom portfolio to track AI predictions for your favorite stocks.</div>
+                <a href="/login" class="login-cta-btn"><i class="fas fa-sign-in-alt"></i> LOG IN TO BUILD WATCHLIST</a>
+            </div>
+        {% endif %}
+
+        <!-- Prediction result -->
+        {% if prediction %}
+            {% macro probability_card(label, value, color_hex) %}
+                {% set val = value|float * 100 %}
+                <div class="prob-cell">
+                    <div class="prob-label">{{ label }}</div>
+                    <div class="prob-val">{{ "%.1f"|format(val) }}%</div>
+                    <div class="prob-bar">
+                        <div class="prob-fill" style="width:{{ val }}%; background:{{ color_hex }};"></div>
                     </div>
                 </div>
+            {% endmacro %}
+
+            <!-- 5D view -->
+            <div id="view-5d" style="margin-top:10px;">
+                <div class="result-card">
+                    <div class="section-hdr" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span>{{ prediction.symbol }} — 5-DAY ANALYSIS</span>
+                        {% if current_user.is_authenticated %}
+                            {% set ns = namespace(is_saved=false) %}
+                            {% for s in saved_stocks %}{% if s.symbol == prediction.symbol %}{% set ns.is_saved = true %}{% endif %}{% endfor %}
+                            <i onclick="toggleStock('{{ prediction.symbol }}', this)"
+                               class="far fa-star cursor-pointer {% if ns.is_saved %}fas star-saved{% else %}far star-unsaved{% endif %}"
+                               style="cursor:pointer;"></i>
+                        {% endif %}
+                    </div>
+                    <div style="padding:12px;">
+                        <div class="tf-toggle">
+                            <button id="btn-5d" onclick="toggleTimeframe('5d')" class="tf-btn active-5d"><i class="fas fa-bolt" style="margin-right:5px;"></i>5 DAYS</button>
+                            <button id="btn-30d" onclick="toggleTimeframe('30d')" class="tf-btn"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>30 DAYS</button>
+                        </div>
+                        <div class="prob-grid">
+                            {{ probability_card('+3% / 1.5% SL',  prediction['3pct'],  '#00c48c') }}
+                            {{ probability_card('+5% / 2.5% SL',  prediction['5pct'],  '#00c48c') }}
+                            {{ probability_card('+10% / 5.0% SL', prediction['10pct'], '#3a8ef6') }}
+                            {{ probability_card('+15% / 7.5% SL', prediction['1mo'],   '#9b72f5') }}
+                        </div>
+                    </div>
                 </div>
-            `;
-            
-            document.body.appendChild(welcomeOverlay);
-            
-            // Handle the understand button
-            const btn = document.getElementById('welcomeUnderstand');
-            if(btn) {
-                btn.addEventListener('click', function() {
-                    welcomeOverlay.classList.remove('active');
-                    setTimeout(() => {
-                        if(document.body.contains(welcomeOverlay)) {
-                            document.body.removeChild(welcomeOverlay);
-                        }
-                        sessionStorage.setItem('disclaimerSeen', 'true');
-                    }, 300);
-                });
-            }
-        }
+            </div>
 
-        // --- 2. Popup System Class ---
-        class PopupSystem {
-            constructor() {
-                this.isActive = false;
-                this.clickCount = 0;
-                this.baseProbability = 0.10; // Starts at a 10% chance
-                this.init();
-            }
+            <!-- 30D view -->
+            <div id="view-30d" style="margin-top:10px; display:none;">
+                <div class="result-card">
+                    <div class="section-hdr" style="display:flex; align-items:center; justify-content:space-between;">
+                        <span>{{ prediction.symbol }} — 30-DAY ANALYSIS</span>
+                        {% if current_user.is_authenticated %}
+                            {% set ns = namespace(is_saved=false) %}
+                            {% for s in saved_stocks %}{% if s.symbol == prediction.symbol %}{% set ns.is_saved = true %}{% endif %}{% endfor %}
+                            <i onclick="toggleStock('{{ prediction.symbol }}', this)"
+                               class="{% if ns.is_saved %}fas star-saved{% else %}far star-unsaved{% endif %} fa-star"
+                               style="cursor:pointer;"></i>
+                        {% endif %}
+                    </div>
+                    <div style="padding:12px;">
+                        <div class="tf-toggle">
+                            <button id="btn-5d-b" onclick="toggleTimeframe('5d')" class="tf-btn"><i class="fas fa-bolt" style="margin-right:5px;"></i>5 DAYS</button>
+                            <button id="btn-30d-b" onclick="toggleTimeframe('30d')" class="tf-btn active-30d"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>30 DAYS</button>
+                        </div>
+                        <div class="prob-grid">
+                            {{ probability_card('+15% / 7.5% SL',  prediction['30_3pct'],  '#00c48c') }}
+                            {{ probability_card('+20% / 10% SL',   prediction['30_5pct'],  '#00c48c') }}
+                            {{ probability_card('+25% / 12.5% SL', prediction['30_10pct'], '#3a8ef6') }}
+                            {{ probability_card('+30% / 15% SL',   prediction['30_1mo'],   '#9b72f5') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
-            init() {
-                const closeBtn = document.getElementById('popupClose');
-                const dismissBtn = document.getElementById('popupDismiss');
-                
-                if(closeBtn) closeBtn.addEventListener('click', () => this.close());
-                if(dismissBtn) dismissBtn.addEventListener('click', () => this.close());
-                
-                document.addEventListener('click', (e) => {
-                    // Prevent triggering if the loading overlay or popup is currently active
-                    const loadingOverlay = document.getElementById('loading-overlay');
-                    if (this.isActive || !loadingOverlay.classList.contains('hidden')) return;
+        {% if error %}
+        <div class="error-card">
+            <div class="error-card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--red);margin-bottom:3px;">STOCK NOT FOUND</div>
+                <div style="font-size:12px;color:var(--text);">
+                    <strong style="color:#e8ecf4;">{{ symbol }}</strong> is not in our S&P 500 or NASDAQ database.
+                    Check the ticker or browse <a href="/sp500" style="color:var(--blue);">Top S&P 500</a>.
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
-                    // Trigger based on elements you've marked with 'popup-trigger'
-                    if (e.target.closest('.popup-trigger')) {
-                        this.clickCount++;
-                        
-                        // Increase the probability by 2% for every click to make it show more often
-                        const currentChance = this.baseProbability + (this.clickCount * 0.02)
-                        
-                        // Check if the random number hits our probability threshold
-                        if (Math.random() < currentChance) {
-                            // Delay slightly so it doesn't instantly interrupt a click action
-                            setTimeout(() => this.showDonationPopup(), 300);
-                            
-                            // Reset clicks, but increase the baseline probability so it triggers faster next time
-                            this.clickCount = 0;
-                            this.baseProbability = Math.min(0.40, this.baseProbability + 0.05); // Caps at 40% base chance
-                        }
-                    }
-                });
-            }
+        <!-- Dev note -->
+        <div class="note-card" style="margin-top:10px;">
+            <div class="note-card-hdr"><i class="fas fa-laptop-code"></i> DEV NOTE — JUN 23, 2025</div>
+            <div class="note-card-body">
+                Site is in beta — glitches and inaccuracies expected. Use the search bar for a deeper analysis.
+                Data updated daily. <strong style="color:#e8ecf4;">5D AUC: 3%→0.58, 5%→0.67, 10%→0.79, 15%→0.83.
+                30D AUC: 15%→0.67, 20%→0.76, 25%→0.81, 30%→0.85.</strong>
+            </div>
+        </div>
 
-            showDonationPopup() {
-                const title = document.getElementById('popupTitle');
-                const body = document.getElementById('popupBody');
-                const icon = document.getElementById('popupIcon');
-                const actionBtn = document.getElementById('popupAction');
-                const dismissBtn = document.getElementById('popupDismiss');
+    </main>
+</div>
 
-                if (!title || !body || !actionBtn) return;
+<!-- Mobile nav -->
+<nav class="mobile-nav">
+    <a class="mobile-nav-item active-dash">
+        <i class="fas fa-search-dollar" style="font-size:16px;"></i>
+        DASHBOARD
+    </a>
+    <a href="/sp500" class="mobile-nav-item">
+        <i class="fas fa-layer-group" style="font-size:16px;"></i>
+        S&P 500
+    </a>
+    <a href="/about" class="mobile-nav-item">
+        <i class="fas fa-laptop-code" style="font-size:16px;"></i>
+        NOTES
+    </a>
+</nav>
 
-                // Match the existing glassmorphism styling and inject content
-                icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
-                title.innerText = "Support LitlGuy!";
-                body.innerHTML = `
-                    <p class="mb-3 text-white">This website is completely free with no ads, if these AI predictions have helped you make money please consider donating to help cover server costs and keep the AI learning!</p>
-                `;
-
-                actionBtn.innerText = "Donate Now";
-                actionBtn.onclick = () => {
-                    // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
-                    window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00', '_blank');
-                    this.close();
-                };
-
-                dismissBtn.innerText = "Maybe Later";
-
-                document.getElementById('popupOverlay').classList.add('active');
-                this.isActive = true;
-            }
-
-            close() {
-                document.getElementById('popupOverlay').classList.remove('active');
-                this.isActive = false;
-            }
-        }
-
-        // --- 3. Autocomplete Logic (FIXED TYPO) ---
-        function setupAutocomplete() {
-            const input = document.getElementById("symbol-input");
-            const suggestionsBox = document.getElementById("suggestions"); // Ensure ID matches HTML
-
-            if (!input || !suggestionsBox) return;
-
-            input.addEventListener("input", async () => {
-                const query = input.value.trim();
-                if (!query) {
-                    suggestionsBox.classList.add("hidden");
-                    suggestionsBox.innerHTML = "";
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/autocomplete?q=${encodeURIComponent(query)}`);
-                    const suggestions = await response.json();
-                    
-                    suggestionsBox.innerHTML = ""; // FIXED TYPO HERE (was suggestioxwnsBox)
-                    
-                    if (suggestions.length > 0) {
-                        suggestionsBox.classList.remove("hidden");
-                        suggestions.forEach(symbol => {
-                            const li = document.createElement("li");
-                            li.textContent = symbol;
-                            li.className = "px-4 py-3 cursor-pointer hover:bg-blue-500/20 text-gray-200 border-b border-gray-700/50 last:border-0";
-                            li.addEventListener("click", () => {
-                                input.value = symbol;
-                                suggestionsBox.classList.add("hidden");
-                            });
-                            suggestionsBox.appendChild(li);
-                        });
-                    } else {
-                        suggestionsBox.classList.add("hidden");
-                    }
-                } catch (error) {
-                    console.error('Autocomplete error:', error);
-                    suggestionsBox.classList.add("hidden");
-                }
-            });
-
-            // Close on outside click
-            document.addEventListener("click", (e) => {
-                if (!suggestionsBox.contains(e.target) && e.target !== input) {
-                    suggestionsBox.classList.add("hidden");
-                }
-            });
-        }
-
-        // --- 4. Loading Animation ---
-        function setupLoadingAnimation() {
-            const form = document.querySelector('form');
-            const overlay = document.getElementById('loading-overlay');
-            const titleEl = document.getElementById('loading-title');
-            const subEl = document.getElementById('loading-subtitle');
-
-            if (!form || !overlay) return;
-
-            const sequences = [
-                { title: "SEARCHING DATA", sub: "retrieving historical price action..." },
-                { title: "FINDING PATTERNS", sub: "scanning moving averages & RSI..." },
-                { title: "CALCULATING", sub: "running predictive models..." },
-                { title: "ANALYZING VOLATILITY", sub: "assessing market sentiment..." },
-                { title: "FINALIZING", sub: "generating recommendation..." }
-            ];
-
-            let isSubmitting = false;
-            form.addEventListener('submit', (e) => {
-                // If already in real submit phase, let it through
-                if (isSubmitting) return;
-
-                const input = document.getElementById('symbol-input');
-                // Allow default HTML5 validation to block empty submit
-                if (!input || !input.value.trim()) return;
-
-                // 1. Stop normal instant submission
-                e.preventDefault();
-
-                // 2. Play audio SAFELY
-                try {
-                    if (typeof playLoadingJingle === "function") {
-                        playLoadingJingle();
-                    }
-                } catch (error) {
-                    console.warn("Audio jingle skipped:", error);
-                }
-
-                // 3. Show the loading overlay
-                if (overlay) {
-                    overlay.classList.remove('hidden');
-                    overlay.classList.add('flex');
-                }
-
-                // 4. Start the text animation
-                let index = 0;
-                const interval = setInterval(() => {
-                    if (index < sequences.length) {
-                        if(titleEl) titleEl.innerText = sequences[index].title;
-                        if(subEl) subEl.innerText = sequences[index].sub;
-                        index++;
-                    }
-                }, 800);
-
-                // 5. Submit after 4 seconds — flag prevents re-triggering
-                setTimeout(() => {
-                    clearInterval(interval);
-                    isSubmitting = true;
-                    form.requestSubmit();
-                }, 4000);
-            });
-        }
-
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(showWelcomePopup, 500);
-            new PopupSystem();
-            setupAutocomplete();
-            setupLoadingAnimation();
-        });
-
-    </script>
-    <script>
-        // Register the Service Worker for PWA support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('ServiceWorker registration failed: ', error);
-                    });
-            });
-        }
-    </script>
-        <script>
-        // Toggle Logic
-        function toggleTimeframe(view) {
-            const btn5d = document.getElementById('btn-5d');
-            const btn30d = document.getElementById('btn-30d');
-            const btn5dB = document.getElementById('btn-5d-b');
-            const btn30dB = document.getElementById('btn-30d-b');
-            const view5d = document.getElementById('view-5d');
-            const view30d = document.getElementById('view-30d');
-
-            if (view === '5d') {
-                if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                if (view5d) view5d.classList.remove('hidden');
-                if (view30d) view30d.classList.add('hidden');
-            } else {
-                if (btn30d) btn30d.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                if (btn5d) btn5d.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                if (btn30dB) btn30dB.className = 'px-6 py-2 rounded-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                if (btn5dB) btn5dB.className = 'px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                if (view30d) view30d.classList.remove('hidden');
-                if (view5d) view5d.classList.add('hidden');
-            }
-        }
-    </script>
 <script>
-    // --- UI Sound Effects (Web Audio API) ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
+function searchWatchlistStock(symbol) {
+    const input = document.getElementById('symbol-input');
+    const form = input ? input.closest('form') : null;
+    if (input && form) { input.value = symbol; form.requestSubmit(); }
+}
 
-    function playClickSound() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
+function removeSavedStock(symbol) {
+    fetch('/toggle_stock', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({symbol}) })
+    .then(r=>r.json()).then(data => {
+        if (data.status === 'removed') {
+            const el = document.getElementById('saved-'+symbol);
+            if (el) el.remove();
         }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
+    }).catch(console.error);
+}
+
+function toggleStock(symbol, element) {
+    element.style.transform = 'scale(1.3)';
+    setTimeout(() => element.style.transform = 'scale(1)', 200);
+    fetch('/toggle_stock', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({symbol}) })
+    .then(r=>r.json()).then(data => {
+        if (data.status === 'added') {
+            element.classList.remove('far','star-unsaved'); element.classList.add('fas','star-saved');
+        } else if (data.status === 'removed') {
+            element.classList.remove('fas','star-saved'); element.classList.add('far','star-unsaved');
         }
-        
-        const now = audioCtx.currentTime;
+    }).catch(console.error);
+}
 
-        // Tone 1: The High "Click"
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine'; 
-        osc1.frequency.setValueAtTime(400, now); 
-        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03); 
-        gain1.gain.setValueAtTime(0.15, now); 
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03); 
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(now);
-        osc1.stop(now + 0.02); 
-
-        // Tone 2: The Low "Thock"
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        const delay = 0.0005; 
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(300, now + delay); 
-        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04); 
-        gain2.gain.setValueAtTime(0, now); 
-        gain2.gain.setValueAtTime(0.15, now + delay); 
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04); 
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(now + delay);
-        osc2.stop(now + delay + 0.04); 
+function toggleTimeframe(view) {
+    const v5 = document.getElementById('view-5d');
+    const v30 = document.getElementById('view-30d');
+    const b5  = document.getElementById('btn-5d');
+    const b30 = document.getElementById('btn-30d');
+    const b5b = document.getElementById('btn-5d-b');
+    const b30b = document.getElementById('btn-30d-b');
+    if (view === '5d') {
+        if (v5) v5.style.display='';  if (v30) v30.style.display='none';
+        if (b5) b5.className='tf-btn active-5d';  if (b30) b30.className='tf-btn';
+        if (b5b) b5b.className='tf-btn active-5d'; if (b30b) b30b.className='tf-btn';
+    } else {
+        if (v5) v5.style.display='none'; if (v30) v30.style.display='';
+        if (b30) b30.className='tf-btn active-30d'; if (b5) b5.className='tf-btn';
+        if (b30b) b30b.className='tf-btn active-30d'; if (b5b) b5b.className='tf-btn';
     }
+}
 
-    // Automatically attach the sound to tabs, buttons, and links
-    document.addEventListener('DOMContentLoaded', () => {
-        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
-        
-        clickableElements.forEach(el => {
-            el.addEventListener('click', function(e) {
-                // --- ADD THIS LINE: Skip the click sound if it has this class ---
-                if (this.closest('.no-click-sound')) return;
+// Loading overlay
+document.getElementById('prediction-form').addEventListener('submit', function() {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('active');
+    const title = document.getElementById('loading-title');
+    const sub   = document.getElementById('loading-subtitle');
+    const msgs = [
+        ['ANALYZING SIGNALS', 'FETCHING MARKET DATA...'],
+        ['RUNNING MODELS', 'COMPUTING PROBABILITIES...'],
+        ['PROCESSING', 'FINALIZING PREDICTIONS...']
+    ];
+    let i = 0;
+    setInterval(() => { i = (i+1)%msgs.length; title.textContent = msgs[i][0]; sub.textContent = msgs[i][1]; }, 1200);
+    if (window.playLoadingJingle) playLoadingJingle();
+});
 
-                // 1. Play the sound immediately
-                playClickSound();
-
-                // 2. Check if this element is a link going to another page
-                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
-                    // Stop the browser from leaving the page instantly
-                    e.preventDefault();
-                    
-                    const targetUrl = this.href;
-
-                    // Wait 100 milliseconds for the sound to finish, then go to the new page
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 100);
+// Popup system
+class PopupSystem {
+    constructor() {
+        this.isActive = false; this.clickCount = 0; this.baseProbability = 0.10; this.init();
+    }
+    init() {
+        const closeBtn = document.getElementById('popupClose');
+        const dismissBtn = document.getElementById('popupDismiss');
+        if (closeBtn) closeBtn.addEventListener('click', () => this.close());
+        if (dismissBtn) dismissBtn.addEventListener('click', () => this.close());
+        document.addEventListener('click', (e) => {
+            const lo = document.getElementById('loading-overlay');
+            if (this.isActive || (lo && lo.classList.contains('active'))) return;
+            if (e.target.closest('.popup-trigger')) {
+                this.clickCount++;
+                const chance = this.baseProbability + (this.clickCount * 0.02);
+                if (Math.random() < chance) {
+                    setTimeout(() => this.showDonationPopup(), 300);
+                    this.clickCount = 0;
+                    this.baseProbability = Math.min(0.40, this.baseProbability + 0.05);
                 }
-            });
+            }
+        });
+    }
+    showDonationPopup() {
+        document.getElementById('popupIcon').innerHTML = '<i class="fas fa-heart" style="color:#e84545"></i>';
+        document.getElementById('popupTitle').textContent = 'SUPPORT LITLGUY';
+        document.getElementById('popupBody').innerHTML = '<p>This site is free with no ads. If these AI predictions have helped you, consider donating to cover server costs and keep the model learning.</p>';
+        const actionBtn = document.getElementById('popupAction');
+        actionBtn.textContent = 'DONATE';
+        actionBtn.onclick = () => { window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00','_blank'); this.close(); };
+        document.getElementById('popupDismiss').textContent = 'LATER';
+        document.getElementById('popupOverlay').classList.add('active');
+        this.isActive = true;
+    }
+    close() { document.getElementById('popupOverlay').classList.remove('active'); this.isActive = false; }
+}
+document.addEventListener('DOMContentLoaded', () => { new PopupSystem(); showWelcomePopup(); });
+
+function showWelcomePopup() {
+    if (sessionStorage.getItem('disclaimerSeen')) return;
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay active';
+    overlay.style.zIndex = '20000';
+    overlay.innerHTML = `
+        <div class="popup-container" style="max-height:90vh;overflow-y:auto;">
+            <div class="popup-title" style="position:sticky;top:0;background:var(--bg2);padding-bottom:8px;">
+                <i class="fas fa-shield-alt" style="color:var(--accent)"></i>
+                FINANCIAL DISCLAIMER
+            </div>
+            <div class="popup-body">
+                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">1. NOT FINANCIAL ADVICE</strong><br>
+                Information provided by LitlGuy is for educational purposes only. This is not professional financial advice.</p>
+                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">2. AI & MARKET RISK</strong><br>
+                Markets are volatile. Historical patterns do not guarantee future results. Confidence levels are probabilities, not certainties.</p>
+                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">3. DATA ACCURACY</strong><br>
+                Market data may be delayed or contain errors. LitlGuy is not responsible for trading losses.</p>
+                <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);padding:10px 12px;font-size:11px;color:#c8cdd8;">
+                    <i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:6px;"></i>
+                    Never invest money you cannot afford to lose. We log visitor IPs for security. We do not sell your data.
+                </div>
+            </div>
+            <div style="position:sticky;bottom:0;background:var(--bg2);padding-top:8px;">
+                <button id="welcomeUnderstand" class="popup-btn popup-btn-primary" style="width:100%;padding:10px;letter-spacing:0.08em;">
+                    ACCEPT &amp; CONTINUE
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('welcomeUnderstand').addEventListener('click', () => {
+        overlay.classList.remove('active');
+        setTimeout(() => { if (document.body.contains(overlay)) document.body.removeChild(overlay); }, 300);
+        sessionStorage.setItem('disclaimerSeen','true');
+    });
+}
+
+// Sound effects
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playClickSound() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const osc1 = audioCtx.createOscillator(), gain1 = audioCtx.createGain();
+    osc1.type='sine'; osc1.frequency.setValueAtTime(400,now); osc1.frequency.exponentialRampToValueAtTime(800,now+0.03);
+    gain1.gain.setValueAtTime(0.15,now); gain1.gain.exponentialRampToValueAtTime(0.001,now+0.03);
+    osc1.connect(gain1); gain1.connect(audioCtx.destination); osc1.start(now); osc1.stop(now+0.02);
+    const osc2 = audioCtx.createOscillator(), gain2 = audioCtx.createGain(), delay=0.0005;
+    osc2.type='sine'; osc2.frequency.setValueAtTime(300,now+delay); osc2.frequency.exponentialRampToValueAtTime(150,now+delay+0.04);
+    gain2.gain.setValueAtTime(0,now); gain2.gain.setValueAtTime(0.15,now+delay); gain2.gain.exponentialRampToValueAtTime(0.001,now+delay+0.04);
+    osc2.connect(gain2); gain2.connect(audioCtx.destination); osc2.start(now+delay); osc2.stop(now+delay+0.04);
+}
+function playLoadingJingle() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state==='suspended') audioCtx.resume();
+    const now=audioCtx.currentTime, dur=4.0, freqs=[110,130.81,146.83,164.81,196,220,261.63,329.63];
+    for(let i=0;i<40;i++){const t=now+(i*0.1);const osc=audioCtx.createOscillator(),g=audioCtx.createGain();osc.type='sine';osc.frequency.setValueAtTime(freqs[Math.floor(Math.random()*freqs.length)],t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.15,t+0.01);g.gain.exponentialRampToValueAtTime(0.001,t+0.08);osc.connect(g);g.connect(audioCtx.destination);osc.start(t);osc.stop(t+0.09);}
+    const d=audioCtx.createOscillator(),dg=audioCtx.createGain();d.type='triangle';d.frequency.setValueAtTime(110,now);dg.gain.setValueAtTime(0,now);dg.gain.linearRampToValueAtTime(0.02,now+0.5);dg.gain.setValueAtTime(0.02,now+dur-0.5);dg.gain.exponentialRampToValueAtTime(0.001,now+dur);dg.gain.linearRampToValueAtTime(0,now+dur+0.05);d.connect(dg);dg.connect(audioCtx.destination);d.start(now);d.stop(now+dur+0.1);
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('button,a,.cursor-pointer,input[type="submit"]').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (this.closest('.no-click-sound')) return;
+            playClickSound();
+            if (this.tagName.toLowerCase()==='a' && this.href && !this.href.includes('#')) {
+                e.preventDefault(); const url=this.href; setTimeout(()=>{window.location.href=url;},100);
+            }
         });
     });
-    // --- AI Processing Sound Effect ---
-    function playLoadingJingle() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-
-        const duration = 4.0; // Exactly matches your 4000ms loading screen
-        const now = audioCtx.currentTime;
-
-        const frequencies = [110, 130.81, 146.83, 164.81, 196, 220, 261.63, 329.63];
-
-        // 1. The "Data Processing" Blips
-        // We create 40 rapid, random blips over the 4 seconds
-        for (let i = 0; i < 40; i++) {
-            const time = now + (i * 0.1); // One blip every 100ms
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            osc.type = 'sine'; // Clean, digital sound
-            // Pick a random note from our tech scale
-            osc.frequency.setValueAtTime(frequencies[Math.floor(Math.random() * frequencies.length)], time);
-
-            // Shape the sound into a sharp, quick click
-            gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(0.15, time + 0.01); // Quick attack (low volume)
-            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08); // Quick fade
-
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            osc.start(time);
-            osc.stop(time + 0.09);
-        }
-
-        // 2. The Low "Server Hum"
-        // Adds weight and presence to the sound
-// 2. The Low "Server Hum"
-        const droneOsc = audioCtx.createOscillator();
-        const droneGain = audioCtx.createGain();
-        droneOsc.type = 'triangle'; 
-        droneOsc.frequency.setValueAtTime(110, now); 
-
-        droneGain.gain.setValueAtTime(0, now);
-        droneGain.gain.linearRampToValueAtTime(0.02, now + 0.5); // Fade in
-
-        // Hold the volume until 0.5 seconds before the end
-        droneGain.gain.setValueAtTime(0.02, now + duration - 0.5); 
-        
-        // Exponential ramp to almost zero sounds much smoother for fading out
-        droneGain.gain.exponentialRampToValueAtTime(0.001, now + duration); 
-        
-        // Force it to absolute 0 just to be safe
-        droneGain.gain.linearRampToValueAtTime(0, now + duration + 0.05);
-
-        droneOsc.connect(droneGain);
-        droneGain.connect(audioCtx.destination);
-
-        droneOsc.start(now);
-        
-        // Stop the oscillator slightly AFTER the volume hits 0 (e.g., + 0.1s)
-        droneOsc.stop(now + duration + 0.1);
-    }
+});
 </script>
 </body>
 </html>

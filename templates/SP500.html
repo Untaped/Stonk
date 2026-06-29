@@ -4,698 +4,494 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>S&P 500 ML Predictions - Strategy AI</title>
-    
-    <meta name="theme-color" content="#1a202c">
+    <title>LitlGuy Terminal — S&amp;P 500 Picks</title>
+    <meta name="theme-color" content="#0d0f12">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
-        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-            --secondary-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-            --card-bg: rgba(26, 32, 44, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --bg:       #0d0f12;
+            --bg2:      #13161b;
+            --bg3:      #1a1e26;
+            --border:   #2a2f3a;
+            --border2:  #363c4a;
+            --text:     #c8cdd8;
+            --text-dim: #5a6070;
+            --text-hdr: #7a8494;
+            --accent:   #f5a623;
+            --green:    #00c48c;
+            --red:      #e84545;
+            --blue:     #3a8ef6;
+            --yellow:   #f5a623;
         }
 
         body {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Glass Cards */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
+        .mono { font-family: 'IBM Plex Mono', monospace; }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        /* ── Top bar ── */
+        .top-bar { background: var(--bg); border-bottom: 2px solid var(--accent); padding: 0 16px; position: sticky; top: 0; z-index: 100; }
+        .top-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 38px; }
+        .top-bar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.08em; }
+        .top-bar-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; }
 
-        /* Animations */
-        .floating-orb {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-        .floating-orb:nth-child(1) { width: 80px; height: 80px; background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%); top: 10%; left: 10%; }
-        .floating-orb:nth-child(2) { width: 120px; height: 120px; background: linear-gradient(135deg, #718096 0%, #4a5568 100%); top: 70%; right: 10%; animation-delay: 2s; }
-        .floating-orb:nth-child(3) { width: 60px; height: 60px; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); top: 40%; left: 70%; animation-delay: 4s; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        /* ── Layout ── */
+        .layout { display: flex; min-height: calc(100vh - 38px); }
 
-        .loading-overlay {
-            background: rgba(26, 32, 44, 0.95);
-            backdrop-filter: blur(20px);
-        }
+        /* ── Sidebar ── */
+        .sidebar { width: 200px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); display: none; flex-direction: column; padding: 16px 0; }
+        @media (min-width: 768px) { .sidebar { display: flex; } }
+        .sidebar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; padding: 0 16px 14px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--text-dim); text-decoration: none; border-left: 2px solid transparent; transition: color 0.1s, border-color 0.1s, background 0.1s; }
+        .nav-link:hover { color: var(--text); background: var(--bg3); }
+        .nav-link.active-sp { color: var(--green); border-left-color: var(--green); background: rgba(0,196,140,0.07); }
 
-        /* Mobile Optimization for Data */
-        .mobile-card-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        @media (max-width: 768px) {
-            .floating-orb { display: none; }
-            /* Hide the big table on mobile */
-            .desktop-table { display: none; }
-        }
-        @media (min-width: 769px) {
-            /* Hide mobile cards on desktop */
-            .mobile-list { display: none; }
-        }
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* ── Main ── */
+        .main { flex: 1; padding: 0 16px 48px; min-width: 0; }
 
-        .popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
-            z-index: 10000; display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s ease;
-        }
-        .popup-overlay.active { opacity: 1; visibility: visible; }
-        .popup-container {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 20px; padding: 2rem; width: 90%; max-width: 500px;
-            transform: scale(0.7) translateY(50px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .popup-overlay.active .popup-container { transform: scale(1) translateY(0); }
-        .popup-btn { padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
-        .popup-btn-primary { background: var(--primary-gradient); color: white; }
+        /* ── Page title ── */
+        .page-title-row { border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .page-title { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #e8ecf4; letter-spacing: 0.02em; }
+
+        /* ── Section header ── */
+        .section-hdr { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 5px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hdr); }
+
+        /* ── Timeframe tabs ── */
+        .tf-toggle { display: flex; gap: 2px; margin: 12px 0; }
+        .tf-btn { border: 1px solid var(--border); background: var(--bg2); color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; padding: 6px 18px; cursor: pointer; transition: background 0.1s, color 0.1s, border-color 0.1s; }
+        .tf-btn.active-5d  { background: rgba(0,196,140,0.12); color: var(--green);  border-color: var(--green); }
+        .tf-btn.active-30d { background: rgba(155,114,245,0.12); color: #9b72f5; border-color: #9b72f5; }
+        .tf-btn:not(.active-5d):not(.active-30d):hover { background: var(--bg3); color: var(--text); }
+
+        /* ── Error card ── */
+        .error-card { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--red); padding: 12px 16px; margin: 10px 0; display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text); }
+
+        /* ── Data table (desktop) ── */
+        .data-table-wrap { background: var(--bg2); border: 1px solid var(--border); overflow: hidden; }
+        table.data-table { width: 100%; border-collapse: collapse; }
+        table.data-table thead tr { background: var(--bg3); }
+        table.data-table th { padding: 7px 12px; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hdr); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        table.data-table th.right { text-align: right; }
+        table.data-table th.center { text-align: center; }
+        table.data-table td { padding: 7px 12px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
+        table.data-table tbody tr:last-child td { border-bottom: none; }
+        table.data-table tbody tr:hover td { background: var(--bg3); }
+        .td-rank { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); width: 36px; }
+        .td-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #e8ecf4; }
+        .td-conf { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-align: center; }
+        .td-name { font-size: 11px; color: var(--text-dim); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .td-action { text-align: center; }
+        .td-price { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-hdr); text-align: right; }
+
+        /* Badges */
+        .badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.06em; padding: 2px 8px; }
+        .badge-buy     { background: #003d2b; color: var(--green); border: 1px solid #005a3e; }
+        .badge-consider { background: #3d2e00; color: var(--yellow); border: 1px solid #5a4400; }
+        .badge-skip    { background: #3d0c0c; color: var(--red);   border: 1px solid #5a1212; }
+
+        .conf-high { color: var(--green); }
+        .conf-med  { color: var(--yellow); }
+        .conf-low  { color: var(--red); }
+
+        /* Star */
+        .star-btn { background: none; border: none; cursor: pointer; font-size: 13px; padding: 0; transition: color 0.1s; }
+        .star-saved { color: #f5c518; }
+        .star-unsaved { color: var(--text-dim); }
+        .star-unsaved:hover { color: #f5c518; }
+
+        /* ── Mobile cards ── */
+        .mobile-row { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; margin-bottom: 2px; }
+        .mobile-row.buy-row     { border-left-color: var(--green); }
+        .mobile-row.consider-row { border-left-color: var(--yellow); }
+        .mobile-row.skip-row    { border-left-color: var(--red); }
+        .mobile-row:hover { border-color: var(--border2); border-left-color: inherit; }
+        .mob-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #e8ecf4; }
+        .mob-sector { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+        .mob-conf { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; }
+
+        /* Desktop/mobile visibility */
+        @media (max-width: 768px) { .desktop-only { display: none !important; } }
+        @media (min-width: 769px) { .mobile-only  { display: none !important; } }
+
+        /* Empty state */
+        .empty-state { background: var(--bg2); border: 1px solid var(--border); padding: 40px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
+
+        /* Loading overlay */
+        #loadingOverlay { position: fixed; inset: 0; z-index: 99999; background: rgba(13,15,18,0.97); display: flex; align-items: center; justify-content: center; }
+        .loading-inner { background: var(--bg2); border: 1px solid var(--border); padding: 32px 48px; text-align: center; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spin { animation: spin 1s linear infinite; }
+
+        /* ── Popup ── */
+        .popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index:10000; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition: all 0.2s; }
+        .popup-overlay.active { opacity:1; visibility:visible; }
+        .popup-container { background: var(--bg2); border: 1px solid var(--border2); padding: 24px; width: 90%; max-width: 480px; transform: scale(0.9); transition: transform 0.2s; }
+        .popup-overlay.active .popup-container { transform: scale(1); }
+        .popup-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #e8ecf4; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .popup-body { font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 16px; }
+        .popup-actions { display: flex; gap: 6px; justify-content: flex-end; }
+        .popup-btn { border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; padding: 7px 16px; cursor: pointer; }
+        .popup-btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+        /* ── Mobile nav ── */
+        .mobile-nav { display: flex; position: fixed; bottom:0; left:0; right:0; z-index:100; background: var(--bg2); border-top: 1px solid var(--border); }
+        @media (min-width: 768px) { .mobile-nav { display: none; } }
+        .mobile-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px 0; font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-dim); text-decoration:none; gap:3px; border-top:2px solid transparent; }
+        .mobile-nav-item.active-sp { color: var(--green); border-top-color: var(--green); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
     </style>
 </head>
-<body class="text-white">
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
-    <div class="floating-orb"></div>
-    <div id="popupOverlay" class="popup-overlay">
-        <div class="popup-container" id="popupContainer">
-            <div class="flex justify-between items-start mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded bg-white/10 flex items-center justify-center" id="popupIcon"><i class="fas fa-info-circle"></i></div>
-                    <h3 class="text-xl font-bold" id="popupTitle">Notification</h3>
-                </div>
-                <button class="w-8 h-8 rounded flex items-center justify-center hover:bg-white/10 transition-colors" id="popupClose"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="text-gray-300 mb-6 leading-relaxed" id="popupBody"></div>
-            <div class="flex justify-end gap-3">
-                <button class="popup-btn bg-white/10 hover:bg-white/20 text-gray-300" id="popupDismiss">Dismiss</button>
-                <button class="popup-btn popup-btn-primary" id="popupAction">Got it</button>
-            </div>
-        </div>
+<body>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+    <div class="loading-inner">
+        <i class="fas fa-circle-notch spin" style="font-size:22px; color:var(--accent);"></i>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:0.1em;color:#e8ecf4;margin-top:14px;">SCANNING S&amp;P 500</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;letter-spacing:0.06em;">PROCESSING SIGNALS...</div>
     </div>
-
-    <div id="loadingOverlay" class="loading-overlay fixed inset-0 flex items-center justify-center z-[99999]">
-        <div class="text-center space-y-6 p-8 glass-card rounded-2xl mx-4">
-            <div class="flex justify-center">
-                <i class="fas fa-circle-notch fa-spin text-4xl text-blue-400"></i>
-            </div>
-            <div>
-                <p class="text-xl font-semibold text-white mb-2">Analyzing S&P 500</p>
-                <p class="text-gray-300 text-sm">Processing signals...</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex flex-col md:flex-row min-h-screen">
-        
-        <aside class="sidebar hidden md:flex md:w-64 p-6 shadow-2xl flex-col justify-between relative z-10 bg-gray-900/90 border-r border-white/10">
-            <div>
-                <h1 class="text-3xl font-black mb-8 gradient-text">
-                    <i class="fas fa-chart-line mr-2"></i>Litlguy.inc
-                </h1>
-                <nav class="space-y-2">
-                    <a href="/" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-search-dollar mr-3"></i> Dashboard
-                    </a>
-                    <a class="flex items-center px-4 py-3 bg-green-500/10 rounded-xl text-green-400 font-bold border-l-4 border-green-500">
-                        <i class="fas fa-layer-group mr-3"></i> Top S&P 500
-                    </a>
-                    <a href="/about" class="flex items-center px-4 py-3 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-laptop-code mr-3"></i> Creator's Notes
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <main class="flex-1 p-4 md:p-6 space-y-8 overflow-y-auto relative z-10 pb-28 md:pb-6">
-
-            <div class="flex justify-center mb-6 z-20 relative">
-                <div class="glass-card p-1 rounded-xl inline-flex bg-gray-900/50">                   
-                    <button id="btn-5d" onclick="toggleTimeframe('5d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm">
-                        <i class="fas fa-bolt mr-2"></i>5 Days
-                    </button>
-                    <button id="btn-30d" onclick="toggleTimeframe('30d')" class="popup-trigger px-6 py-2 rounded-lg text-sm font-bold text-gray-400 hover:text-white transition-all">
-                        <i class="fas fa-calendar-alt mr-2"></i>30 Days
-                    </button>
-                </div>
-            </div>
-            {% if error %}
-                <div class="glass-card rounded-xl p-4 border-l-4 border-red-500 flex items-center gap-3">
-                    <i class="fas fa-exclamation-triangle text-red-400"></i>
-                    <span class="text-sm text-gray-300">{{ error }}</span>
-                </div>
-            {% endif %}
-                        {% if market_health %}
-            {% set mh = market_health %}
-            <div>
-
-        <!----        {# Sector grid — ranked, no Bullish/Bearish labels #}
-                {% if mh.sector_scores_sorted %}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {% for sector_name, sd in mh.sector_scores_sorted %}
-                    <div class="flex items-center gap-3 bg-gray-900/40 rounded-xl px-3 py-2.5 border border-gray-700/30">
-                        <div class="text-[10px] font-black text-gray-500 w-4 shrink-0">#{{ sd.rank }}</div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-xs font-semibold text-gray-200 truncate">{{ sector_name }}</div>
-                            <div class="text-[10px] text-gray-500">{{ sd.count }} stocks · top: {{ sd.top_stock }}</div>
-                        </div>
-                        <div class="text-right shrink-0">
-                            <div class="text-sm font-black text-white">{{ "%.1f" | format(sd.score_5d * 100) }}%</div>
-                            <div class="text-[10px] text-gray-600">5d</div>
-                        </div>
-                        <div class="text-right shrink-0 ml-1">
-                            <div class="text-sm font-bold text-gray-400">{{ "%.1f" | format(sd.score_30d * 100) }}%</div>
-                            <div class="text-[10px] text-gray-600">30d</div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            {% endif %} -->
-<div id="view-5d" class="space-y-6 animate-fade-in">
-    {% if stocks_5d %}
-        <div class="mobile-list space-y-3">
-            {% for stock in stocks_5d %}
-            <div class="glass-card p-4 rounded-xl flex items-center justify-between border-l-4 
-                {% if stock.recommendation == 'BUY' %} border-green-500
-                {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
-                {% else %} border-red-500 {% endif %}">
-                
-                <div class="flex items-center gap-2 mb-1">
-                    
-                    <td class="py-4 px-6">
-                        <div class="flex items-center gap-3">
-                            <span class="font-bold text-white">{{ stock.symbol }}</span>
-                            
-                            {% if current_user.is_authenticated %}
-                                <i onclick="toggleStock('{{ stock.symbol }}', this)" 
-                                class="cursor-pointer transition-all duration-200 text-lg
-                                {% if stock.symbol in user_watchlist %}
-                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                {% else %}
-                                    far fa-star text-gray-600 hover:text-yellow-400/70
-                                {% endif %}">
-                                </i>
-                            {% else %}
-                                <a href="/login" title="Login to favorite">
-                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </td>
-
-                    <span class="text-[10px] px-1.5 py-0.5 square bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
-                </div>
-
-                <div class="text-right flex flex-col items-end">
-                     {% if stock.probability >= 0.35 %}
-                        <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
-                    {% elif stock.probability >= 0.30 %}
-                        <div class="text-green-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                    {% else %}
-                        <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                    {% endif %}
-                    
-                    <div class="text-[10px] font-bold mt-1 px-2 py-0.5 rounded bg-gray-800
-                        {% if stock.recommendation == 'BUY' %} text-green-400
-                        {% elif stock.recommendation == 'CONSIDER' %} text-yellow-400
-                        {% else %} text-red-400 {% endif %}">
-                        {{ stock.recommendation }}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="desktop-table glass-card square-2xl shadow-2xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead class="bg-gray-900/50">
-                        <tr>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Rank</th>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Symbol</th>
-                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">5D Confidence</th>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Company</th>
-                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Action</th>
-                            <th class="py-4 px-6 text-right text-sm font-semibold text-gray-400 uppercase">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-700/50">
-                        {% for stock in stocks_5d %}
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-3">
-                                    <span class="font-bold text-white">{{ stock.symbol }}</span>
-                                    
-                                    {% if current_user.is_authenticated %}
-                                        <i onclick="toggleStock('{{ stock.symbol }}', this)" 
-                                        class="cursor-pointer transition-all duration-200 text-lg
-                                        {% if stock.symbol in user_watchlist %}
-                                            fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                        {% else %}
-                                            far fa-star text-gray-600 hover:text-yellow-400/70
-                                        {% endif %}">
-                                        </i>
-                                    {% else %}
-                                        <a href="/login" title="Login to favorite">
-                                            <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                {% if stock.probability >= 0.35 %}
-                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                {% elif stock.probability >= 0.30 %}
-                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                {% else %}
-                                    <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-4 px-6 text-gray-300 text-sm">{{ stock.shortName[:30] }}</td>
-                            <td class="py-4 px-6 text-center">
-                                <span class="px-3 py-1 square text-xs font-bold
-                                    {% if stock.recommendation == 'BUY' %} bg-green-500/20 text-green-400
-                                    {% elif stock.recommendation == 'CONSIDER' %} bg-yellow-500/20 text-yellow-400
-                                    {% else %} bg-red-500/20 text-red-400 {% endif %}">
-                                    {{ stock.recommendation }}
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-right font-mono text-gray-300">
-                                {% if stock.currentPrice > 0 %}${{ "%.2f" | format(stock.currentPrice) }}{% else %}N/A{% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    {% else %}
-        <div class="glass-card square-2xl p-12 text-center">
-            <i class="fas fa-chart-bar text-6xl text-gray-600 mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-400">No Data Available</h3>
-        </div>
-    {% endif %}
 </div>
-<div id="view-30d" class="hidden space-y-6 animate-fade-in">
-    {% if stocks_30d %}
-        <div class="mobile-list space-y-3">
-            {% for stock in stocks_30d %}
-            <div class="glass-card p-4 square-xl flex items-center justify-between border-l-4 
-                {% if stock.recommendation == 'BUY' %} border-green-500
-                {% elif stock.recommendation == 'CONSIDER' %} border-yellow-500
-                {% else %} border-red-500 {% endif %}">
-                
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="font-black text-lg text-white">{{ stock.symbol }}</span>
-                    
-                    <td class="py-4 px-6">
-                        <div class="flex items-center gap-3">
-                            <span class="font-bold text-white">{{ stock.symbol }}</span>
-                            
-                            {% if current_user.is_authenticated %}
-                                <i onclick="toggleStock('{{ stock.symbol }}', this)" 
-                                class="cursor-pointer transition-all duration-200 text-lg
-                                {% if stock.symbol in user_watchlist %}
-                                    fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                {% else %}
-                                    far fa-star text-gray-600 hover:text-yellow-400/70
-                                {% endif %}">
-                                </i>
-                            {% else %}
-                                <a href="/login" title="Login to favorite">
-                                    <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </td>
 
-                    <span class="text-[10px] px-1.5 py-0.5 square bg-gray-700 text-gray-300 truncate max-w-[80px]">{{ stock.sector }}</span>
-                </div>
+<!-- Popup -->
+<div id="popupOverlay" class="popup-overlay">
+    <div class="popup-container" id="popupContainer">
+        <div class="popup-title">
+            <span id="popupIcon"><i class="fas fa-info-circle" style="color:var(--blue)"></i></span>
+            <span id="popupTitle">NOTIFICATION</span>
+            <button onclick="document.getElementById('popupOverlay').classList.remove('active')" style="margin-left:auto;background:none;border:none;color:var(--text-dim);cursor:pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body" id="popupBody"></div>
+        <div class="popup-actions">
+            <button class="popup-btn" id="popupDismiss">DISMISS</button>
+            <button class="popup-btn popup-btn-primary" id="popupAction">OK</button>
+        </div>
+    </div>
+</div>
 
-                <div class="text-right flex flex-col items-end">
-                     {% if stock.probability >= 0.35 %}
-                        <div class="text-green-400 font-black text-xl">{{ stock.score_percent }}</div>
-                    {% elif stock.probability >= 0.30 %}
-                        <div class="text-green-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                    {% else %}
-                        <div class="text-red-400 font-bold text-xl">{{ stock.score_percent }}</div>
-                    {% endif %}
-                    
-                    <div class="text-[10px] font-bold mt-1 px-2 py-0.5 square bg-gray-800
-                        {% if stock.recommendation == 'BUY' %} text-green-400
-                        {% elif stock.recommendation == 'CONSIDER' %} text-yellow-400
-                        {% else %} text-red-400 {% endif %}">
-                        {{ stock.recommendation }}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+
+<!-- Layout -->
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">LITLGUY.INC</div>
+        <a href="/"      class="nav-link"><i class="fas fa-search-dollar" style="width:14px;"></i> DASHBOARD</a>
+        <a href="/sp500" class="nav-link active-sp"><i class="fas fa-layer-group" style="width:14px;"></i> TOP S&amp;P 500</a>
+        <a href="/about" class="nav-link"><i class="fas fa-laptop-code" style="width:14px;"></i> CREATOR'S NOTES</a>
+        {% if current_user.is_authenticated %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/logout" class="nav-link" style="padding:6px 0; border:none; color:var(--red);"><i class="fas fa-sign-out-alt" style="width:14px;"></i> LOGOUT</a>
+        </div>
+        {% else %}
+        <div style="padding:8px 16px; border-top:1px solid var(--border); margin-top:auto;">
+            <a href="/login" class="nav-link" style="padding:6px 0; border:none; color:var(--blue);"><i class="fas fa-user-circle" style="width:14px;"></i> LOG IN</a>
+        </div>
+        {% endif %}
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+        <!-- Page title -->
+        <div class="page-title-row">
+            <div class="page-title">S&amp;P 500 — ML PREDICTIONS</div>
         </div>
 
-        <div class="desktop-table glass-card square-2xl shadow-2xl overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead class="bg-gray-900/50">
-                        <tr>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Rank</th>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Symbol</th>
-                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">30D Confidence</th>
-                            <th class="py-4 px-6 text-left text-sm font-semibold text-gray-400 uppercase">Company</th>
-                            <th class="py-4 px-6 text-center text-sm font-semibold text-gray-400 uppercase">Action</th>
-                            <th class="py-4 px-6 text-right text-sm font-semibold text-gray-400 uppercase">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-700/50">
-                        {% for stock in stocks_30d %}
-                        <tr class="hover:bg-white/5 transition-colors">
-                            <td class="py-4 px-6 text-sm text-gray-500 font-mono">{{ loop.index }}</td>
-                            <td class="py-4 px-6">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-white">{{ stock.symbol }}</span>
-                                <td class="py-4 px-6">
-                                    <div class="flex items-center gap-3">
-                                        <span class="font-bold text-white">{{ stock.symbol }}</span>
-                                        
+        <!-- Timeframe toggle -->
+        <div class="tf-toggle">
+            <button id="btn-5d"  onclick="toggleTimeframe('5d')"  class="tf-btn popup-trigger active-5d"><i class="fas fa-bolt" style="margin-right:5px;"></i>5 DAYS</button>
+            <button id="btn-30d" onclick="toggleTimeframe('30d')" class="tf-btn popup-trigger"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>30 DAYS</button>
+        </div>
+
+        {% if error %}
+        <div class="error-card">
+            <i class="fas fa-exclamation-triangle" style="color:var(--red);"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- ── 5-DAY VIEW ── -->
+        <div id="view-5d">
+            {% if stocks_5d %}
+
+            <!-- Mobile list -->
+            <div class="mobile-only">
+                {% for stock in stocks_5d %}
+                <div class="mobile-row {% if stock.recommendation == 'BUY' %}buy-row{% elif stock.recommendation == 'CONSIDER' %}consider-row{% else %}skip-row{% endif %}">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="mob-symbol">{{ stock.symbol }}</span>
+                            {% if current_user.is_authenticated %}
+                            <i onclick="toggleStock('{{ stock.symbol }}', this)"
+                               class="{% if stock.symbol in user_watchlist %}fas fa-star star-saved{% else %}far fa-star star-unsaved{% endif %} star-btn"></i>
+                            {% else %}
+                            <a href="/login"><i class="far fa-star star-unsaved star-btn"></i></a>
+                            {% endif %}
+                        </div>
+                        <div class="mob-sector">{{ stock.sector }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="mob-conf {% if stock.probability >= 0.35 %}conf-high{% elif stock.probability >= 0.30 %}conf-med{% else %}conf-low{% endif %}">
+                            {{ stock.score_percent }}
+                        </div>
+                        <div style="margin-top:4px;">
+                            <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                                {{ stock.recommendation }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Desktop table -->
+            <div class="desktop-only data-table-wrap">
+                <div class="section-hdr">5-DAY CONFIDENCE RANKINGS</div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>SYMBOL</th>
+                                <th class="center">5D CONF</th>
+                                <th>COMPANY</th>
+                                <th class="center">ACTION</th>
+                                <th class="right">PRICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks_5d %}
+                            <tr>
+                                <td class="td-rank">{{ loop.index }}</td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span class="td-symbol">{{ stock.symbol }}</span>
                                         {% if current_user.is_authenticated %}
-                                            <i onclick="toggleStock('{{ stock.symbol }}', this)" 
-                                            class="cursor-pointer transition-all duration-200 text-lg
-                                            {% if stock.symbol in user_watchlist %}
-                                                fas fa-star text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]
-                                            {% else %}
-                                                far fa-star text-gray-600 hover:text-yellow-400/70
-                                            {% endif %}">
-                                            </i>
+                                        <i onclick="toggleStock('{{ stock.symbol }}', this)"
+                                           class="{% if stock.symbol in user_watchlist %}fas fa-star star-saved{% else %}far fa-star star-unsaved{% endif %} star-btn"></i>
                                         {% else %}
-                                            <a href="/login" title="Login to favorite">
-                                                <i class="far fa-star text-gray-600 hover:text-gray-400 transition-colors text-lg"></i>
-                                            </a>
+                                        <a href="/login"><i class="far fa-star star-unsaved star-btn"></i></a>
                                         {% endif %}
                                     </div>
                                 </td>
-                                </div>
-                            </td>
-                            <td class="py-4 px-6 text-center">
-                                {% if stock.probability >= 0.35 %}
-                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                {% elif stock.probability >= 0.30 %}
-                                    <span class="text-green-400 font-bold">{{ stock.score_percent }}</span>
-                                {% else %}
-                                    <span class="text-red-400 font-bold">{{ stock.score_percent }}</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-4 px-6 text-gray-300 text-sm">{{ stock.shortName[:30] }}</td>
-                            <td class="py-4 px-6 text-center">
-                                <span class="px-3 py-1 square text-xs font-bold
-                                    {% if stock.recommendation == 'BUY' %} bg-green-500/20 text-green-400
-                                    {% elif stock.recommendation == 'CONSIDER' %} bg-yellow-500/20 text-yellow-400
-                                    {% else %} bg-red-500/20 text-red-400 {% endif %}">
-                                    {{ stock.recommendation }}
-                                </span>
-                            </td>
-                            <td class="py-4 px-6 text-right font-mono text-gray-300">
-                                {% if stock.currentPrice > 0 %}${{ "%.2f" | format(stock.currentPrice) }}{% else %}N/A{% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                <td class="td-conf {% if stock.probability >= 0.35 %}conf-high{% elif stock.probability >= 0.30 %}conf-med{% else %}conf-low{% endif %}">
+                                    {{ stock.score_percent }}
+                                </td>
+                                <td class="td-name">{{ stock.shortName[:30] }}</td>
+                                <td class="td-action">
+                                    <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                                        {{ stock.recommendation }}
+                                    </span>
+                                </td>
+                                <td class="td-price">{% if stock.currentPrice > 0 %}${{ "%.2f"|format(stock.currentPrice) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            {% else %}
+            <div class="empty-state">NO 5-DAY DATA — RUN A SCAN FIRST</div>
+            {% endif %}
         </div>
-    {% endif %}
+
+        <!-- ── 30-DAY VIEW ── -->
+        <div id="view-30d" style="display:none;">
+            {% if stocks_30d %}
+
+            <!-- Mobile list -->
+            <div class="mobile-only">
+                {% for stock in stocks_30d %}
+                <div class="mobile-row {% if stock.recommendation == 'BUY' %}buy-row{% elif stock.recommendation == 'CONSIDER' %}consider-row{% else %}skip-row{% endif %}">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="mob-symbol">{{ stock.symbol }}</span>
+                            {% if current_user.is_authenticated %}
+                            <i onclick="toggleStock('{{ stock.symbol }}', this)"
+                               class="{% if stock.symbol in user_watchlist %}fas fa-star star-saved{% else %}far fa-star star-unsaved{% endif %} star-btn"></i>
+                            {% else %}
+                            <a href="/login"><i class="far fa-star star-unsaved star-btn"></i></a>
+                            {% endif %}
+                        </div>
+                        <div class="mob-sector">{{ stock.sector }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="mob-conf {% if stock.probability >= 0.35 %}conf-high{% elif stock.probability >= 0.30 %}conf-med{% else %}conf-low{% endif %}">
+                            {{ stock.score_percent }}
+                        </div>
+                        <div style="margin-top:4px;">
+                            <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                                {{ stock.recommendation }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Desktop table -->
+            <div class="desktop-only data-table-wrap">
+                <div class="section-hdr">30-DAY CONFIDENCE RANKINGS</div>
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>SYMBOL</th>
+                                <th class="center">30D CONF</th>
+                                <th>COMPANY</th>
+                                <th class="center">ACTION</th>
+                                <th class="right">PRICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in stocks_30d %}
+                            <tr>
+                                <td class="td-rank">{{ loop.index }}</td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <span class="td-symbol">{{ stock.symbol }}</span>
+                                        {% if current_user.is_authenticated %}
+                                        <i onclick="toggleStock('{{ stock.symbol }}', this)"
+                                           class="{% if stock.symbol in user_watchlist %}fas fa-star star-saved{% else %}far fa-star star-unsaved{% endif %} star-btn"></i>
+                                        {% else %}
+                                        <a href="/login"><i class="far fa-star star-unsaved star-btn"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="td-conf {% if stock.probability >= 0.35 %}conf-high{% elif stock.probability >= 0.30 %}conf-med{% else %}conf-low{% endif %}">
+                                    {{ stock.score_percent }}
+                                </td>
+                                <td class="td-name">{{ stock.shortName[:30] }}</td>
+                                <td class="td-action">
+                                    <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                                        {{ stock.recommendation }}
+                                    </span>
+                                </td>
+                                <td class="td-price">{% if stock.currentPrice > 0 %}${{ "%.2f"|format(stock.currentPrice) }}{% else %}N/A{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="empty-state">NO 30-DAY DATA — RUN A SCAN FIRST</div>
+            {% endif %}
+        </div>
+
+    </main>
 </div>
 
-        </main>
-    </div>
+<!-- Mobile nav -->
+<nav class="mobile-nav">
+    <a href="/"      class="mobile-nav-item"><i class="fas fa-search-dollar" style="font-size:16px;"></i>DASHBOARD</a>
+    <a href="/sp500" class="mobile-nav-item active-sp"><i class="fas fa-layer-group" style="font-size:16px;"></i>S&amp;P 500</a>
+    <a href="/about" class="mobile-nav-item"><i class="fas fa-laptop-code" style="font-size:16px;"></i>NOTES</a>
+</nav>
 
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#1a202c]/95 backdrop-blur-xl border-t border-gray-700/50 pb-safe">
-        <div class="flex justify-around items-center h-16">
-            <a href="/" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-400 transition-colors">
-                <i class="fas fa-search-dollar text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">Dashboard</span>
-            </a>
+<script>
+// Hide loading overlay on load
+window.addEventListener('load', () => {
+    const o = document.getElementById('loadingOverlay');
+    if (o) { o.style.opacity='0'; o.style.transition='opacity 0.4s'; setTimeout(()=>o.style.display='none',400); }
+});
 
-            <a class="flex flex-col items-center justify-center w-full h-full text-green-400">
-                <i class="fas fa-layer-group text-xl mb-1"></i>
-                <span class="text-[10px] font-bold tracking-wide">Top S&P 500</span>
-                <span class="absolute top-0 w-12 h-1 bg-green-500 square-b-lg shadow-[0_0_10px_#10b981]"></span>
-            </a>      
-            <a href="/about" class="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-laptop-code text-xl mb-1"></i>
-                <span class="text-[10px] font-medium tracking-wide">About</span>
-            </a>
-        </div>
-    </nav>
+function toggleTimeframe(view) {
+    const v5=document.getElementById('view-5d'), v30=document.getElementById('view-30d');
+    const b5=document.getElementById('btn-5d'),  b30=document.getElementById('btn-30d');
+    if (view==='5d') {
+        v5.style.display=''; v30.style.display='none';
+        b5.className='tf-btn popup-trigger active-5d'; b30.className='tf-btn popup-trigger';
+    } else {
+        v30.style.display=''; v5.style.display='none';
+        b30.className='tf-btn popup-trigger active-30d'; b5.className='tf-btn popup-trigger';
+    }
+}
 
-    <script>
-        window.addEventListener("load", function () {
-            const overlay = document.getElementById("loadingOverlay");
-            if (overlay) {
-                // Fade out effect
-                overlay.style.opacity = '0';
-                overlay.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => {
-                    overlay.style.display = "none";
-                }, 500);
+function toggleStock(symbol, element) {
+    element.style.transform='scale(1.3)'; setTimeout(()=>element.style.transform='scale(1)',200);
+    fetch('/toggle_stock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({symbol})})
+    .then(r=>r.json()).then(data=>{
+        if(data.status==='added'){element.classList.remove('far','star-unsaved');element.classList.add('fas','star-saved');}
+        else if(data.status==='removed'){element.classList.remove('fas','star-saved');element.classList.add('far','star-unsaved');}
+    }).catch(console.error);
+}
+
+// Popup system
+class PopupSystem {
+    constructor(){this.isActive=false;this.clickCount=0;this.baseProbability=0.10;this.init();}
+    init(){
+        const c=document.getElementById('popupClose'),d=document.getElementById('popupDismiss');
+        if(c)c.addEventListener('click',()=>this.close());
+        if(d)d.addEventListener('click',()=>this.close());
+        document.addEventListener('click',(e)=>{
+            const lo=document.getElementById('loadingOverlay');
+            if(this.isActive||(lo&&lo.style.display!=='none'))return;
+            if(e.target.closest('.popup-trigger')){
+                this.clickCount++;
+                const chance=this.baseProbability+(this.clickCount*0.02);
+                if(Math.random()<chance){
+                    setTimeout(()=>this.showDonationPopup(),300);
+                    this.clickCount=0;this.baseProbability=Math.min(0.40,this.baseProbability+0.05);
+                }
             }
         });
-    </script>
-    <script>
-        // Toggle Logic
-        function toggleTimeframe(view) {
-            const btn5d = document.getElementById('btn-5d');
-            const btn30d = document.getElementById('btn-30d');
-            const view5d = document.getElementById('view-5d');
-            const view30d = document.getElementById('view-30d');
-
-            if (view === '5d') {
-                // Update Buttons
-                btn5d.className = 'px-6 py-2 square-lg text-sm font-bold bg-green-500/20 text-green-400 transition-all shadow-sm';
-                btn30d.className = 'px-6 py-2 square-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                // Toggle Views
-                view5d.classList.remove('hidden');
-                view30d.classList.add('hidden');
-            } else {
-                // Update Buttons
-                btn30d.className = 'px-6 py-2 square-lg text-sm font-bold bg-indigo-500/20 text-indigo-400 transition-all shadow-sm';
-                btn5d.className = 'px-6 py-2 square-lg text-sm font-bold text-gray-400 hover:text-white transition-all';
-                // Toggle Views
-                view30d.classList.remove('hidden');
-                view5d.classList.add('hidden');
-            }
-        }
-    </script>
-<script>
-        class PopupSystem {
-            constructor() {
-                this.isActive = false;
-                this.clickCount = 0;
-                this.baseProbability = 0.10; // Starts at a 10% chance
-                this.init();
-            }
-
-            init() {
-                const closeBtn = document.getElementById('popupClose');
-                const dismissBtn = document.getElementById('popupDismiss');
-                
-                if(closeBtn) closeBtn.addEventListener('click', () => this.close());
-                if(dismissBtn) dismissBtn.addEventListener('click', () => this.close());
-                
-                document.addEventListener('click', (e) => {
-                    // Prevent triggering if the loading overlay or popup is currently active
-                    const loadingOverlay = document.getElementById('loadingOverlay');
-                    if (this.isActive || (loadingOverlay && loadingOverlay.style.display !== 'none')) return;
-
-                    // Trigger based on elements you've marked with 'popup-trigger'
-                    if (e.target.closest('.popup-trigger')) {
-                        this.clickCount++;
-                        
-                        // Increase the probability by 2% for every click to make it show more often
-                        const currentChance = this.baseProbability + (this.clickCount * 0.02)
-                        
-                        // Check if the random number hits our probability threshold
-                        if (Math.random() < currentChance) {
-                            // Delay slightly so it doesn't instantly interrupt a click action
-                            setTimeout(() => this.showDonationPopup(), 300);
-                            
-                            // Reset clicks, but increase the baseline probability so it triggers faster next time
-                            this.clickCount = 0;
-                            this.baseProbability = Math.min(0.40, this.baseProbability + 0.05); // Caps at 40% base chance
-                        }
-                    }
-                });
-            }
-
-            showDonationPopup() {
-                const title = document.getElementById('popupTitle');
-                const body = document.getElementById('popupBody');
-                const icon = document.getElementById('popupIcon');
-                const actionBtn = document.getElementById('popupAction');
-                const dismissBtn = document.getElementById('popupDismiss');
-
-                if (!title || !body || !actionBtn) return;
-
-                // Match the existing glassmorphism styling and inject content
-                icon.innerHTML = '<i class="fas fa-heart text-pink-500"></i>';
-                title.innerText = "Support LitlGuy!";
-                body.innerHTML = `
-                    <p class="mb-3 text-white">This website is completely free with no ads, if these AI predictions have helped you make money please consider donating to help cover server costs and keep the AI learning!</p>
-                `;
-
-                actionBtn.innerText = "Donate Now";
-                actionBtn.onclick = () => {
-                    // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL DONATION LINK (Patreon, Ko-fi, Stripe, etc.)
-                    window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00', '_blank');
-                    this.close();
-                };
-
-                dismissBtn.innerText = "Maybe Later";
-
-                document.getElementById('popupOverlay').classList.add('active');
-                this.isActive = true;
-            }
-
-            close() {
-                document.getElementById('popupOverlay').classList.remove('active');
-                this.isActive = false;
-            }
-        }
-                    document.addEventListener('DOMContentLoaded', function() {
-                        new PopupSystem();
-                    });
-        function toggleStock(symbol, element) {
-            // Add a quick pop animation
-            element.style.transform = 'scale(1.3)';
-            setTimeout(() => element.style.transform = 'scale(1)', 200);
-
-            fetch('/toggle_stock', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ symbol: symbol })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'added') {
-                    // Switch to solid yellow star
-                    element.classList.remove('far', 'text-gray-600', 'hover:text-yellow-400/70');
-                    element.classList.add('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
-                } else if (data.status === 'removed') {
-                    // Switch to empty gray star
-                    element.classList.remove('fas', 'text-yellow-400', 'drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]');
-                    element.classList.add('far', 'text-gray-600', 'hover:text-yellow-400/70');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                element.style.transform = 'scale(1)'; 
-            });
-        }
-    </script>
-    <script>
-    // --- UI Sound Effects (Web Audio API) ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
-
-    function playClickSound() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-        
-        const now = audioCtx.currentTime;
-
-        // Tone 1: The High "Click"
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine'; 
-        osc1.frequency.setValueAtTime(400, now); 
-        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03); 
-        gain1.gain.setValueAtTime(0.15, now); 
-        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03); 
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(now);
-        osc1.stop(now + 0.02); 
-
-        // Tone 2: The Low "Thock"
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        const delay = 0.0005; 
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(300, now + delay); 
-        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04); 
-        gain2.gain.setValueAtTime(0, now); 
-        gain2.gain.setValueAtTime(0.15, now + delay); 
-        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04); 
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(now + delay);
-        osc2.stop(now + delay + 0.04); 
     }
+    showDonationPopup(){
+        document.getElementById('popupIcon').innerHTML='<i class="fas fa-heart" style="color:#e84545"></i>';
+        document.getElementById('popupTitle').textContent='SUPPORT LITLGUY';
+        document.getElementById('popupBody').innerHTML='<p>This site is free with no ads. If these predictions have helped you, please consider donating to cover server costs.</p>';
+        const a=document.getElementById('popupAction');a.textContent='DONATE';
+        a.onclick=()=>{window.open('https://buy.stripe.com/fZu7sM5wf9VfbNYfLU9Ve00','_blank');this.close();};
+        document.getElementById('popupDismiss').textContent='LATER';
+        document.getElementById('popupOverlay').classList.add('active');this.isActive=true;
+    }
+    close(){document.getElementById('popupOverlay').classList.remove('active');this.isActive=false;}
+}
+document.addEventListener('DOMContentLoaded',()=>new PopupSystem());
 
-    // Automatically attach the sound to tabs, buttons, and links
-    document.addEventListener('DOMContentLoaded', () => {
-        // I added 'li' and '.nav-item' here just in case your tabs use list elements
-        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
-        
-        clickableElements.forEach(el => {
-            el.addEventListener('click', function(e) {
-                // 1. Play the sound immediately
-                playClickSound();
-
-                // 2. Check if this element is a link going to another page
-                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
-                    // Stop the browser from leaving the page instantly
-                    e.preventDefault();
-                    
-                    const targetUrl = this.href;
-
-                    // Wait 100 milliseconds for the sound to finish, then go to the new page
-                    setTimeout(() => {
-                        window.location.href = targetUrl;
-                    }, 100);
-                }
-            });
+// Sound effects
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playClickSound(){
+    if(!audioCtx)audioCtx=new AudioContext();if(audioCtx.state==='suspended')audioCtx.resume();
+    const now=audioCtx.currentTime;
+    const o1=audioCtx.createOscillator(),g1=audioCtx.createGain();o1.type='sine';o1.frequency.setValueAtTime(400,now);o1.frequency.exponentialRampToValueAtTime(800,now+0.03);g1.gain.setValueAtTime(0.15,now);g1.gain.exponentialRampToValueAtTime(0.001,now+0.03);o1.connect(g1);g1.connect(audioCtx.destination);o1.start(now);o1.stop(now+0.02);
+    const o2=audioCtx.createOscillator(),g2=audioCtx.createGain(),dl=0.0005;o2.type='sine';o2.frequency.setValueAtTime(300,now+dl);o2.frequency.exponentialRampToValueAtTime(150,now+dl+0.04);g2.gain.setValueAtTime(0,now);g2.gain.setValueAtTime(0.15,now+dl);g2.gain.exponentialRampToValueAtTime(0.001,now+dl+0.04);o2.connect(g2);g2.connect(audioCtx.destination);o2.start(now+dl);o2.stop(now+dl+0.04);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('button,a,.cursor-pointer').forEach(el=>{
+        el.addEventListener('click',function(e){
+            playClickSound();
+            if(this.tagName.toLowerCase()==='a'&&this.href&&!this.href.includes('#')){
+                e.preventDefault();const url=this.href;setTimeout(()=>{window.location.href=url;},100);
+            }
         });
     });
+});
 </script>
 </body>
 </html>

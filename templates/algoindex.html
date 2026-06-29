@@ -11,103 +11,233 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg:       #0d0f12;
+            --bg2:      #13161b;
+            --bg3:      #1a1e26;
+            --border:   #2a2f3a;
+            --border2:  #363c4a;
+            --text:     #c8cdd8;
+            --text-dim: #5a6070;
+            --text-hdr: #7a8494;
+            --accent:   #f5a623;
+            --green:    #00c48c;
+            --red:      #e84545;
+            --blue:     #3a8ef6;
+            --purple:   #9b72f5;
+        }
+
         body {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 50%, #2d3748 100%);
-            min-height: 100vh; overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            min-height: 100vh;
+            overflow-x: hidden;
             padding-bottom: env(safe-area-inset-bottom);
         }
+
+        /* Typography */
+        .mono { font-family: 'IBM Plex Mono', monospace; }
+        .gradient-text { color: #e8ecf4; font-weight: 700; }
+
+        /* Layout blocks */
         .glass-card {
-            background: rgba(26,32,44,0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 0;
         }
-        .gradient-text {
-            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        .glass-card:hover { border-color: var(--border2); }
+
+        /* Section header bar */
+        .section-hdr {
+            background: var(--bg3);
+            border-bottom: 1px solid var(--border);
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-hdr);
         }
-        .floating-orb {
-            position: fixed; border-radius: 50%; filter: blur(80px);
-            animation: orb-float 8s ease-in-out infinite; pointer-events: none; z-index: 0;
+
+        /* Tabs */
+        .tab-btn {
+            border: 1px solid var(--border);
+            border-radius: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            padding: 6px 14px;
+            cursor: pointer;
+            background: var(--bg2);
+            color: var(--text-dim);
+            transition: background 0.1s, color 0.1s;
         }
-        @keyframes orb-float {
-            0%,100%{transform:translateY(0) translateX(0);}
-            33%{transform:translateY(-20px) translateX(10px);}
-            66%{transform:translateY(10px) translateX(-15px);}
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
         }
-        .tab-btn { transition: all 0.2s ease; }
-        .tab-btn.active { background:rgba(99,102,241,0.2); border-color:rgba(99,102,241,0.5); color:#a5b4fc; }
-        .tab-btn:not(.active) { background:transparent; border-color:rgba(255,255,255,0.1); color:rgba(255,255,255,0.5); }
-        .pos-card { transition: border-color 0.2s ease; }
-        .pos-card:hover { border-color:rgba(255,255,255,0.2); }
+        .tab-btn:not(.active):hover { background: var(--bg3); color: var(--text); }
 
-        .badge-rec  { background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
-        .badge-con  { background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
-        .badge-no   { background:rgba(239,68,68,0.15);  color:#f87171; border:1px solid rgba(239,68,68,0.3); }
-        .badge-act  { background:rgba(99,102,241,0.15); color:#a5b4fc; border:1px solid rgba(99,102,241,0.3); }
-        .badge-cls  { background:rgba(107,114,128,0.15);color:#9ca3af; border:1px solid rgba(107,114,128,0.3); }
-        .badge-5d   { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); }
-        .badge-30d  { background:rgba(167,139,250,0.15);color:#c4b5fd; border:1px solid rgba(167,139,250,0.3); }
-        .badge-win  { background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
-        .badge-loss { background:rgba(239,68,68,0.15);  color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+        /* Filter pills → flat square buttons */
+        .filter-pill {
+            border: 1px solid var(--border);
+            border-radius: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            padding: 4px 10px;
+            background: var(--bg2);
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: background 0.1s, color 0.1s;
+        }
+        .filter-pill.bg-white\/10, .filter-pill:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
 
-        .pnl-pos { color:#34d399; }
-        .pnl-neg { color:#f87171; }
-        .pnl-neu { color:#9ca3af; }
+        /* Position cards */
+        .pos-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            margin-bottom: 2px;
+        }
+        .pos-card:hover { border-color: var(--border2); }
 
-        .progress-bar  { height:4px; border-radius:2px; background:rgba(255,255,255,0.1); overflow:hidden; }
-        .progress-fill { height:100%; border-radius:2px; }
+        /* Badges → flat rectangular labels */
+        .badge-rec  { background:#003d2b; color:#00c48c; border:1px solid #005a3e; font-family:'IBM Plex Mono',monospace; }
+        .badge-con  { background:#3d2e00; color:#f5a623; border:1px solid #5a4400; font-family:'IBM Plex Mono',monospace; }
+        .badge-no   { background:#3d0c0c; color:#e84545; border:1px solid #5a1212; font-family:'IBM Plex Mono',monospace; }
+        .badge-act  { background:#001a3d; color:#3a8ef6; border:1px solid #00295a; font-family:'IBM Plex Mono',monospace; }
+        .badge-cls  { background:#1e2028; color:#5a6070; border:1px solid #2a2f3a; font-family:'IBM Plex Mono',monospace; }
+        .badge-5d   { background:#001a3d; color:#3a8ef6; border:1px solid #00295a; font-family:'IBM Plex Mono',monospace; }
+        .badge-30d  { background:#1a003d; color:#9b72f5; border:1px solid #2a005a; font-family:'IBM Plex Mono',monospace; }
+        .badge-win  { background:#003d2b; color:#00c48c; border:1px solid #005a3e; font-family:'IBM Plex Mono',monospace; }
+        .badge-loss { background:#3d0c0c; color:#e84545; border:1px solid #5a1212; font-family:'IBM Plex Mono',monospace; }
 
-        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-        .pulse-dot { animation:pulse-dot 2s ease-in-out infinite; }
+        /* P&L colors */
+        .pnl-pos { color: var(--green); font-family: 'IBM Plex Mono', monospace; }
+        .pnl-neg { color: var(--red);   font-family: 'IBM Plex Mono', monospace; }
+        .pnl-neu { color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+
+        /* Progress bar — flat */
+        .progress-bar  { height: 3px; background: var(--border); overflow: hidden; }
+        .progress-fill { height: 100%; }
+
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        .pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+        /* Stat cells */
+        .stat-cell {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
+        }
+        .stat-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-hdr);
+            margin-bottom: 4px;
+        }
+        .stat-val {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 15px;
+            font-weight: 600;
+            color: #e8ecf4;
+        }
+        .stat-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* Divider rule */
+        .h-rule { border-top: 1px solid var(--border); }
+
+        /* Data table rows */
+        .data-row {
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .data-row:last-child { border-bottom: none; }
+
+        /* Ticker label box */
+        .ticker-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 7px;
+            min-width: 36px;
+            letter-spacing: 0.04em;
+        }
 
         /* NAV sparkline canvas */
-        #navChart { display:block; width:100%; height:60px; }
+        #navChart { display:block; width:100%; height:54px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
     </style>
 </head>
 <body>
 
-<div class="floating-orb w-96 h-96 bg-blue-900 opacity-20" style="top:-100px;left:-100px;"></div>
-<div class="floating-orb w-64 h-64 bg-purple-900 opacity-20" style="bottom:100px;right:-80px;animation-delay:-4s;"></div>
+<div style="background:#0d0f12; border-bottom:2px solid #f5a623; padding:0 16px;">
+    <div style="max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:38px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#f5a623; font-weight:600; letter-spacing:0.08em;">LITLGUY TERMINAL</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; letter-spacing:0.05em;">ALGO INDEX FUND &nbsp;|&nbsp; LIVE</div>
+    </div>
+</div>
 
-<div class="relative z-10 max-w-3xl mx-auto px-4 py-6">
+<div class="relative z-10" style="margin:0 auto; padding:0 16px 32px;">
+
 
     <!-- Header -->
-    <div class="flex items-start justify-between mb-6 flex-wrap gap-3">
+    <div style="border-bottom:1px solid #2a2f3a; padding:14px 0 12px; margin-bottom:0; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px;">
         <div>
-            <a href="/" class="text-gray-400 hover:text-white text-sm mb-2 flex items-center gap-1 transition">
-                <i class="fas fa-chevron-left text-xs"></i> Back
+            <a href="/" style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px;">
+                <i class="fas fa-chevron-left" style="font-size:9px;"></i> BACK
             </a>
-            <h1 class="gradient-text text-2xl font-bold tracking-tight">Algo Index Fund</h1>
-            <p class="text-gray-400 text-xs mt-0.5">
-                Started {{ start_date }}
-                &nbsp;·&nbsp;
-                {{ active|length }} active &nbsp;·&nbsp; {{ closed|length }} closed
-            </p>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; color:#e8ecf4; letter-spacing:0.02em;">ALGO INDEX FUND</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-top:3px; letter-spacing:0.04em;">
+                INCEPTION {{ start_date }}
+                &nbsp;/&nbsp;
+                {{ active|length }} ACTIVE &nbsp;/&nbsp; {{ closed|length }} CLOSED
+            </div>
         </div>
-        <div class="text-right">
-            <div class="text-gray-500 text-xs mb-1">Last scan</div>
-            <div class="text-gray-300 text-xs font-mono">
-                {% if last_run %}{{ last_run }}{% else %}Never — run predict_single_stock.py --scan{% endif %}
+        <div style="text-align:right;">
+            <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070; text-transform:uppercase; margin-bottom:3px;">LAST SCAN</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#7a8494;">
+                {% if last_run %}{{ last_run }}{% else %}NEVER — RUN PREDICT_SINGLE_STOCK.PY --SCAN{% endif %}
             </div>
             {% if last_pick_date %}
-            <div class="text-gray-500 text-xs mt-1">Last picks: {{ last_pick_date }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-top:3px;">LAST PICKS: {{ last_pick_date }}</div>
             {% endif %}
         </div>
     </div>
 
     {% if no_data %}
     <!-- No data yet -->
-    <div class="glass-card rounded-2xl p-10 text-center">
-        <i class="fas fa-chart-line text-4xl text-gray-600 mb-4 block"></i>
-        <div class="text-gray-300 font-medium mb-2">No algo index data yet</div>
-        <div class="text-gray-500 text-sm mb-4">Run the predictor to generate positions:</div>
-        <code class="bg-black/30 text-green-400 px-4 py-2 rounded-lg text-sm block max-w-md mx-auto">
+    <div style="background:#13161b; border:1px solid #2a2f3a; padding:40px 24px; text-align:center; margin-top:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#c8cdd8; font-weight:600; letter-spacing:0.05em; margin-bottom:8px;">NO ALGO INDEX DATA</div>
+        <div style="font-size:11px; color:#5a6070; margin-bottom:16px;">Run the predictor to generate positions:</div>
+        <code style="display:block; background:#0d0f12; color:#00c48c; font-family:'IBM Plex Mono',monospace; font-size:11px; padding:10px 16px; border:1px solid #2a2f3a; max-width:420px; margin:0 auto; text-align:left;">
             python stock_ai/predict_single_stock.py --scan
         </code>
-        <div class="text-gray-600 text-xs mt-3">The fund will automatically select and track the top picks after each scan.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a; margin-top:10px;">Fund auto-selects top picks after each scan.</div>
     </div>
 
     {% else %}
@@ -127,131 +257,116 @@
     {% set loss_count = stats.get('losses', 0) %}
 
     <!-- ══ PORTFOLIO HERO CARD ══════════════════════════════════════════════ -->
-    <div class="glass-card rounded-2xl p-5 mb-5 relative overflow-hidden">
         <!-- Background sparkline -->
-        <canvas id="navChart" class="absolute inset-0 opacity-20 pointer-events-none"></canvas>
+        <div style="position:relative;">
+            <canvas id="navChart" style="position:absolute; top:0; left:0; width:100%; height:54px; opacity:0.15; pointer-events:none;"></canvas>
+            <div style="position:relative; z-index:2; padding:14px 16px 12px;">
+                <!-- Total value + return -->
+                <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:4px;">TOTAL PORTFOLIO VALUE</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; color:#e8ecf4; letter-spacing:0.01em;">
+                            ${{ "{:,.2f}".format(total_val) }}
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+                            <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+                                {% if ret_pct > 0 %}color:#00c48c{% elif ret_pct < 0 %}color:#e84545{% else %}color:#5a6070{% endif %}">
+                                {{ "+" if ret_pct > 0 else "" }}{{ "%.2f"|format(ret_pct * 100) }}%
+                            </span>
+                            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+                                ({{ "+" if gain_usd > 0 else "" }}${{ "%.2f"|format(gain_usd) }})&nbsp;vs&nbsp;${{ "{:,.0f}".format(starting) }} start
+                            </span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">STARTING BALANCE</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:#7a8494;">${{ "{:,.2f}".format(starting) }}</div>
+                    </div>
+                </div>
 
-        <div class="relative z-10">
-            <!-- Total value + return -->
-            <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
-                <div>
-                    <div class="text-gray-400 text-xs mb-1">Portfolio Value</div>
-                    <div class="text-white text-3xl font-bold tracking-tight">
-                        ${{ "{:,.2f}".format(total_val) }}
+                <!-- Sub-metrics row -->
+                <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:2px;">
+                    <div class="stat-cell" style="grid-template-columns: repeat(2,1fr);">
+                        <div class="stat-label">CASH</div>
+                        <div class="stat-val">${{ "{:,.2f}".format(cash) }}</div>
+                        <div class="stat-sub">{{ "%.0f"|format(cash / total_val * 100) if total_val else 0 }}% OF FUND</div>
                     </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-sm font-semibold
-                            {% if ret_pct > 0 %}pnl-pos{% elif ret_pct < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
-                            {{ "+" if ret_pct > 0 else "" }}{{ "%.2f"|format(ret_pct * 100) }}%
-                        </span>
-                        <span class="text-gray-500 text-xs">
-                            ({{ "+" if gain_usd > 0 else "" }}${{ "%.2f"|format(gain_usd) }})
-                            since ${{ "{:,.0f}".format(starting) }} start
-                        </span>
+                    <div class="stat-cell">
+                        <div class="stat-label">INVESTED</div>
+                        <div class="stat-val">${{ "{:,.2f}".format(invested) }}</div>
+                        <div class="stat-sub">{{ "%.0f"|format(invested / total_val * 100) if total_val else 0 }}% OF FUND</div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <div class="text-gray-500 text-xs mb-1">Starting balance</div>
-                    <div class="text-gray-300 font-semibold">${{ "{:,.2f}".format(starting) }}</div>
-                </div>
-            </div>
-
-            <!-- Sub-metrics row -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div class="bg-white/5 rounded-xl p-3">
-                    <div class="text-gray-500 mb-0.5">Cash</div>
-                    <div class="text-white font-semibold">${{ "{:,.2f}".format(cash) }}</div>
-                    <div class="text-gray-600">
-                        {{ "%.0f"|format(cash / total_val * 100) if total_val else 0 }}% of fund
+                    <div class="stat-cell">
+                        <div class="stat-label">REALIZED P&amp;L</div>
+                        <div class="stat-val {% if real_pnl > 0 %}pnl-pos{% elif real_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                            {{ "+" if real_pnl > 0 else "" }}${{ "%.2f"|format(real_pnl) }}
+                        </div>
+                        <div class="stat-sub">{{ closed_count }} CLOSED TRADES</div>
                     </div>
-                </div>
-                <div class="bg-white/5 rounded-xl p-3">
-                    <div class="text-gray-500 mb-0.5">Invested</div>
-                    <div class="text-white font-semibold">${{ "{:,.2f}".format(invested) }}</div>
-                    <div class="text-gray-600">
-                        {{ "%.0f"|format(invested / total_val * 100) if total_val else 0 }}% of fund
+                    <div class="stat-cell">
+                        <div class="stat-label">UNREALIZED</div>
+                        <div class="stat-val {% if unreal_pnl > 0 %}pnl-pos{% elif unreal_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+                            {{ "+" if unreal_pnl > 0 else "" }}${{ "%.2f"|format(unreal_pnl) }}
+                        </div>
+                        <div class="stat-sub">{{ active|length }} OPEN POSITIONS</div>
                     </div>
-                </div>
-                <div class="bg-white/5 rounded-xl p-3">
-                    <div class="text-gray-500 mb-0.5">Realized P&amp;L</div>
-                    <div class="font-semibold
-                        {% if real_pnl > 0 %}pnl-pos{% elif real_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
-                        {{ "+" if real_pnl > 0 else "" }}${{ "%.2f"|format(real_pnl) }}
-                    </div>
-                    <div class="text-gray-600">from {{ closed_count }} closed</div>
-                </div>
-                <div class="bg-white/5 rounded-xl p-3">
-                    <div class="text-gray-500 mb-0.5">Unrealized</div>
-                    <div class="font-semibold
-                        {% if unreal_pnl > 0 %}pnl-pos{% elif unreal_pnl < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
-                        {{ "+" if unreal_pnl > 0 else "" }}${{ "%.2f"|format(unreal_pnl) }}
-                    </div>
-                    <div class="text-gray-600">{{ active|length }} open positions</div>
                 </div>
             </div>
         </div>
-    </div>
+
+                    </div>
+                </div>
 
     <!-- ══ TRADE STATS ROW ═══════════════════════════════════════════════════ -->
-    <div class="glass-card rounded-xl px-4 py-3 mb-5 flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-400">
-        <!-- Win rate -->
+    <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:8px 16px; display:flex; flex-wrap:wrap; gap:20px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-bottom:2px;">
         <span>
-            <i class="fas fa-percent mr-1 text-indigo-400"></i>
-            Win rate:
+            WIN RATE:
             {% if win_rate is not none %}
-                <span class="{% if win_rate >= 0.5 %}pnl-pos{% else %}pnl-neg{% endif %} font-medium">
+                <span style="{% if win_rate >= 0.5 %}color:#00c48c{% else %}color:#e84545{% endif %}; font-weight:600;">
                     {{ "%.0f"|format(win_rate*100) }}%
                 </span>
-                <span class="text-gray-600">({{ win_count }}W / {{ loss_count }}L)</span>
-            {% else %}—{% endif %}
+                <span style="color:#3a3f4a;">({{ win_count }}W / {{ loss_count }}L)</span>
+            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
         </span>
-        <!-- Best trade $ -->
         <span>
-            <i class="fas fa-trophy mr-1 text-yellow-400"></i>
-            Best:
+            BEST:
             {% if stats.best_trade_usd is defined and stats.best_trade_usd is not none %}
-                <span class="pnl-pos font-medium">+${{ "%.2f"|format(stats.best_trade_usd) }}</span>
-                <span class="text-gray-600">(+{{ "%.1f"|format(stats.best_trade*100) }}%)</span>
-            {% else %}—{% endif %}
+                <span style="color:#00c48c; font-weight:600;">+${{ "%.2f"|format(stats.best_trade_usd) }}</span>
+                <span style="color:#3a3f4a;">(+{{ "%.1f"|format(stats.best_trade*100) }}%)</span>
+            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
         </span>
-        <!-- Worst trade $ -->
         <span>
-            <i class="fas fa-skull-crossbones mr-1 text-red-400"></i>
-            Worst:
+            WORST:
             {% if stats.worst_trade_usd is defined and stats.worst_trade_usd is not none %}
-                <span class="pnl-neg font-medium">${{ "%.2f"|format(stats.worst_trade_usd) }}</span>
-                <span class="text-gray-600">({{ "%.1f"|format(stats.worst_trade*100) }}%)</span>
-            {% else %}—{% endif %}
+                <span style="color:#e84545; font-weight:600;">${{ "%.2f"|format(stats.worst_trade_usd) }}</span>
+                <span style="color:#3a3f4a;">({{ "%.1f"|format(stats.worst_trade*100) }}%)</span>
+            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
         </span>
-        <!-- Exit rules reminder -->
-        <span class="ml-auto text-gray-600">
-            <i class="fas fa-shield-alt mr-1"></i>SL −{{ stop_loss_pct }}%
-            &nbsp;·&nbsp;<i class="fas fa-rocket mr-1"></i>TP +{{ take_profit_pct }}%
-            &nbsp;·&nbsp;<i class="fas fa-brain mr-1"></i>Δconf {{ conf_drop_pct }}pp
+        <span style="margin-left:auto; color:#3a3f4a;">
+            SL −{{ stop_loss_pct }}% &nbsp;/&nbsp; TP +{{ take_profit_pct }}% &nbsp;/&nbsp; ΔCONF {{ conf_drop_pct }}pp
         </span>
     </div>
 
     <!-- ══ TABS ══════════════════════════════════════════════════════════════ -->
-    <div class="flex gap-2 mb-5">
-        <button class="tab-btn active text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('portfolio',this)">
-            Portfolio <span class="ml-1 opacity-60">{{ active|length }}</span>
+    <div style="display:flex; gap:2px; margin-top:14px; margin-bottom:2px;">
+        <button class="tab-btn active" onclick="switchTab('portfolio',this)">
+            PORTFOLIO [{{ active|length }}]
         </button>
-        <button class="tab-btn text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('picks',this)">
-            Today's Picks
+        <button class="tab-btn" onclick="switchTab('picks',this)">
+            TODAY'S PICKS
         </button>
-        <button class="tab-btn text-xs px-4 py-2 rounded-xl border font-medium" onclick="switchTab('history',this)">
-            History <span class="ml-1 opacity-60">{{ closed|length }}</span>
+        <button class="tab-btn" onclick="switchTab('history',this)">
+            HISTORY [{{ closed|length }}]
         </button>
     </div>
 
     <!-- ── TAB: Portfolio ──────────────────────────────────────────────────── -->
     <div id="tab-portfolio">
         <!-- Filter pills -->
-        <div class="flex gap-2 mb-4 flex-wrap">
-            {% for f,lbl in [('all','All'),('active','Active'),('closed','Closed'),('5d','5-Day'),('30d','30-Day')] %}
-            <button class="filter-pill text-xs px-3 py-1 rounded-full border border-white/10
-                           {% if loop.first %}bg-white/10 text-white{% else %}text-gray-400 hover:text-white{% endif %}
-                           transition" data-filter="{{ f }}" onclick="setFilter(this)">{{ lbl }}</button>
+        <div style="display:flex; gap:2px; margin-bottom:2px; flex-wrap:wrap;">
+            {% for f,lbl in [('all','ALL'),('active','ACTIVE'),('closed','CLOSED'),('5d','5D'),('30d','30D')] %}
+            <button class="filter-pill {% if loop.first %}bg-white/10 text-white{% else %}text-gray-400 hover:text-white{% endif %}"
+                    data-filter="{{ f }}" onclick="setFilter(this)">{{ lbl }}</button>
             {% endfor %}
         </div>
 
@@ -267,124 +382,107 @@
                                  else pos.get('dollar_pnl', 0) %}
         {% set pct_pnl   = pos.get('current_pnl') if pos.status == 'active' else pos.get('pnl') %}
 
-        <div class="pos-card glass-card rounded-2xl p-4 mb-3"
-             data-horizon="{{ pos.horizon }}" data-status="{{ pos.status }}">
+        <div class="pos-card"
+             data-horizon="{{ pos.horizon }}" data-status="{{ pos.status }}"
+             style="padding:0; margin-bottom:2px;">
 
             <!-- Top row: symbol / horizon badge / status -->
-            <div class="flex items-start justify-between gap-2 mb-3 flex-wrap">
-                <div class="flex items-center gap-3">
-                    <div class="rounded-xl flex items-center justify-center text-xs font-bold w-10 h-10
-                        {% if pos.horizon == '5d' %}badge-5d{% else %}badge-30d{% endif %}">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:8px 12px; border-bottom:1px solid #1a1e26;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="ticker-box {% if pos.horizon == '5d' %}badge-5d{% else %}badge-30d{% endif %}">
                         {{ pos.horizon|upper }}
-                    </div>
+                    </span>
                     <div>
-                        <div class="text-white font-semibold text-sm">{{ pos.symbol }}</div>
-                        <div class="text-gray-400 text-xs">{{ pos.name }}</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#e8ecf4; letter-spacing:0.04em;">{{ pos.symbol }}</div>
+                        <div style="font-size:10px; color:#5a6070;">{{ pos.name }}</div>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center flex-wrap justify-end">
-                    <!-- Confidence badge -->
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if pos.confidence >= 0.35 %}badge-rec
-                        {% elif pos.confidence >= 0.30 %}badge-con
-                        {% else %}badge-no{% endif %}">
-                        {{ "%.0f"|format(pos.confidence*100) }}% conf
+                <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                    {% set disp_conf = pos.current_conf if pos.status == 'active' and pos.current_conf is defined else pos.confidence %}
+                    <span class="ticker-box {% if disp_conf >= 0.35 %}badge-rec{% elif disp_conf >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:10px;">
+                        {{ "%.0f"|format(disp_conf*100) }}% CONF
+                        {%- if pos.status == 'active' and pos.current_conf is defined and pos.current_conf != pos.confidence %}
+                        <span style="opacity:0.5; font-size:9px;">&nbsp;(WAS {{ "%.0f"|format(pos.confidence*100) }}%)</span>
+                        {%- endif %}
                     </span>
-                    <!-- Status badge -->
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if pos.status == 'active' %}badge-act{% else %}badge-cls{% endif %}">
+                    <span class="ticker-box {% if pos.status == 'active' %}badge-act{% else %}badge-cls{% endif %}" style="font-size:10px;">
                         {% if pos.status == 'active' %}
-                            <span class="pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-indigo-400 mr-1 align-middle"></span>active
+                            <span class="pulse-dot" style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#3a8ef6; margin-right:4px; vertical-align:middle;"></span>LIVE
                         {% else %}
-                            {{ pos.exit_reason or 'closed' }}
+                            {{ (pos.exit_reason or 'CLOSED')|upper }}
                         {% endif %}
                     </span>
                 </div>
             </div>
 
             <!-- Data grid — 6 cells -->
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 text-xs">
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0;">
                 <!-- Entry price -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">Entry</div>
-                    <div class="text-white font-medium">${{ "%.2f"|format(pos.entry_price) }}</div>
-                    <div class="text-gray-600">{{ pos.get('shares', 0)|round(4) }} sh</div>
+                <div style="padding:8px 12px; border-right:1px solid #1a1e26; border-bottom:1px solid #1a1e26;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">ENTRY</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">${{ "%.2f"|format(pos.entry_price) }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a;">{{ pos.get('shares', 0)|round(4) }} SH</div>
                 </div>
                 <!-- Live / exit price -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">
-                        {% if pos.status == 'active' %}Live{% else %}Exit{% endif %}
-                    </div>
-                    <div class="text-white font-medium">
-                        {% if pos.status == 'active' %}
-                            ${{ "%.2f"|format(cur_price) }}
-                        {% elif pos.exit_price %}
-                            ${{ "%.2f"|format(pos.exit_price) }}
+                <div style="padding:8px 12px; border-right:1px solid #1a1e26; border-bottom:1px solid #1a1e26;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">{% if pos.status == 'active' %}LIVE{% else %}EXIT{% endif %}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">
+                        {% if pos.status == 'active' %}${{ "%.2f"|format(cur_price) }}
+                        {% elif pos.exit_price %}${{ "%.2f"|format(pos.exit_price) }}
                         {% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- $ P&L -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">P&amp;L $</div>
-                    <div class="font-medium
-                        {% if pos_dollar_pnl is not none and pos_dollar_pnl > 0 %}pnl-pos
-                        {% elif pos_dollar_pnl is not none and pos_dollar_pnl < 0 %}pnl-neg
-                        {% else %}pnl-neu{% endif %}">
-                        {% if pos_dollar_pnl is not none %}
-                            {{ "+" if pos_dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos_dollar_pnl) }}
-                        {% else %}—{% endif %}
+                <div style="padding:8px 12px; border-bottom:1px solid #1a1e26;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">P&amp;L $</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px;
+                        {% if pos_dollar_pnl is not none and pos_dollar_pnl > 0 %}color:#00c48c;
+                        {% elif pos_dollar_pnl is not none and pos_dollar_pnl < 0 %}color:#e84545;
+                        {% else %}color:#5a6070;{% endif %}">
+                        {% if pos_dollar_pnl is not none %}{{ "+" if pos_dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos_dollar_pnl) }}{% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- % P&L -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">P&amp;L %</div>
-                    <div class="font-medium
-                        {% if pct_pnl is not none and pct_pnl > 0 %}pnl-pos
-                        {% elif pct_pnl is not none and pct_pnl < 0 %}pnl-neg
-                        {% else %}pnl-neu{% endif %}">
-                        {% if pct_pnl is not none %}
-                            {{ "+" if pct_pnl > 0 else "" }}{{ "%.1f"|format(pct_pnl*100) }}%
-                        {% else %}—{% endif %}
+                <div style="padding:8px 12px; border-right:1px solid #1a1e26;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">P&amp;L %</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px;
+                        {% if pct_pnl is not none and pct_pnl > 0 %}color:#00c48c;
+                        {% elif pct_pnl is not none and pct_pnl < 0 %}color:#e84545;
+                        {% else %}color:#5a6070;{% endif %}">
+                        {% if pct_pnl is not none %}{{ "+" if pct_pnl > 0 else "" }}{{ "%.1f"|format(pct_pnl*100) }}%{% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- Cost basis / market value -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">Invested</div>
-                    <div class="text-white font-medium">${{ "%.2f"|format(cost) }}</div>
+                <div style="padding:8px 12px; border-right:1px solid #1a1e26;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">INVESTED</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">${{ "%.2f"|format(cost) }}</div>
                     {% if pos.status == 'active' %}
-                    <div class="text-gray-600">mkt ${{ "%.2f"|format(mkt_val) }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a;">MKT ${{ "%.2f"|format(mkt_val) }}</div>
                     {% endif %}
                 </div>
                 <!-- Days / Sector -->
-                <div>
-                    <div class="text-gray-500 mb-0.5">
-                        {% if pos.status == 'active' %}Days left{% else %}Entry date{% endif %}
+                <div style="padding:8px 12px;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">{% if pos.status == 'active' %}DAYS LEFT{% else %}ENTRY DATE{% endif %}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">
+                        {% if pos.status == 'active' %}{{ [pos.target_days - pos.get('days_elapsed', 0), 0]|max }}d <span style="color:#3a3f4a;">/{{ pos.target_days }}d</span>
+                        {% else %}{{ pos.entry_date }}{% endif %}
                     </div>
-                    <div class="text-white font-medium">
-                        {% if pos.status == 'active' %}
-                            {{ [pos.target_days - pos.get('days_elapsed', 0), 0]|max }}d
-                            <span class="text-gray-600">/{{ pos.target_days }}d</span>
-                        {% else %}
-                            {{ pos.entry_date }}
-                        {% endif %}
-                    </div>
-                    <div class="text-gray-600 truncate">{{ pos.sector }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ pos.sector }}</div>
                 </div>
             </div>
 
             <!-- Progress bar (active only) -->
             {% if pos.status == 'active' %}
             {% set elapsed_pct = [(pos.get('days_elapsed', 0) / pos.target_days * 100), 100]|min|int %}
-            <div class="mt-3 progress-bar">
-                <div class="progress-fill {% if elapsed_pct > 80 %}bg-amber-500{% else %}bg-indigo-500{% endif %}"
-                     style="width:{{ elapsed_pct }}%"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:{{ elapsed_pct }}%; background:{% if elapsed_pct > 80 %}#f5a623{% else %}#3a8ef6{% endif %};"></div>
             </div>
             {% else %}
             <!-- Closed summary row -->
-            <div class="mt-3 flex items-center gap-3 text-xs text-gray-500 flex-wrap">
+            <div style="padding:6px 12px; display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; flex-wrap:wrap; border-top:1px solid #1a1e26;">
                 <span>{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</span>
                 {% if pos.dollar_pnl is not none %}
-                <span class="{% if pos.dollar_pnl > 0 %}badge-win{% else %}badge-loss{% endif %} px-2 py-0.5 rounded-full font-medium">
+                <span class="ticker-box {% if pos.dollar_pnl > 0 %}badge-win{% else %}badge-loss{% endif %}" style="font-size:9px;">
                     {{ "+" if pos.dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos.dollar_pnl) }}
                     ({{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%)
                 </span>
@@ -396,9 +494,8 @@
         {% endfor %}
         </div>
         {% else %}
-        <div class="glass-card rounded-2xl p-8 text-center text-gray-400">
-            <i class="fas fa-inbox text-3xl mb-3 block opacity-30"></i>
-            No positions yet. The fund will populate after the next scan.
+        <div style="background:#13161b; border:1px solid #2a2f3a; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+            NO POSITIONS — FUND POPULATES AFTER NEXT SCAN
         </div>
         {% endif %}
     </div>
@@ -406,67 +503,62 @@
     <!-- ── TAB: Today's Picks ─────────────────────────────────────────────── -->
     <div id="tab-picks" class="hidden">
         {% if last_pick_date %}
-        <div class="text-gray-400 text-xs mb-4">
-            Picks from <span class="text-gray-200">{{ last_pick_date }}</span> scan.
-            Ranked by model confidence score.
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
+            PICKS FROM SCAN: <span style="color:#7a8494;">{{ last_pick_date }}</span>&nbsp;&nbsp;|&nbsp;&nbsp;RANKED BY MODEL CONFIDENCE
         </div>
         {% endif %}
 
         <!-- 5-day -->
-        <div class="mb-5">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="badge-5d text-xs px-2 py-0.5 rounded-full font-medium">5d</span>
-                <span class="text-gray-300 text-xs font-semibold uppercase tracking-widest">5-Day Horizon</span>
+        <div style="margin-bottom:12px;">
+            <div style="background:#13161b; border:1px solid #2a2f3a; padding:5px 12px; display:flex; align-items:center; gap:10px;">
+                <span class="ticker-box badge-5d" style="font-size:9px;">5D</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">5-DAY HORIZON</span>
             </div>
             {% for s in top_5d %}
-            <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center justify-between gap-3 flex-wrap">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="text-white font-semibold text-sm w-14 shrink-0">{{ s.symbol }}</div>
-                    <div class="text-gray-400 text-xs truncate">{{ s.sector }}</div>
+            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-gray-300 text-xs">${{ "%.2f"|format(s.price) }}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#7a8494;">${{ "%.2f"|format(s.price) }}</span>
+                    <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {{ "%.0f"|format(s.score*100) }}%
                     </span>
-                    <span class="text-xs px-2 py-0.5 rounded-full
-                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                    <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {% if s.score >= 0.35 %}REC{% elif s.score >= 0.30 %}CONSIDER{% else %}SKIP{% endif %}
                     </span>
                 </div>
             </div>
             {% else %}
-            <div class="text-gray-500 text-sm py-3 text-center">No picks — run a scan first.</div>
+            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
             {% endfor %}
         </div>
 
         <!-- 30-day -->
         <div>
-            <div class="flex items-center gap-2 mb-3">
-                <span class="badge-30d text-xs px-2 py-0.5 rounded-full font-medium">30d</span>
-                <span class="text-gray-300 text-xs font-semibold uppercase tracking-widest">30-Day Horizon</span>
+            <div style="background:#13161b; border:1px solid #2a2f3a; padding:5px 12px; display:flex; align-items:center; gap:10px;">
+                <span class="ticker-box badge-30d" style="font-size:9px;">30D</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">30-DAY HORIZON</span>
             </div>
             {% for s in top_30d %}
-            <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center justify-between gap-3 flex-wrap">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="text-white font-semibold text-sm w-14 shrink-0">{{ s.symbol }}</div>
-                    <div class="text-gray-400 text-xs truncate">{{ s.sector }}</div>
+            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-gray-300 text-xs">${{ "%.2f"|format(s.price) }}</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#7a8494;">${{ "%.2f"|format(s.price) }}</span>
+                    <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {{ "%.0f"|format(s.score*100) }}%
                     </span>
-                    <span class="text-xs px-2 py-0.5 rounded-full
-                        {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}">
+                    <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {% if s.score >= 0.35 %}REC{% elif s.score >= 0.30 %}CONSIDER{% else %}SKIP{% endif %}
                     </span>
                 </div>
             </div>
             {% else %}
-            <div class="text-gray-500 text-sm py-3 text-center">No picks — run a scan first.</div>
+            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
             {% endfor %}
         </div>
     </div>
@@ -474,46 +566,42 @@
     <!-- ── TAB: History ───────────────────────────────────────────────────── -->
     <div id="tab-history" class="hidden">
         {% if closed %}
-        <div class="text-gray-400 text-xs mb-4">
-            Exit rules: stop loss −{{ stop_loss_pct }}% · take profit +{{ take_profit_pct }}% ·
-            confidence drop &gt;{{ conf_drop_pct }}pp · time limit
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
+            EXIT RULES: SL −{{ stop_loss_pct }}% / TP +{{ take_profit_pct }}% / CONF DROP &gt;{{ conf_drop_pct }}pp / TIME LIMIT
         </div>
 
         <!-- Cumulative realized P&L ticker -->
         {% set total_usd = stats.get('realized_pnl_usd', 0) %}
-        <div class="glass-card rounded-xl px-4 py-3 mb-4 flex items-center justify-between text-xs">
-            <span class="text-gray-400">Cumulative realized P&amp;L</span>
-            <span class="font-semibold text-sm
-                {% if total_usd > 0 %}pnl-pos{% elif total_usd < 0 %}pnl-neg{% else %}pnl-neu{% endif %}">
+        <div style="background:#13161b; border:1px solid #2a2f3a; padding:8px 14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">CUMULATIVE REALIZED P&amp;L</span>
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;
+                {% if total_usd > 0 %}color:#00c48c;{% elif total_usd < 0 %}color:#e84545;{% else %}color:#5a6070;{% endif %}">
                 {{ "+" if total_usd > 0 else "" }}${{ "%.2f"|format(total_usd) }}
             </span>
         </div>
 
         {% for pos in closed|sort(attribute='exit_date',reverse=True) %}
-        <div class="glass-card rounded-xl px-4 py-3 mb-2 flex items-center gap-3 justify-between flex-wrap">
-            <div class="flex items-center gap-3">
-                <span class="text-xs px-2 py-0.5 rounded-full {% if pos.horizon=='5d' %}badge-5d{% else %}badge-30d{% endif %}">
+        <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:8px 12px; display:flex; align-items:center; gap:10px; justify-content:space-between; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="ticker-box {% if pos.horizon=='5d' %}badge-5d{% else %}badge-30d{% endif %}" style="font-size:9px;">
                     {{ pos.horizon|upper }}
                 </span>
                 <div>
-                    <div class="text-white font-semibold text-sm">{{ pos.symbol }}</div>
-                    <div class="text-gray-500 text-xs">{{ pos.exit_reason or '—' }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4;">{{ pos.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:#5a6070;">{{ (pos.exit_reason or '—')|upper }}</div>
                 </div>
             </div>
-            <div class="text-gray-400 text-xs">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
-            <!-- Prices -->
-            <div class="text-xs text-gray-400">
-                ${{ "%.2f"|format(pos.entry_price) }} →
-                ${{ "%.2f"|format(pos.exit_price) if pos.exit_price else '—' }}
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#7a8494;">
+                ${{ "%.2f"|format(pos.entry_price) }} → ${{ "%.2f"|format(pos.exit_price) if pos.exit_price else '—' }}
             </div>
-            <!-- $ P&L -->
-            <div class="font-semibold text-sm
-                {% if pos.dollar_pnl is not none and pos.dollar_pnl > 0 %}pnl-pos
-                {% elif pos.dollar_pnl is not none and pos.dollar_pnl < 0 %}pnl-neg
-                {% else %}pnl-neu{% endif %}">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;
+                {% if pos.dollar_pnl is not none and pos.dollar_pnl > 0 %}color:#00c48c;
+                {% elif pos.dollar_pnl is not none and pos.dollar_pnl < 0 %}color:#e84545;
+                {% else %}color:#5a6070;{% endif %}">
                 {% if pos.dollar_pnl is not none %}
                     {{ "+" if pos.dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos.dollar_pnl) }}
-                    <span class="text-gray-500 font-normal text-xs">
+                    <span style="font-size:10px; font-weight:400; color:#5a6070;">
                         ({{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%)
                     </span>
                 {% else %}—{% endif %}
@@ -521,9 +609,8 @@
         </div>
         {% endfor %}
         {% else %}
-        <div class="glass-card rounded-2xl p-8 text-center text-gray-400">
-            <i class="fas fa-history text-3xl mb-3 block opacity-30"></i>
-            No closed positions yet. Exits are processed automatically on each scan.
+        <div style="background:#13161b; border:1px solid #2a2f3a; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+            NO CLOSED POSITIONS — EXITS PROCESSED ON EACH SCAN
         </div>
         {% endif %}
     </div>
@@ -531,8 +618,8 @@
     {% endif %}{# end no_data #}
 
     <!-- Footer -->
-    <div class="mt-6 text-center text-gray-600 text-xs">
-        Data updated by running <code class="text-gray-500">python stock_ai/predict_single_stock.py --scan</code>
+    <div style="margin-top:20px; padding-top:12px; border-top:1px solid #2a2f3a; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#3a3f4a; letter-spacing:0.04em;">
+        DATA UPDATED BY: <code style="color:#5a6070;">python stock_ai/predict_single_stock.py --scan</code>
     </div>
 
 </div><!-- /container -->
@@ -591,11 +678,11 @@ const STARTING_BALANCE = {{ portfolio.get('starting_balance', 10000) }};
     const yOf    = v => H - ((v - minV) / range) * H;
 
     const isPositive = vals[vals.length - 1] >= STARTING_BALANCE;
-    const color      = isPositive ? '#34d399' : '#f87171';
+    const color      = isPositive ? '#00c48c' : '#e84545';
 
     // Gradient fill
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0,   isPositive ? 'rgba(52,211,153,0.4)' : 'rgba(248,113,113,0.4)');
+    grad.addColorStop(0,   isPositive ? 'rgba(0,196,140,0.35)' : 'rgba(232,69,69,0.35)');
     grad.addColorStop(1,   'rgba(0,0,0,0)');
 
     ctx.beginPath();
