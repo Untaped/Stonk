@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#1a202c">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
@@ -98,7 +97,7 @@
             cursor: pointer;
             transition: background 0.1s, color 0.1s;
         }
-        .filter-pill.bg-white\/10, .filter-pill:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+        .filter-pill.active-pill, .filter-pill:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
 
         /* Position cards */
         .pos-card {
@@ -187,6 +186,12 @@
         /* NAV sparkline canvas */
         #navChart { display:block; width:100%; height:54px; }
 
+        /* Replaces the two Tailwind utilities this page actually used
+           (.hidden for tab switching, .bg-white/10 + text-white for the
+           active filter pill) now that the CDN script is gone. */
+        .hidden { display: none; }
+        .filter-pill.active-pill { background: rgba(255,255,255,0.1); color: #fff; }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
@@ -202,7 +207,7 @@
     </div>
 </div>
 
-<div class="relative z-10" style="margin:0 auto; padding:0 16px 32px;">
+<div style="position:relative; z-index:10; margin:0 auto; padding:0 16px 32px;">
 
 
     <!-- Header -->
@@ -365,7 +370,7 @@
         <!-- Filter pills -->
         <div style="display:flex; gap:2px; margin-bottom:2px; flex-wrap:wrap;">
             {% for f,lbl in [('all','ALL'),('active','ACTIVE'),('closed','CLOSED'),('5d','5D'),('30d','30D')] %}
-            <button class="filter-pill {% if loop.first %}bg-white/10 text-white{% else %}text-gray-400 hover:text-white{% endif %}"
+            <button class="filter-pill{% if loop.first %} active-pill{% endif %}"
                     data-filter="{{ f }}" onclick="setFilter(this)">{{ lbl }}</button>
             {% endfor %}
         </div>
@@ -638,11 +643,9 @@ function switchTab(name, btn) {
 // ── Filter pills ─────────────────────────────────────────────────────────────
 function setFilter(btn) {
     document.querySelectorAll('.filter-pill').forEach(b => {
-        b.classList.remove('bg-white/10','text-white');
-        b.classList.add('text-gray-400');
+        b.classList.remove('active-pill');
     });
-    btn.classList.add('bg-white/10','text-white');
-    btn.classList.remove('text-gray-400');
+    btn.classList.add('active-pill');
     const f = btn.dataset.filter;
     document.querySelectorAll('#positions-list > [data-horizon]').forEach(card => {
         let show = true;

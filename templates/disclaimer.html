@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Disclosure &amp; Terms — LitlGuy</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg:       #0d0f12;
+            --bg2:      #13161b;
+            --bg3:      #1a1e26;
+            --border:   #2a2f3a;
+            --border2:  #363c4a;
+            --text:     #c8cdd8;
+            --text-dim: #5a6070;
+            --text-hdr: #7a8494;
+            --accent:   #f5a623;
+            --green:    #00c48c;
+            --red:      #e84545;
+            --blue:     #3a8ef6;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .mono { font-family: 'IBM Plex Mono', monospace; }
+
+        .gate-card {
+            background: var(--bg2);
+            border: 1px solid var(--border2);
+            width: 100%;
+            max-width: 580px;
+            padding: 28px;
+        }
+
+        .gate-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #e8ecf4;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .gate-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+            margin-bottom: 18px;
+        }
+
+        .gate-flash {
+            background: rgba(232,69,69,0.1);
+            border: 1px solid rgba(232,69,69,0.3);
+            color: #ffb3b3;
+            padding: 10px 12px;
+            font-size: 11px;
+            margin-bottom: 14px;
+        }
+
+        .gate-scroll {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            line-height: 1.65;
+        }
+        .gate-scroll h3 {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            color: #e8ecf4;
+            text-transform: uppercase;
+            margin: 14px 0 6px;
+        }
+        .gate-scroll h3:first-child { margin-top: 0; }
+        .gate-scroll p { margin-bottom: 8px; color: var(--text); }
+
+        .gate-warn {
+            background: rgba(245,166,35,0.08);
+            border: 1px solid rgba(245,166,35,0.25);
+            padding: 10px 12px;
+            font-size: 11px;
+            color: var(--text);
+            margin-top: 10px;
+        }
+
+        .gate-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text);
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+        .gate-check input {
+            margin-top: 3px;
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            accent-color: var(--blue);
+        }
+
+        .gate-actions { display: flex; gap: 8px; }
+
+        .gate-btn {
+            flex: 1;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 11px 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .gate-btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+        .gate-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .gate-btn:hover:not(:disabled) { border-color: var(--border2); }
+
+        .gate-footer {
+            text-align: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            margin-top: 14px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
+    </style>
+</head>
+<body>
+
+    <div class="gate-card">
+        <div class="gate-title">
+            <i class="fas fa-shield-alt" style="color:var(--accent)"></i>
+            Risk Disclosure &amp; Terms of Use
+        </div>
+        <div class="gate-sub">PLEASE READ BEFORE CONTINUING · VERSION {{ version }}</div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="gate-flash">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="gate-scroll">
+            <h3>1. Not Financial Advice</h3>
+            <p>LitlGuy provides automated, model-generated information about publicly traded securities for
+            general, educational, and informational purposes only. Nothing on this site is, or should be
+            construed as, personalized investment advice, a recommendation to buy or sell any security, or an
+            offer of any brokerage, advisory, or investment management service. LitlGuy is not a registered
+            investment adviser, broker-dealer, or financial planner in any jurisdiction.</p>
+
+            <h3>2. AI &amp; Market Risk</h3>
+            <p>Predictions, scores, and probabilities shown here come from statistical and machine-learning
+            models trained on historical data. Markets are volatile and unpredictable; historical patterns,
+            backtests, and past performance do not guarantee, and may not even be indicative of, future
+            results. A high displayed probability is not a promise of any outcome.</p>
+
+            <h3>3. Data Accuracy &amp; Availability</h3>
+            <p>Price, fundamentals, and other data are sourced from third parties (including Yahoo Finance) and
+            may be delayed, incomplete, or wrong. LitlGuy does not warrant the accuracy, completeness, or
+            timeliness of any data or prediction, and is not responsible for decisions made in reliance on it.
+            The service may be unavailable, interrupted, or discontinued at any time without notice.</p>
+
+            <h3>4. Your Own Responsibility</h3>
+            <p>You are solely responsible for your own investment and trading decisions. Investing in
+            securities involves risk, including the possible loss of principal. Never invest money you cannot
+            afford to lose, and consider speaking with a licensed, independent financial or tax advisor before
+            acting on anything you see here.</p>
+
+            <h3>5. No Warranty; Limitation of Liability</h3>
+            <p>This site and its content are provided "as is" and "as available," without warranties of any
+            kind, express or implied. To the fullest extent permitted by law, LitlGuy and its operator disclaim
+            liability for any loss or damage arising from your use of, or reliance on, this site.</p>
+
+            <h3>6. Privacy &amp; Security Logging</h3>
+            <p>We log visitor IP addresses and basic request metadata for security, fraud-prevention, and
+            abuse-mitigation purposes. We do not sell your personal data to third parties.</p>
+
+            <h3>7. Eligibility</h3>
+            <p>You must be at least 18 years old, or the age of majority in your jurisdiction, and legally
+            permitted to access financial information services from your location, to use this site.</p>
+
+            <h3>8. Changes to These Terms</h3>
+            <p>We may update this disclosure from time to time. Continued use of the site after a change means
+            you accept the updated terms; material changes will prompt you to re-confirm your agreement, the
+            way you're doing right now.</p>
+
+            <div class="gate-warn">
+                <i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:6px;"></i>
+                This is a general-purpose disclosure, not a substitute for advice from a licensed attorney or
+                financial professional, and it does not by itself guarantee legal compliance for this site.
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('disclaimer') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ next_url }}">
+
+            <label class="gate-check">
+                <input type="checkbox" id="agreeBox" name="agree" value="yes">
+                <span>I have read and understood the above, and I agree to the Terms of Use and Risk
+                Disclosure. I understand this is not financial advice.</span>
+            </label>
+
+            <div class="gate-actions">
+                <a href="https://www.google.com" class="gate-btn">Leave Site</a>
+                <button type="submit" class="gate-btn gate-btn-primary" id="agreeSubmit">
+                    I Agree &amp; Continue
+                </button>
+            </div>
+        </form>
+
+        <div class="gate-footer">LITLGUY.INC · SHOWN ONCE PER BROWSER, AND AGAIN WHENEVER TERMS CHANGE</div>
+    </div>
+
+    <script>
+        // Progressive enhancement only: the button starts enabled so this
+        // still works with JS disabled — the server checks the checkbox
+        // value on submit either way, so nothing here is load-bearing for
+        // actual enforcement.
+        const agreeBox = document.getElementById('agreeBox');
+        const agreeSubmit = document.getElementById('agreeSubmit');
+        agreeSubmit.disabled = true;
+        agreeBox.addEventListener('change', () => { agreeSubmit.disabled = !agreeBox.checked; });
+    </script>
+
+    <script>
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playClickSound() {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const gain1 = audioCtx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(400, now);
+        osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03);
+        gain1.gain.setValueAtTime(0.15, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+        osc1.connect(gain1);
+        gain1.connect(audioCtx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.02);
+
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        const delay = 0.0005;
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(300, now + delay);
+        osc2.frequency.exponentialRampToValueAtTime(150, now + delay + 0.04);
+        gain2.gain.setValueAtTime(0, now);
+        gain2.gain.setValueAtTime(0.15, now + delay);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(now + delay);
+        osc2.stop(now + delay + 0.04);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const clickableElements = document.querySelectorAll('button, a, .cursor-pointer, input[type="submit"], li, .nav-item');
+        clickableElements.forEach(el => {
+            el.addEventListener('click', function(e) {
+                playClickSound();
+                if (this.tagName.toLowerCase() === 'a' && this.href && !this.href.includes('#')) {
+                    e.preventDefault();
+                    const targetUrl = this.href;
+                    setTimeout(() => { window.location.href = targetUrl; }, 100);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
