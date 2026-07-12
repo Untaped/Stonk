@@ -22,6 +22,26 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask import Response
 from flask_wtf.csrf import CSRFProtect
+
+# Analytics for strength factors and peer comparison (neutral, data-driven)
+try:
+    from stock_analytics import (
+        load_sector_fundamentals,
+        calculate_sector_stats,
+        calculate_strength_factors,
+    )
+except ImportError:
+    load_sector_fundamentals = None
+    calculate_sector_stats = None
+    calculate_strength_factors = None
+
+# Peer correlation / price-gap analysis (same neutral, data-driven framing
+# as the strength-factors import above)
+try:
+    from parallel_stock_analysis import find_parallel_stocks
+except ImportError:
+    find_parallel_stocks = None
+
 #Logging IPsssssss
 def get_location(ip):
     response = requests.get(f"https://ipinfo.io/{ip}/json")
@@ -91,6 +111,22 @@ class SavedStock(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     saved_price = db.Column(db.Float, nullable=True)
 
+class DisclaimerAgreement(db.Model):
+    """
+    Audit trail only — this table is NOT read by the gate that decides whether
+    to let a visitor through (see require_disclaimer_agreement() below, which
+    checks a cookie instead so the gate costs zero DB queries per request).
+    This just gives you a durable, queryable record of who agreed to what
+    version of the terms and when, in case you ever need it. New table, so
+    db.create_all() below picks it up automatically — no migration needed.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # null = wasn't logged in yet
+    version = db.Column(db.String(20), nullable=False)
+    agreed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    ip_address = db.Column(db.String(64), nullable=True)
+    user_agent = db.Column(db.String(255), nullable=True)
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -159,6 +195,82 @@ def set_security_headers(response):
         "connect-src 'self'"
     )
     return response
+
+# --- Legal / Risk Disclosure gate ------------------------------------------
+# Bump this string whenever you materially change the disclaimer text in
+# templates/disclaimer.html. It's stored in the visitor's cookie, so bumping
+# it means everyone — even people who already agreed — gets asked again.
+DISCLAIMER_VERSION = "2026-07-07"
+DISCLAIMER_COOKIE = "disclaimer_agreed_version"
+DISCLAIMER_COOKIE_MAX_AGE = 60 * 60 * 24 * 365  # ~1 year
+
+# Endpoint names (not URLs) that must stay reachable for visitors who haven't
+# agreed yet. Keep health_check in here — Render polls /health to decide if
+# the app is alive, and a redirect instead of a 200 there reads as "down."
+DISCLAIMER_EXEMPT_ENDPOINTS = {
+    "disclaimer", "health_check", "robots", "serve_sw", "serve_manifest", "static",
+}
+
+# JSON/AJAX endpoints: redirecting these to an HTML page would just hand the
+# calling fetch() a page of HTML instead of JSON, silently breaking the
+# feature instead of gating anything. Anyone who can reach these already had
+# to load a gated HTML page first to get the JS that calls them.
+DISCLAIMER_EXEMPT_PATH_PREFIXES = ("/api/",)
+DISCLAIMER_EXEMPT_PATHS = {"/autocomplete", "/toggle_stock"}
+
+
+@app.before_request
+def require_disclaimer_agreement():
+    if request.endpoint is None:
+        return  # unmatched route — let it 404 normally, don't redirect dead links into a loop
+    if request.endpoint in DISCLAIMER_EXEMPT_ENDPOINTS:
+        return
+    if request.path in DISCLAIMER_EXEMPT_PATHS or request.path.startswith(DISCLAIMER_EXEMPT_PATH_PREFIXES):
+        return
+    if request.cookies.get(DISCLAIMER_COOKIE) == DISCLAIMER_VERSION:
+        return
+
+    next_target = request.full_path if request.query_string else request.path
+    return redirect(url_for('disclaimer', next=next_target))
+
+
+@app.route('/disclaimer', methods=['GET', 'POST'])
+def disclaimer():
+    next_url = request.values.get('next') or url_for('index')
+    # Block open redirects (next=https://evil.com) and self-referencing loops
+    if not next_url.startswith('/') or next_url.startswith(url_for('disclaimer')):
+        next_url = url_for('index')
+
+    if request.method == 'POST':
+        if request.form.get('agree') == 'yes':
+            try:
+                db.session.add(DisclaimerAgreement(
+                    user_id=current_user.id if current_user.is_authenticated else None,
+                    version=DISCLAIMER_VERSION,
+                    ip_address=request.headers.get('CF-Connecting-IP', request.remote_addr),
+                    user_agent=request.headers.get('User-Agent', '')[:255],
+                ))
+                db.session.commit()
+            except Exception as e:
+                # Never let an audit-log hiccup block someone who legitimately agreed
+                db.session.rollback()
+                logging.info(f"disclaimer audit-log write failed: {e}")
+
+            resp = redirect(next_url)
+            resp.set_cookie(
+                DISCLAIMER_COOKIE,
+                DISCLAIMER_VERSION,
+                max_age=DISCLAIMER_COOKIE_MAX_AGE,
+                httponly=True,
+                secure=IS_PRODUCTION,
+                samesite='Lax',
+            )
+            return resp
+
+        flash("Please check the box to confirm you've read this before continuing.")
+
+    return render_template('disclaimer.html', next_url=next_url, version=DISCLAIMER_VERSION)
+
 
 # --- Authentication Routes ---
 @app.route('/register', methods=['GET', 'POST'])
@@ -412,6 +524,66 @@ def get_fundamentals(symbol):
     # Return dummy data if file missing or error
     return {'shortName': symbol, 'sector': 'Unknown', 'marketCap': 0, 'price': 0}
 
+
+def get_strength_factors(symbol):
+    """
+    Compute neutral, factual "strength factors" for a stock by comparing its
+    fundamentals to same-sector peers (median P/E, revenue growth, ROE,
+    debt-to-equity, current ratio). Returns [] if data isn't available yet —
+    this is additive/optional, never blocks the page from rendering.
+
+    Deliberately descriptive, not prescriptive: each factor states what the
+    data shows ("Trading 18% below sector median P/E") rather than telling
+    the user what to do about it.
+    """
+    if calculate_strength_factors is None:
+        return []
+    try:
+        all_fund_df = load_sector_fundamentals()
+        if all_fund_df.empty:
+            return []
+        stock_row = all_fund_df[all_fund_df['symbol'] == symbol]
+        if stock_row.empty:
+            return []
+        stock_fund_dict = stock_row.iloc[0].to_dict()
+        sector = stock_fund_dict.get('sector', 'Unknown')
+        if not sector or sector == 'Unknown':
+            return []
+        sector_stats = calculate_sector_stats(all_fund_df, sector)
+        if sector_stats.get('count', 0) < 3:
+            # Not enough same-sector peers to make a meaningful comparison
+            return []
+        return calculate_strength_factors(stock_fund_dict, sector_stats)
+    except Exception as e:
+        logging.info(f"strength factor calc failed for {symbol}: {e}")
+        return []
+
+
+def get_parallel_stocks(symbol):
+    """
+    Compute peer-correlation / price-gap data for a stock via
+    parallel_stock_analysis.find_parallel_stocks(): same-sector peers whose
+    daily returns are highly correlated with this stock, and how far the
+    CURRENT price ratio between them sits from its own typical range.
+    Returns None if data isn't available yet, or if no peer clears the
+    correlation/liquidity/history gates — this is additive/optional, never
+    blocks the page from rendering.
+
+    Deliberately descriptive, not prescriptive, matching get_strength_factors()
+    above: this states what the data shows (an X.X std-dev offset from the
+    typical price ratio) rather than telling the user what to do about it.
+    """
+    if find_parallel_stocks is None:
+        return None
+    try:
+        result = find_parallel_stocks(symbol)
+        if not result.get('peers'):
+            return None
+        return result
+    except Exception as e:
+        logging.info(f"parallel-stock analysis failed for {symbol}: {e}")
+        return None
+
 # --- Routes ---
 
 @app.route('/health')
@@ -513,16 +685,21 @@ def index_post():
             is_linear_5d = (p3 > p5) and (p5 > p10) and (p10 > p15)
             score_5d = float(raw_data.get('score_5d', 0))
             if score_5d >= 0.35:
-                rec_5d = "RECOMENDED" if is_linear_5d else "CONSIDER"
+                # "Strong Signal Match" = high model confidence AND the
+                # probability curve behaves as expected across thresholds.
+                # "Mixed Signal" = high confidence but an inconsistent curve.
+                # These describe what the model output looks like — they are
+                # not instructions to buy, sell, or hold anything.
+                rec_5d = "Strong Signal Match" if is_linear_5d else "Mixed Signal"
             else:
-                rec_5d = "NOT RECOMENDED"
+                rec_5d = "Weak Signal"
 
             is_linear_30d = (p30_3 > p30_5) and (p30_5 > p30_10) and (p30_10 > p30_15)
             score_30d = float(raw_data.get('score_30d', 0))
             if score_30d >= 0.35:
-                rec_30d = "RECOMENDED" if is_linear_30d else "CONSIDER"
+                rec_30d = "Strong Signal Match" if is_linear_30d else "Mixed Signal"
             else:
-                rec_30d = "NOT RECOMENDED"
+                rec_30d = "Weak Signal"
 
             prediction = {
                 'symbol': raw_data.get('symbol'),
@@ -532,11 +709,24 @@ def index_post():
                 '30_3pct': p30_3, '30_5pct': p30_5, '30_10pct': p30_10, '30_1mo': p30_15
             }
             stock_data = get_fundamentals(symbol)
+            strength_factors = get_strength_factors(symbol)
+            parallel_stocks = get_parallel_stocks(symbol)
         else:
             error = f"No prediction found for {symbol} in S&P 500 databases."
+            strength_factors = []
+            parallel_stocks = None
+    else:
+        strength_factors = []
+        parallel_stocks = None
 
     # Make sure saved_stocks is passed here!
-    return render_template('index.html', symbol=symbol, prediction=prediction, stock_data=stock_data, error=error, saved_stocks=saved_stocks)
+    return render_template(
+        'index.html', symbol=symbol, prediction=prediction, stock_data=stock_data,
+        error=error, saved_stocks=saved_stocks, strength_factors=strength_factors,
+        parallel_stocks=parallel_stocks,
+        rec_5d=rec_5d if symbol and raw_data else None,
+        rec_30d=rec_30d if symbol and raw_data else None,
+    )
 
 @app.route('/api/stocks')
 def api_stocks():
