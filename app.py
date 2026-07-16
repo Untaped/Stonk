@@ -864,18 +864,18 @@ def sp500_list():
         # Recommendation thresholds are identical to MIN_SCORE_5D / MIN_SCORE_30D
         # in algo_index_manager.py (both 0.35) — the single source of truth.
         if prob_5d >= 0.35 and is_linear_5d:
-            rec_5d = "BUY"
+            rec_5d = "Ideal"
         elif prob_5d >= 0.30:
-            rec_5d = "CONSIDER"
+            rec_5d = "Good"
         else:
-            rec_5d = "NOT RECOMMENDED"
+            rec_5d = "Unrealiable"
 
         if prob_30d >= 0.35 and is_linear_30d:
-            rec_30d = "BUY"
+            rec_30d = "Ideal"
         elif prob_30d >= 0.30:
-            rec_30d = "CONSIDER"
+            rec_30d = "Good"
         else:
-            rec_30d = "NOT RECOMMENDED"
+            rec_30d = "Unreliable"
 
         base = {
             'symbol':       p.get('symbol'),
