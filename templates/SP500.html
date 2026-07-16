@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>LitlGuy Terminal — S&amp;P 500 Picks</title>
-    <meta name="theme-color" content="#0d0f12">
+    <meta name="theme-color" content="#e4e7ed">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,19 +17,19 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --bg:       #0d0f12;
-            --bg2:      #13161b;
-            --bg3:      #1a1e26;
-            --border:   #2a2f3a;
-            --border2:  #363c4a;
-            --text:     #c8cdd8;
-            --text-dim: #5a6070;
-            --text-hdr: #7a8494;
-            --accent:   #f5a623;
-            --green:    #00c48c;
-            --red:      #e84545;
-            --blue:     #3a8ef6;
-            --yellow:   #f5a623;
+            --bg:       #e4e7ed;
+            --bg2:      #ffffff;
+            --bg3:      #d8dce4;
+            --border:   #c2c8d3;
+            --border2:  #98a1b3;
+            --text:     #12141a;
+            --text-dim: #5a6376;
+            --text-hdr: #454e60;
+            --accent:   #b45309;
+            --green:    #047857;
+            --red:      #dc2626;
+            --blue:     #2563eb;
+            --yellow:   #b45309;
         }
 
         body {
@@ -45,7 +45,7 @@
         .mono { font-family: 'IBM Plex Mono', monospace; }
 
         /* ── Top bar ── */
-        .top-bar { background: var(--bg); border-bottom: 2px solid var(--accent); padding: 0 16px; position: sticky; top: 0; z-index: 100; }
+        .top-bar { background: var(--bg2); border-bottom: 2px solid var(--accent); box-shadow: 0 1px 3px rgba(18,20,26,0.07), 0 4px 12px rgba(18,20,26,0.04); padding: 0 16px; position: sticky; top: 0; z-index: 100; }
         .top-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 38px; }
         .top-bar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.08em; }
         .top-bar-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; }
@@ -59,14 +59,14 @@
         .sidebar-logo { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; padding: 0 16px 14px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
         .nav-link { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; color: var(--text-dim); text-decoration: none; border-left: 2px solid transparent; transition: color 0.1s, border-color 0.1s, background 0.1s; }
         .nav-link:hover { color: var(--text); background: var(--bg3); }
-        .nav-link.active-sp { color: var(--green); border-left-color: var(--green); background: rgba(0,196,140,0.07); }
+        .nav-link.active-sp { color: var(--green); border-left-color: var(--green); background: rgba(4,120,87,0.07); }
 
         /* ── Main ── */
         .main { flex: 1; padding: 0 16px 48px; min-width: 0; }
 
         /* ── Page title ── */
         .page-title-row { border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-        .page-title { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #e8ecf4; letter-spacing: 0.02em; }
+        .page-title { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #0d0f12; letter-spacing: 0.02em; }
 
         /* ── Section header ── */
         .section-hdr { background: var(--bg3); border-bottom: 1px solid var(--border); padding: 5px 12px; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-hdr); }
@@ -74,8 +74,8 @@
         /* ── Timeframe tabs ── */
         .tf-toggle { display: flex; gap: 2px; margin: 12px 0; }
         .tf-btn { border: 1px solid var(--border); background: var(--bg2); color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; padding: 6px 18px; cursor: pointer; transition: background 0.1s, color 0.1s, border-color 0.1s; }
-        .tf-btn.active-5d  { background: rgba(0,196,140,0.12); color: var(--green);  border-color: var(--green); }
-        .tf-btn.active-30d { background: rgba(155,114,245,0.12); color: #9b72f5; border-color: #9b72f5; }
+        .tf-btn.active-5d  { background: rgba(4,120,87,0.12); color: var(--green);  border-color: var(--green); }
+        .tf-btn.active-30d { background: rgba(124,58,237,0.12); color: #7c3aed; border-color: #7c3aed; }
         .tf-btn:not(.active-5d):not(.active-30d):hover { background: var(--bg3); color: var(--text); }
 
         /* ── Error card ── */
@@ -92,7 +92,7 @@
         table.data-table tbody tr:last-child td { border-bottom: none; }
         table.data-table tbody tr:hover td { background: var(--bg3); }
         .td-rank { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); width: 36px; }
-        .td-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #e8ecf4; }
+        .td-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: #0d0f12; }
         .td-conf { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; text-align: center; }
         .td-name { font-size: 11px; color: var(--text-dim); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .td-action { text-align: center; }
@@ -100,9 +100,9 @@
 
         /* Badges */
         .badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.06em; padding: 2px 8px; }
-        .badge-buy     { background: #003d2b; color: var(--green); border: 1px solid #005a3e; }
-        .badge-consider { background: #3d2e00; color: var(--yellow); border: 1px solid #5a4400; }
-        .badge-skip    { background: #3d0c0c; color: var(--red);   border: 1px solid #5a1212; }
+        .badge-buy     { background: #e3fff7; color: var(--green); border: 1px solid #7ef1d0; }
+        .badge-consider { background: #fef4e4; color: var(--yellow); border: 1px solid #ecc583; }
+        .badge-skip    { background: #fce5e5; color: var(--red);   border: 1px solid #e48b8b; }
 
         .conf-high { color: var(--green); }
         .conf-med  { color: var(--yellow); }
@@ -110,9 +110,9 @@
 
         /* Star */
         .star-btn { background: none; border: none; cursor: pointer; font-size: 13px; padding: 0; transition: color 0.1s; }
-        .star-saved { color: #f5c518; }
+        .star-saved { color: #8a6a08; }
         .star-unsaved { color: var(--text-dim); }
-        .star-unsaved:hover { color: #f5c518; }
+        .star-unsaved:hover { color: #8a6a08; }
 
         /* ── Mobile cards ── */
         .mobile-row { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; margin-bottom: 2px; }
@@ -120,7 +120,7 @@
         .mobile-row.consider-row { border-left-color: var(--yellow); }
         .mobile-row.skip-row    { border-left-color: var(--red); }
         .mobile-row:hover { border-color: var(--border2); border-left-color: inherit; }
-        .mob-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #e8ecf4; }
+        .mob-symbol { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: #0d0f12; }
         .mob-sector { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-dim); margin-top: 2px; }
         .mob-conf { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; }
 
@@ -132,7 +132,7 @@
         .empty-state { background: var(--bg2); border: 1px solid var(--border); padding: 40px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
 
         /* Loading overlay */
-        #loadingOverlay { position: fixed; inset: 0; z-index: 99999; background: rgba(13,15,18,0.97); display: flex; align-items: center; justify-content: center; }
+        #loadingOverlay { position: fixed; inset: 0; z-index: 99999; background: rgba(228,231,237,0.97); display: flex; align-items: center; justify-content: center; }
         .loading-inner { background: var(--bg2); border: 1px solid var(--border); padding: 32px 48px; text-align: center; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spin { animation: spin 1s linear infinite; }
@@ -142,7 +142,7 @@
         .popup-overlay.active { opacity:1; visibility:visible; }
         .popup-container { background: var(--bg2); border: 1px solid var(--border2); padding: 24px; width: 90%; max-width: 480px; transform: scale(0.9); transition: transform 0.2s; }
         .popup-overlay.active .popup-container { transform: scale(1); }
-        .popup-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #e8ecf4; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .popup-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #0d0f12; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
         .popup-body { font-size: 12px; color: var(--text); line-height: 1.6; margin-bottom: 16px; }
         .popup-actions { display: flex; gap: 6px; justify-content: flex-end; }
         .popup-btn { border: 1px solid var(--border); background: var(--bg3); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; padding: 7px 16px; cursor: pointer; }
@@ -157,6 +157,9 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border2); }
+        .data-table-wrap, .error-card, .popup-container {
+            box-shadow: 0 1px 2px rgba(18,20,26,0.04), 0 2px 10px rgba(18,20,26,0.06);
+        }
     </style>
 </head>
 <body>
@@ -165,7 +168,7 @@
 <div id="loadingOverlay">
     <div class="loading-inner">
         <i class="fas fa-circle-notch spin" style="font-size:22px; color:var(--accent);"></i>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:0.1em;color:#e8ecf4;margin-top:14px;">SCANNING S&amp;P 500</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:0.1em;color:#0d0f12;margin-top:14px;">SCANNING S&amp;P 500</div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px;letter-spacing:0.06em;">PROCESSING SIGNALS...</div>
     </div>
 </div>
@@ -237,7 +240,7 @@
             <!-- Mobile list -->
             <div class="mobile-only">
                 {% for stock in stocks_5d %}
-                <div class="mobile-row {% if stock.recommendation == 'BUY' %}buy-row{% elif stock.recommendation == 'CONSIDER' %}consider-row{% else %}skip-row{% endif %}">
+                <div class="mobile-row {% if stock.recommendation == 'Ideal' %}buy-row{% elif stock.recommendation == 'Good' %}consider-row{% else %}skip-row{% endif %}">
                     <div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span class="mob-symbol">{{ stock.symbol }}</span>
@@ -255,7 +258,7 @@
                             {{ stock.score_percent }}
                         </div>
                         <div style="margin-top:4px;">
-                            <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                            <span class="badge {% if stock.recommendation == 'Ideal' %}badge-buy{% elif stock.recommendation == 'Good' %}badge-consider{% else %}badge-skip{% endif %}">
                                 {{ stock.recommendation }}
                             </span>
                         </div>
@@ -275,7 +278,7 @@
                                 <th>SYMBOL</th>
                                 <th class="center">5D CONF</th>
                                 <th>COMPANY</th>
-                                <th class="center">ACTION</th>
+                                <th class="center">Status</th>
                                 <th class="right">PRICE</th>
                             </tr>
                         </thead>
@@ -299,7 +302,7 @@
                                 </td>
                                 <td class="td-name">{{ stock.shortName[:30] }}</td>
                                 <td class="td-action">
-                                    <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                                    <span class="badge {% if stock.recommendation == 'Ideal' %}badge-buy{% elif stock.recommendation == 'Good' %}badge-consider{% else %}badge-skip{% endif %}">
                                         {{ stock.recommendation }}
                                     </span>
                                 </td>
@@ -323,7 +326,7 @@
             <!-- Mobile list -->
             <div class="mobile-only">
                 {% for stock in stocks_30d %}
-                <div class="mobile-row {% if stock.recommendation == 'BUY' %}buy-row{% elif stock.recommendation == 'CONSIDER' %}consider-row{% else %}skip-row{% endif %}">
+                <div class="mobile-row {% if stock.recommendation == 'Ideal' %}buy-row{% elif stock.recommendation == 'Good' %}consider-row{% else %}skip-row{% endif %}">
                     <div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span class="mob-symbol">{{ stock.symbol }}</span>
@@ -341,7 +344,7 @@
                             {{ stock.score_percent }}
                         </div>
                         <div style="margin-top:4px;">
-                            <span class="badge {% if stock.recommendation == 'BUY' %}badge-buy{% elif stock.recommendation == 'CONSIDER' %}badge-consider{% else %}badge-skip{% endif %}">
+                            <span class="badge {% if stock.recommendation == 'Ideal' %}badge-buy{% elif stock.recommendation == 'Good' %}badge-consider{% else %}badge-skip{% endif %}">
                                 {{ stock.recommendation }}
                             </span>
                         </div>
@@ -361,7 +364,7 @@
                                 <th>SYMBOL</th>
                                 <th class="center">30D CONF</th>
                                 <th>COMPANY</th>
-                                <th class="center">ACTION</th>
+                                <th class="center">Status</th>
                                 <th class="right">PRICE</th>
                             </tr>
                         </thead>
@@ -461,7 +464,7 @@ class PopupSystem {
         });
     }
     showDonationPopup(){
-        document.getElementById('popupIcon').innerHTML='<i class="fas fa-heart" style="color:#e84545"></i>';
+        document.getElementById('popupIcon').innerHTML='<i class="fas fa-heart" style="color:#dc2626"></i>';
         document.getElementById('popupTitle').textContent='SUPPORT LITLGUY';
         document.getElementById('popupBody').innerHTML='<p>This site is free with no ads. If these predictions have helped you, please consider donating to cover server costs.</p>';
         const a=document.getElementById('popupAction');a.textContent='DONATE';

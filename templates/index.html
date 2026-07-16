@@ -5,12 +5,12 @@
     <meta name="google-site-verification" content="-EYeOaB9zf9RqlD7LYWpstpmfwJTpBdHsQxGkygG2FQ" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>LitlGuy Terminal — Dashboard</title>
-    <meta name="theme-color" content="#0d0f12">
+    <title>Remington Terminal — Dashboard</title>
+    <meta name="theme-color" content="#e4e7ed">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
@@ -32,19 +32,19 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --bg:       #0d0f12;
-            --bg2:      #13161b;
-            --bg3:      #1a1e26;
-            --border:   #2a2f3a;
-            --border2:  #363c4a;
-            --text:     #c8cdd8;
-            --text-dim: #5a6070;
-            --text-hdr: #7a8494;
-            --accent:   #f5a623;
-            --green:    #00c48c;
-            --red:      #e84545;
-            --blue:     #3a8ef6;
-            --purple:   #9b72f5;
+            --bg:       #e4e7ed;
+            --bg2:      #ffffff;
+            --bg3:      #d8dce4;
+            --border:   #c2c8d3;
+            --border2:  #98a1b3;
+            --text:     #12141a;
+            --text-dim: #5a6376;
+            --text-hdr: #454e60;
+            --accent:   #b45309;
+            --green:    #047857;
+            --red:      #dc2626;
+            --blue:     #2563eb;
+            --purple:   #7c3aed;
         }
 
         body {
@@ -61,8 +61,9 @@
 
         /* ── Top bar ── */
         .top-bar {
-            background: var(--bg);
+            background: var(--bg2);
             border-bottom: 2px solid var(--accent);
+            box-shadow: 0 1px 3px rgba(18,20,26,0.07), 0 4px 12px rgba(18,20,26,0.04);
             padding: 0 16px;
             position: sticky;
             top: 0;
@@ -139,10 +140,10 @@
             transition: color 0.1s, border-color 0.1s, background 0.1s;
         }
         .nav-link:hover { color: var(--text); background: var(--bg3); }
-        .nav-link.active-dash { color: var(--blue); border-left-color: var(--blue); background: rgba(58,142,246,0.07); }
-        .nav-link.active-sp   { color: var(--green); border-left-color: var(--green); background: rgba(0,196,140,0.07); }
-        .nav-link.active-about { color: var(--red); border-left-color: var(--red); background: rgba(232,69,69,0.07); }
-        .nav-link.active-algo { color: var(--accent); border-left-color: var(--accent); background: rgba(245,166,35,0.07); }
+        .nav-link.active-dash { color: var(--blue); border-left-color: var(--blue); background: rgba(37,99,235,0.07); }
+        .nav-link.active-sp   { color: var(--green); border-left-color: var(--green); background: rgba(4,120,87,0.07); }
+        .nav-link.active-about { color: var(--red); border-left-color: var(--red); background: rgba(220,38,38,0.07); }
+        .nav-link.active-algo { color: var(--accent); border-left-color: var(--accent); background: rgba(180,83,9,0.07); }
 
         /* Algo widget in sidebar */
         .algo-widget {
@@ -225,7 +226,7 @@
             width: 100%;
             background: var(--bg2);
             border: 1px solid var(--border);
-            color: #e8ecf4;
+            color: #0d0f12;
             font-family: 'IBM Plex Mono', monospace;
             font-size: 12px;
             padding: 8px 12px 8px 30px;
@@ -236,7 +237,7 @@
         .search-input:focus { border-color: var(--accent); }
         .search-btn {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             border: none;
             font-family: 'IBM Plex Mono', monospace;
             font-size: 11px;
@@ -247,7 +248,7 @@
             white-space: nowrap;
             transition: background 0.1s;
         }
-        .search-btn:hover { background: #e0961e; }
+        .search-btn:hover { background: #8f4a08; }
 
         /* ── Auth buttons ── */
         .auth-btn {
@@ -268,9 +269,9 @@
             border-color: var(--blue);
             color: #fff;
         }
-        .auth-btn-primary:hover { background: #2a7ee0; border-color: #2a7ee0; }
-        .auth-btn-danger { color: var(--red); border-color: rgba(232,69,69,0.3); }
-        .auth-btn-danger:hover { background: rgba(232,69,69,0.08); border-color: var(--red); }
+        .auth-btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+        .auth-btn-danger { color: var(--red); border-color: rgba(220,38,38,0.3); }
+        .auth-btn-danger:hover { background: rgba(220,38,38,0.08); border-color: var(--red); }
 
         /* ── Watchlist stocks ── */
         .watchlist-grid { display: flex; flex-wrap: wrap; gap: 2px; padding: 10px 0; }
@@ -294,7 +295,7 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 13px;
             font-weight: 600;
-            color: #e8ecf4;
+            color: #0d0f12;
         }
         .watchlist-price {
             font-family: 'IBM Plex Mono', monospace;
@@ -351,7 +352,7 @@
             border: none;
             cursor: pointer;
         }
-        .login-cta-btn:hover { background: #2a7ee0; }
+        .login-cta-btn:hover { background: #1d4ed8; }
 
         /* ── Result cards ── */
         .result-card {
@@ -363,7 +364,7 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 14px;
             font-weight: 600;
-            color: #e8ecf4;
+            color: #0d0f12;
             letter-spacing: 0.02em;
             display: flex;
             align-items: center;
@@ -389,8 +390,8 @@
             cursor: pointer;
             transition: background 0.1s, color 0.1s, border-color 0.1s;
         }
-        .tf-btn.active-5d { background: rgba(0,196,140,0.15); color: var(--green); border-color: var(--green); }
-        .tf-btn.active-30d { background: rgba(155,114,245,0.15); color: var(--purple); border-color: var(--purple); }
+        .tf-btn.active-5d { background: rgba(4,120,87,0.15); color: var(--green); border-color: var(--green); }
+        .tf-btn.active-30d { background: rgba(124,58,237,0.15); color: var(--purple); border-color: var(--purple); }
         .tf-btn:not(.active-5d):not(.active-30d):hover { background: var(--bg3); color: var(--text); }
 
         /* Signal badge — describes what the model output looks like, not an instruction */
@@ -406,8 +407,8 @@
             padding: 3px 8px;
             border: 1px solid var(--border);
         }
-        .signal-badge.strong { color: var(--green); border-color: rgba(0,196,140,0.35); background: rgba(0,196,140,0.08); }
-        .signal-badge.mixed  { color: var(--accent); border-color: rgba(245,166,35,0.35); background: rgba(245,166,35,0.08); }
+        .signal-badge.strong { color: var(--green); border-color: rgba(4,120,87,0.35); background: rgba(4,120,87,0.08); }
+        .signal-badge.mixed  { color: var(--accent); border-color: rgba(180,83,9,0.35); background: rgba(180,83,9,0.08); }
         .signal-badge.weak   { color: var(--text-dim); border-color: var(--border); background: transparent; }
 
         /* Strength factors — factual peer comparison, not a recommendation */
@@ -456,8 +457,8 @@
             border: 1px solid var(--border);
             flex-shrink: 0;
         }
-        .offset-badge.rich    { color: var(--blue);    border-color: rgba(58,142,246,0.35); background: rgba(58,142,246,0.08); }
-        .offset-badge.cheap   { color: var(--green);   border-color: rgba(0,196,140,0.35);  background: rgba(0,196,140,0.08); }
+        .offset-badge.rich    { color: var(--blue);    border-color: rgba(37,99,235,0.35); background: rgba(37,99,235,0.08); }
+        .offset-badge.cheap   { color: var(--green);   border-color: rgba(4,120,87,0.35);  background: rgba(4,120,87,0.08); }
         .offset-badge.in_line { color: var(--text-dim); border-color: var(--border); background: transparent; }
 
         /* Probability grid */
@@ -479,7 +480,7 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 18px;
             font-weight: 600;
-            color: #e8ecf4;
+            color: #0d0f12;
         }
         .prob-bar { height: 3px; background: var(--border); margin-top: 6px; }
         .prob-fill { height: 100%; }
@@ -533,7 +534,7 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 16px;
             font-weight: 600;
-            color: #e8ecf4;
+            color: #0d0f12;
             letter-spacing: 0.02em;
         }
         .user-greeting {
@@ -547,7 +548,7 @@
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: rgba(13,15,18,0.97);
+            background: rgba(228,231,237,0.97);
             display: none;
             flex-direction: column;
             align-items: center;
@@ -565,7 +566,7 @@
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.1em;
-            color: #e8ecf4;
+            color: #0d0f12;
             text-transform: uppercase;
             margin-top: 16px;
         }
@@ -601,7 +602,7 @@
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.08em;
-            color: #e8ecf4;
+            color: #0d0f12;
             margin-bottom: 12px;
             text-transform: uppercase;
             display: flex;
@@ -661,9 +662,12 @@
         ::-webkit-scrollbar-thumb { background: var(--border2); }
 
         /* Star icons */
-        .star-saved { color: #f5c518; }
+        .star-saved { color: #8a6a08; }
         .star-unsaved { color: var(--text-dim); }
-        .star-unsaved:hover { color: #f5c518; }
+        .star-unsaved:hover { color: #8a6a08; }
+        .algo-widget, .error-card, .login-cta, .note-card, .popup-container, .result-card, .watchlist-card {
+            box-shadow: 0 1px 2px rgba(18,20,26,0.04), 0 2px 10px rgba(18,20,26,0.06);
+        }
     </style>
 </head>
 <body>
@@ -703,7 +707,7 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="sidebar-logo">LITLGUY.INC</div>
+        <div class="sidebar-logo">REMINGTON</div>
         <a href="/" class="nav-link active-dash"><i class="fas fa-search-dollar" style="width:14px;"></i> DASHBOARD</a>
         <a href="/sp500" class="nav-link"><i class="fas fa-layer-group" style="width:14px;"></i> TOP S&P 500</a>
         <a href="/about" class="nav-link"><i class="fas fa-laptop-code" style="width:14px;"></i> CREATOR'S NOTES</a>
@@ -712,7 +716,7 @@
         {% if algo_widget %}
         <a href="/algoindex" class="algo-widget no-click-sound" onclick="(function(){playClickSound();setTimeout(()=>{window.location.href='/algoindex'},100)})();return false;">
             <div class="algo-widget-hdr">
-                <span>LITLGUY INDEX</span>
+                <span>REMINGTON INDEX</span>
                 <i class="fas fa-chevron-right" style="color:var(--text-dim);font-size:9px;"></i>
             </div>
             <div class="algo-widget-val
@@ -813,7 +817,7 @@
                             </div>
                             {% if saved_price > 0 %}
                             <div class="watchlist-pnl {% if diff >= 0 %}style="color:var(--green)"{% else %}style="color:var(--red)"{% endif %}">
-                                <span style="color:{% if diff >= 0 %}#00c48c{% else %}#e84545{% endif %}; font-family:'IBM Plex Mono',monospace; font-size:10px;">
+                                <span style="color:{% if diff >= 0 %}#047857{% else %}#dc2626{% endif %}; font-family:'IBM Plex Mono',monospace; font-size:10px;">
                                     {% if diff >= 0 %}+{% endif %}${{ "%.2f"|format(diff|abs) }} ({% if diff >= 0 %}+{% endif %}{{ "%.2f"|format(pct) }}%)
                                 </span>
                             </div>
@@ -873,10 +877,10 @@
                             <button id="btn-30d" onclick="toggleTimeframe('30d')" class="tf-btn"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>30 DAYS</button>
                         </div>
                         <div class="prob-grid">
-                            {{ probability_card('+3% / 1.5% SL',  prediction['3pct'],  '#00c48c') }}
-                            {{ probability_card('+5% / 2.5% SL',  prediction['5pct'],  '#00c48c') }}
-                            {{ probability_card('+10% / 5.0% SL', prediction['10pct'], '#3a8ef6') }}
-                            {{ probability_card('+15% / 7.5% SL', prediction['1mo'],   '#9b72f5') }}
+                            {{ probability_card('+3% / 1.5% SL',  prediction['3pct'],  '#047857') }}
+                            {{ probability_card('+5% / 2.5% SL',  prediction['5pct'],  '#047857') }}
+                            {{ probability_card('+10% / 5.0% SL', prediction['10pct'], '#2563eb') }}
+                            {{ probability_card('+15% / 7.5% SL', prediction['1mo'],   '#7c3aed') }}
                         </div>
                     </div>
                 </div>
@@ -908,10 +912,10 @@
                             <button id="btn-30d-b" onclick="toggleTimeframe('30d')" class="tf-btn active-30d"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i>30 DAYS</button>
                         </div>
                         <div class="prob-grid">
-                            {{ probability_card('+15% / 7.5% SL',  prediction['30_3pct'],  '#00c48c') }}
-                            {{ probability_card('+20% / 10% SL',   prediction['30_5pct'],  '#00c48c') }}
-                            {{ probability_card('+25% / 12.5% SL', prediction['30_10pct'], '#3a8ef6') }}
-                            {{ probability_card('+30% / 15% SL',   prediction['30_1mo'],   '#9b72f5') }}
+                            {{ probability_card('+15% / 7.5% SL',  prediction['30_3pct'],  '#047857') }}
+                            {{ probability_card('+20% / 10% SL',   prediction['30_5pct'],  '#047857') }}
+                            {{ probability_card('+25% / 12.5% SL', prediction['30_10pct'], '#2563eb') }}
+                            {{ probability_card('+30% / 15% SL',   prediction['30_1mo'],   '#7c3aed') }}
                         </div>
                     </div>
                 </div>
@@ -977,7 +981,7 @@
             <div>
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--red);margin-bottom:3px;">STOCK NOT FOUND</div>
                 <div style="font-size:12px;color:var(--text);">
-                    <strong style="color:#e8ecf4;">{{ symbol }}</strong> is not in our S&P 500 or NASDAQ database.
+                    <strong style="color:#0d0f12;">{{ symbol }}</strong> is not in our S&P 500 or NASDAQ database.
                     Check the ticker or browse <a href="/sp500" style="color:var(--blue);">Top S&P 500</a>.
                 </div>
             </div>
@@ -989,7 +993,7 @@
             <div class="note-card-hdr"><i class="fas fa-laptop-code"></i> DEV NOTE — JUN 23, 2025</div>
             <div class="note-card-body">
                 Site is in beta — glitches and inaccuracies expected. Use the search bar for a deeper analysis.
-                Data updated daily. <strong style="color:#e8ecf4;">5D AUC: 3%→0.58, 5%→0.67, 10%→0.79, 15%→0.83.
+                Data updated daily. <strong style="color:#0d0f12;">5D AUC: 3%→0.58, 5%→0.67, 10%→0.79, 15%→0.83.
                 30D AUC: 15%→0.67, 20%→0.76, 25%→0.81, 30%→0.85.</strong>
             </div>
         </div>
@@ -1102,8 +1106,8 @@ class PopupSystem {
         });
     }
     showDonationPopup() {
-        document.getElementById('popupIcon').innerHTML = '<i class="fas fa-heart" style="color:#e84545"></i>';
-        document.getElementById('popupTitle').textContent = 'SUPPORT LITLGUY';
+        document.getElementById('popupIcon').innerHTML = '<i class="fas fa-heart" style="color:#dc2626"></i>';
+        document.getElementById('popupTitle').textContent = 'SUPPORT REMINGTON';
         document.getElementById('popupBody').innerHTML = '<p>This site is free with no ads. If these AI predictions have helped you, consider donating to cover server costs and keep the model learning.</p>';
         const actionBtn = document.getElementById('popupAction');
         actionBtn.textContent = 'DONATE';
@@ -1128,23 +1132,23 @@ function showWelcomePopup() {
                 FINANCIAL DISCLAIMER
             </div>
             <div class="popup-body">
-                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">1. NOT FINANCIAL ADVICE</strong><br>
-                Information provided by LitlGuy is for educational purposes only. This is not professional financial advice.</p>
-                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">2. AI & MARKET RISK</strong><br>
+                <p style="margin-bottom:10px;"><strong style="color:#0d0f12;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">1. NOT FINANCIAL ADVICE</strong><br>
+                Information provided by Remington is for educational purposes only. This is not professional financial advice.</p>
+                <p style="margin-bottom:10px;"><strong style="color:#0d0f12;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">2. AI & MARKET RISK</strong><br>
                 Markets are volatile. Historical patterns do not guarantee future results. Confidence levels are probabilities, not certainties.</p>
-                <p style="margin-bottom:10px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">3. DATA ACCURACY</strong><br>
-                Market data may be delayed or contain errors. LitlGuy is not responsible for trading losses.</p>
-                <p style="margin-bottom:6px;"><strong style="color:#e8ecf4;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">4. DATA COLLECTION</strong><br>
+                <p style="margin-bottom:10px;"><strong style="color:#0d0f12;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">3. DATA ACCURACY</strong><br>
+                Market data may be delayed or contain errors. Remington is not responsible for trading losses.</p>
+                <p style="margin-bottom:6px;"><strong style="color:#0d0f12;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">4. DATA COLLECTION</strong><br>
                         We do not sell your data. Here's what we collect:</p>
                         <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;">
-                            <li style="margin-bottom:4px;"><strong style="color:#e8ecf4;">Access logs</strong> — your IP address, timestamp, page requested, referring page, and browser/device info, on every visit. Used for security, bot-blocking, and abuse prevention.</li>
-                            <li style="margin-bottom:4px;"><strong style="color:#e8ecf4;">Account data</strong> (if you register) — your username and a securely hashed password (we never store or see it in plain text), plus the date you accepted these terms.</li>
-                            <li style="margin-bottom:4px;"><strong style="color:#e8ecf4;">Watchlist data</strong> (if you're logged in) — any stock symbols you save and the price at which you saved them.</li>
-                            <li style="margin-bottom:4px;"><strong style="color:#e8ecf4;">Session cookie</strong> — a single cookie that keeps you logged in. Not used for advertising or cross-site tracking.</li>
-                            <li style="margin-bottom:4px;"><strong style="color:#e8ecf4;">Donations</strong> (optional) — handled entirely by Stripe. We never receive or store your card details.</li>
-                            <li style="margin-bottom:0;"><strong style="color:#e8ecf4;">Third-party resources</strong> — fonts, icons, and charting libraries load from external CDNs, which see your IP address directly when your browser requests them.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Access logs</strong> — your IP address, timestamp, page requested, referring page, and browser/device info, on every visit. Used for security, bot-blocking, and abuse prevention.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Account data</strong> (if you register) — your username and a securely hashed password (we never store or see it in plain text), plus the date you accepted these terms.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Watchlist data</strong> (if you're logged in) — any stock symbols you save and the price at which you saved them.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Session cookie</strong> — a single cookie that keeps you logged in. Not used for advertising or cross-site tracking.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Donations</strong> (optional) — handled entirely by Stripe. We never receive or store your card details.</li>
+                            <li style="margin-bottom:0;"><strong style="color:#0d0f12;">Third-party resources</strong> — fonts, icons, and charting libraries load from external CDNs, which see your IP address directly when your browser requests them.</li>
                         </ul>
-                <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);padding:10px 12px;font-size:11px;color:#c8cdd8;">
+                <div style="background:rgba(180,83,9,0.08);border:1px solid rgba(180,83,9,0.2);padding:10px 12px;font-size:11px;color:#12141a;">
                     <i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:6px;"></i>
                     Never invest money you cannot afford to lose. We log visitor IPs for security. We do not sell your data.
                 </div>

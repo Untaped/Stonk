@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Algo Index Fund — LitlGuy</title>
-    <meta name="theme-color" content="#1a202c">
+    <meta name="theme-color" content="#e4e7ed">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -15,19 +15,19 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            --bg:       #0d0f12;
-            --bg2:      #13161b;
-            --bg3:      #1a1e26;
-            --border:   #2a2f3a;
-            --border2:  #363c4a;
-            --text:     #c8cdd8;
-            --text-dim: #5a6070;
-            --text-hdr: #7a8494;
-            --accent:   #f5a623;
-            --green:    #00c48c;
-            --red:      #e84545;
-            --blue:     #3a8ef6;
-            --purple:   #9b72f5;
+            --bg:       #e4e7ed;
+            --bg2:      #ffffff;
+            --bg3:      #d8dce4;
+            --border:   #c2c8d3;
+            --border2:  #98a1b3;
+            --text:     #12141a;
+            --text-dim: #5a6376;
+            --text-hdr: #454e60;
+            --accent:   #b45309;
+            --green:    #047857;
+            --red:      #dc2626;
+            --blue:     #2563eb;
+            --purple:   #7c3aed;
         }
 
         body {
@@ -42,7 +42,7 @@
 
         /* Typography */
         .mono { font-family: 'IBM Plex Mono', monospace; }
-        .gradient-text { color: #e8ecf4; font-weight: 700; }
+        .gradient-text { color: #0d0f12; font-weight: 700; }
 
         /* Layout blocks */
         .glass-card {
@@ -81,7 +81,7 @@
         .tab-btn.active {
             background: var(--accent);
             border-color: var(--accent);
-            color: #000;
+            color: #fff;
         }
         .tab-btn:not(.active):hover { background: var(--bg3); color: var(--text); }
 
@@ -109,15 +109,15 @@
         .pos-card:hover { border-color: var(--border2); }
 
         /* Badges → flat rectangular labels */
-        .badge-rec  { background:#003d2b; color:#00c48c; border:1px solid #005a3e; font-family:'IBM Plex Mono',monospace; }
-        .badge-con  { background:#3d2e00; color:#f5a623; border:1px solid #5a4400; font-family:'IBM Plex Mono',monospace; }
-        .badge-no   { background:#3d0c0c; color:#e84545; border:1px solid #5a1212; font-family:'IBM Plex Mono',monospace; }
-        .badge-act  { background:#001a3d; color:#3a8ef6; border:1px solid #00295a; font-family:'IBM Plex Mono',monospace; }
-        .badge-cls  { background:#1e2028; color:#5a6070; border:1px solid #2a2f3a; font-family:'IBM Plex Mono',monospace; }
-        .badge-5d   { background:#001a3d; color:#3a8ef6; border:1px solid #00295a; font-family:'IBM Plex Mono',monospace; }
-        .badge-30d  { background:#1a003d; color:#9b72f5; border:1px solid #2a005a; font-family:'IBM Plex Mono',monospace; }
-        .badge-win  { background:#003d2b; color:#00c48c; border:1px solid #005a3e; font-family:'IBM Plex Mono',monospace; }
-        .badge-loss { background:#3d0c0c; color:#e84545; border:1px solid #5a1212; font-family:'IBM Plex Mono',monospace; }
+        .badge-rec  { background:#e3fff7; color:#047857; border:1px solid #7ef1d0; font-family:'IBM Plex Mono',monospace; }
+        .badge-con  { background:#fef4e4; color:#b45309; border:1px solid #ecc583; font-family:'IBM Plex Mono',monospace; }
+        .badge-no   { background:#fce5e5; color:#dc2626; border:1px solid #e48b8b; font-family:'IBM Plex Mono',monospace; }
+        .badge-act  { background:#e4f0fe; color:#2563eb; border:1px solid #83b2ec; font-family:'IBM Plex Mono',monospace; }
+        .badge-cls  { background:#d8dce4; color:#5a6376; border:1px solid #c2c8d3; font-family:'IBM Plex Mono',monospace; }
+        .badge-5d   { background:#e4f0fe; color:#2563eb; border:1px solid #83b2ec; font-family:'IBM Plex Mono',monospace; }
+        .badge-30d  { background:#ece4fe; color:#7c3aed; border:1px solid #a586e9; font-family:'IBM Plex Mono',monospace; }
+        .badge-win  { background:#e3fff7; color:#047857; border:1px solid #7ef1d0; font-family:'IBM Plex Mono',monospace; }
+        .badge-loss { background:#fce5e5; color:#dc2626; border:1px solid #e48b8b; font-family:'IBM Plex Mono',monospace; }
 
         /* P&L colors */
         .pnl-pos { color: var(--green); font-family: 'IBM Plex Mono', monospace; }
@@ -149,7 +149,7 @@
             font-family: 'IBM Plex Mono', monospace;
             font-size: 15px;
             font-weight: 600;
-            color: #e8ecf4;
+            color: #0d0f12;
         }
         .stat-sub {
             font-family: 'IBM Plex Mono', monospace;
@@ -190,20 +190,23 @@
            (.hidden for tab switching, .bg-white/10 + text-white for the
            active filter pill) now that the CDN script is gone. */
         .hidden { display: none; }
-        .filter-pill.active-pill { background: rgba(255,255,255,0.1); color: #fff; }
+        .filter-pill.active-pill { background: rgba(13,15,18,0.06); color: #0d0f12; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border2); }
+        .glass-card, .pos-card {
+            box-shadow: 0 1px 2px rgba(18,20,26,0.04), 0 2px 10px rgba(18,20,26,0.06);
+        }
     </style>
 </head>
 <body>
 
-<div style="background:#0d0f12; border-bottom:2px solid #f5a623; padding:0 16px;">
+<div style="background:#ffffff; border-bottom:2px solid #b45309; box-shadow: 0 1px 3px rgba(18,20,26,0.07), 0 4px 12px rgba(18,20,26,0.04); padding:0 16px;">
     <div style="max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:38px;">
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#f5a623; font-weight:600; letter-spacing:0.08em;">LITLGUY TERMINAL</div>
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; letter-spacing:0.05em;">ALGO INDEX FUND &nbsp;|&nbsp; LIVE</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#b45309; font-weight:600; letter-spacing:0.08em;">LITLGUY TERMINAL</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; letter-spacing:0.05em;">ALGO INDEX FUND &nbsp;|&nbsp; LIVE</div>
     </div>
 </div>
 
@@ -211,38 +214,38 @@
 
 
     <!-- Header -->
-    <div style="border-bottom:1px solid #2a2f3a; padding:14px 0 12px; margin-bottom:0; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="border-bottom:1px solid #c2c8d3; padding:14px 0 12px; margin-bottom:0; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px;">
         <div>
-            <a href="/" style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px;">
+            <a href="/" style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:6px;">
                 <i class="fas fa-chevron-left" style="font-size:9px;"></i> BACK
             </a>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; color:#e8ecf4; letter-spacing:0.02em;">ALGO INDEX FUND</div>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-top:3px; letter-spacing:0.04em;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; color:#0d0f12; letter-spacing:0.02em;">ALGO INDEX FUND</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; margin-top:3px; letter-spacing:0.04em;">
                 INCEPTION {{ start_date }}
                 &nbsp;/&nbsp;
                 {{ active|length }} ACTIVE &nbsp;/&nbsp; {{ closed|length }} CLOSED
             </div>
         </div>
         <div style="text-align:right;">
-            <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070; text-transform:uppercase; margin-bottom:3px;">LAST SCAN</div>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#7a8494;">
+            <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6376; text-transform:uppercase; margin-bottom:3px;">LAST SCAN</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#454e60;">
                 {% if last_run %}{{ last_run }}{% else %}NEVER — RUN PREDICT_SINGLE_STOCK.PY --SCAN{% endif %}
             </div>
             {% if last_pick_date %}
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-top:3px;">LAST PICKS: {{ last_pick_date }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; margin-top:3px;">LAST PICKS: {{ last_pick_date }}</div>
             {% endif %}
         </div>
     </div>
 
     {% if no_data %}
     <!-- No data yet -->
-    <div style="background:#13161b; border:1px solid #2a2f3a; padding:40px 24px; text-align:center; margin-top:12px;">
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#c8cdd8; font-weight:600; letter-spacing:0.05em; margin-bottom:8px;">NO ALGO INDEX DATA</div>
-        <div style="font-size:11px; color:#5a6070; margin-bottom:16px;">Run the predictor to generate positions:</div>
-        <code style="display:block; background:#0d0f12; color:#00c48c; font-family:'IBM Plex Mono',monospace; font-size:11px; padding:10px 16px; border:1px solid #2a2f3a; max-width:420px; margin:0 auto; text-align:left;">
+    <div style="background:#ffffff; border:1px solid #c2c8d3; padding:40px 24px; text-align:center; margin-top:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#12141a; font-weight:600; letter-spacing:0.05em; margin-bottom:8px;">NO ALGO INDEX DATA</div>
+        <div style="font-size:11px; color:#5a6376; margin-bottom:16px;">Run the predictor to generate positions:</div>
+        <code style="display:block; background:#e4e7ed; color:#047857; font-family:'IBM Plex Mono',monospace; font-size:11px; padding:10px 16px; border:1px solid #c2c8d3; max-width:420px; margin:0 auto; text-align:left;">
             python stock_ai/predict_single_stock.py --scan
         </code>
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a; margin-top:10px;">Fund auto-selects top picks after each scan.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a8aebc; margin-top:10px;">Fund auto-selects top picks after each scan.</div>
     </div>
 
     {% else %}
@@ -269,23 +272,23 @@
                 <!-- Total value + return -->
                 <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
                     <div>
-                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:4px;">TOTAL PORTFOLIO VALUE</div>
-                        <div style="font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; color:#e8ecf4; letter-spacing:0.01em;">
+                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:4px;">TOTAL PORTFOLIO VALUE</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; color:#0d0f12; letter-spacing:0.01em;">
                             ${{ "{:,.2f}".format(total_val) }}
                         </div>
                         <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
                             <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
-                                {% if ret_pct > 0 %}color:#00c48c{% elif ret_pct < 0 %}color:#e84545{% else %}color:#5a6070{% endif %}">
+                                {% if ret_pct > 0 %}color:#047857{% elif ret_pct < 0 %}color:#dc2626{% else %}color:#5a6376{% endif %}">
                                 {{ "+" if ret_pct > 0 else "" }}{{ "%.2f"|format(ret_pct * 100) }}%
                             </span>
-                            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+                            <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">
                                 ({{ "+" if gain_usd > 0 else "" }}${{ "%.2f"|format(gain_usd) }})&nbsp;vs&nbsp;${{ "{:,.0f}".format(starting) }} start
                             </span>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">STARTING BALANCE</div>
-                        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:#7a8494;">${{ "{:,.2f}".format(starting) }}</div>
+                        <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">STARTING BALANCE</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:#454e60;">${{ "{:,.2f}".format(starting) }}</div>
                     </div>
                 </div>
 
@@ -323,31 +326,31 @@
                 </div>
 
     <!-- ══ TRADE STATS ROW ═══════════════════════════════════════════════════ -->
-    <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:8px 16px; display:flex; flex-wrap:wrap; gap:20px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; margin-bottom:2px;">
+    <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:8px 16px; display:flex; flex-wrap:wrap; gap:20px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; margin-bottom:2px;">
         <span>
             WIN RATE:
             {% if win_rate is not none %}
-                <span style="{% if win_rate >= 0.5 %}color:#00c48c{% else %}color:#e84545{% endif %}; font-weight:600;">
+                <span style="{% if win_rate >= 0.5 %}color:#047857{% else %}color:#dc2626{% endif %}; font-weight:600;">
                     {{ "%.0f"|format(win_rate*100) }}%
                 </span>
-                <span style="color:#3a3f4a;">({{ win_count }}W / {{ loss_count }}L)</span>
-            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
+                <span style="color:#a8aebc;">({{ win_count }}W / {{ loss_count }}L)</span>
+            {% else %}<span style="color:#a8aebc;">—</span>{% endif %}
         </span>
         <span>
             BEST:
             {% if stats.best_trade_usd is defined and stats.best_trade_usd is not none %}
-                <span style="color:#00c48c; font-weight:600;">+${{ "%.2f"|format(stats.best_trade_usd) }}</span>
-                <span style="color:#3a3f4a;">(+{{ "%.1f"|format(stats.best_trade*100) }}%)</span>
-            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
+                <span style="color:#047857; font-weight:600;">+${{ "%.2f"|format(stats.best_trade_usd) }}</span>
+                <span style="color:#a8aebc;">(+{{ "%.1f"|format(stats.best_trade*100) }}%)</span>
+            {% else %}<span style="color:#a8aebc;">—</span>{% endif %}
         </span>
         <span>
             WORST:
             {% if stats.worst_trade_usd is defined and stats.worst_trade_usd is not none %}
-                <span style="color:#e84545; font-weight:600;">${{ "%.2f"|format(stats.worst_trade_usd) }}</span>
-                <span style="color:#3a3f4a;">({{ "%.1f"|format(stats.worst_trade*100) }}%)</span>
-            {% else %}<span style="color:#3a3f4a;">—</span>{% endif %}
+                <span style="color:#dc2626; font-weight:600;">${{ "%.2f"|format(stats.worst_trade_usd) }}</span>
+                <span style="color:#a8aebc;">({{ "%.1f"|format(stats.worst_trade*100) }}%)</span>
+            {% else %}<span style="color:#a8aebc;">—</span>{% endif %}
         </span>
-        <span style="margin-left:auto; color:#3a3f4a;">
+        <span style="margin-left:auto; color:#a8aebc;">
             SL −{{ stop_loss_pct }}% &nbsp;/&nbsp; TP +{{ take_profit_pct }}% &nbsp;/&nbsp; ΔCONF {{ conf_drop_pct }}pp
         </span>
     </div>
@@ -392,14 +395,14 @@
              style="padding:0; margin-bottom:2px;">
 
             <!-- Top row: symbol / horizon badge / status -->
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:8px 12px; border-bottom:1px solid #1a1e26;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:8px 12px; border-bottom:1px solid #d8dce4;">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <span class="ticker-box {% if pos.horizon == '5d' %}badge-5d{% else %}badge-30d{% endif %}">
                         {{ pos.horizon|upper }}
                     </span>
                     <div>
-                        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#e8ecf4; letter-spacing:0.04em;">{{ pos.symbol }}</div>
-                        <div style="font-size:10px; color:#5a6070;">{{ pos.name }}</div>
+                        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#0d0f12; letter-spacing:0.04em;">{{ pos.symbol }}</div>
+                        <div style="font-size:10px; color:#5a6376;">{{ pos.name }}</div>
                     </div>
                 </div>
                 <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
@@ -412,7 +415,7 @@
                     </span>
                     <span class="ticker-box {% if pos.status == 'active' %}badge-act{% else %}badge-cls{% endif %}" style="font-size:10px;">
                         {% if pos.status == 'active' %}
-                            <span class="pulse-dot" style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#3a8ef6; margin-right:4px; vertical-align:middle;"></span>LIVE
+                            <span class="pulse-dot" style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#2563eb; margin-right:4px; vertical-align:middle;"></span>LIVE
                         {% else %}
                             {{ (pos.exit_reason or 'CLOSED')|upper }}
                         {% endif %}
@@ -423,56 +426,56 @@
             <!-- Data grid — 6 cells -->
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:0;">
                 <!-- Entry price -->
-                <div style="padding:8px 12px; border-right:1px solid #1a1e26; border-bottom:1px solid #1a1e26;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">ENTRY</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">${{ "%.2f"|format(pos.entry_price) }}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a;">{{ pos.get('shares', 0)|round(4) }} SH</div>
+                <div style="padding:8px 12px; border-right:1px solid #d8dce4; border-bottom:1px solid #d8dce4;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">ENTRY</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#12141a;">${{ "%.2f"|format(pos.entry_price) }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a8aebc;">{{ pos.get('shares', 0)|round(4) }} SH</div>
                 </div>
                 <!-- Live / exit price -->
-                <div style="padding:8px 12px; border-right:1px solid #1a1e26; border-bottom:1px solid #1a1e26;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">{% if pos.status == 'active' %}LIVE{% else %}EXIT{% endif %}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">
+                <div style="padding:8px 12px; border-right:1px solid #d8dce4; border-bottom:1px solid #d8dce4;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">{% if pos.status == 'active' %}LIVE{% else %}EXIT{% endif %}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#12141a;">
                         {% if pos.status == 'active' %}${{ "%.2f"|format(cur_price) }}
                         {% elif pos.exit_price %}${{ "%.2f"|format(pos.exit_price) }}
                         {% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- $ P&L -->
-                <div style="padding:8px 12px; border-bottom:1px solid #1a1e26;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">P&amp;L $</div>
+                <div style="padding:8px 12px; border-bottom:1px solid #d8dce4;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">P&amp;L $</div>
                     <div style="font-family:'IBM Plex Mono',monospace; font-size:12px;
-                        {% if pos_dollar_pnl is not none and pos_dollar_pnl > 0 %}color:#00c48c;
-                        {% elif pos_dollar_pnl is not none and pos_dollar_pnl < 0 %}color:#e84545;
-                        {% else %}color:#5a6070;{% endif %}">
+                        {% if pos_dollar_pnl is not none and pos_dollar_pnl > 0 %}color:#047857;
+                        {% elif pos_dollar_pnl is not none and pos_dollar_pnl < 0 %}color:#dc2626;
+                        {% else %}color:#5a6376;{% endif %}">
                         {% if pos_dollar_pnl is not none %}{{ "+" if pos_dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos_dollar_pnl) }}{% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- % P&L -->
-                <div style="padding:8px 12px; border-right:1px solid #1a1e26;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">P&amp;L %</div>
+                <div style="padding:8px 12px; border-right:1px solid #d8dce4;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">P&amp;L %</div>
                     <div style="font-family:'IBM Plex Mono',monospace; font-size:12px;
-                        {% if pct_pnl is not none and pct_pnl > 0 %}color:#00c48c;
-                        {% elif pct_pnl is not none and pct_pnl < 0 %}color:#e84545;
-                        {% else %}color:#5a6070;{% endif %}">
+                        {% if pct_pnl is not none and pct_pnl > 0 %}color:#047857;
+                        {% elif pct_pnl is not none and pct_pnl < 0 %}color:#dc2626;
+                        {% else %}color:#5a6376;{% endif %}">
                         {% if pct_pnl is not none %}{{ "+" if pct_pnl > 0 else "" }}{{ "%.1f"|format(pct_pnl*100) }}%{% else %}—{% endif %}
                     </div>
                 </div>
                 <!-- Cost basis / market value -->
-                <div style="padding:8px 12px; border-right:1px solid #1a1e26;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">INVESTED</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">${{ "%.2f"|format(cost) }}</div>
+                <div style="padding:8px 12px; border-right:1px solid #d8dce4;">
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">INVESTED</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#12141a;">${{ "%.2f"|format(cost) }}</div>
                     {% if pos.status == 'active' %}
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a;">MKT ${{ "%.2f"|format(mkt_val) }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a8aebc;">MKT ${{ "%.2f"|format(mkt_val) }}</div>
                     {% endif %}
                 </div>
                 <!-- Days / Sector -->
                 <div style="padding:8px 12px;">
-                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6070; margin-bottom:3px;">{% if pos.status == 'active' %}DAYS LEFT{% else %}ENTRY DATE{% endif %}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#c8cdd8;">
-                        {% if pos.status == 'active' %}{{ [pos.target_days - pos.get('days_elapsed', 0), 0]|max }}d <span style="color:#3a3f4a;">/{{ pos.target_days }}d</span>
+                    <div style="font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#5a6376; margin-bottom:3px;">{% if pos.status == 'active' %}DAYS LEFT{% else %}ENTRY DATE{% endif %}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#12141a;">
+                        {% if pos.status == 'active' %}{{ [pos.target_days - pos.get('days_elapsed', 0), 0]|max }}d <span style="color:#a8aebc;">/{{ pos.target_days }}d</span>
                         {% else %}{{ pos.entry_date }}{% endif %}
                     </div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#3a3f4a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ pos.sector }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a8aebc; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ pos.sector }}</div>
                 </div>
             </div>
 
@@ -480,11 +483,11 @@
             {% if pos.status == 'active' %}
             {% set elapsed_pct = [(pos.get('days_elapsed', 0) / pos.target_days * 100), 100]|min|int %}
             <div class="progress-bar">
-                <div class="progress-fill" style="width:{{ elapsed_pct }}%; background:{% if elapsed_pct > 80 %}#f5a623{% else %}#3a8ef6{% endif %};"></div>
+                <div class="progress-fill" style="width:{{ elapsed_pct }}%; background:{% if elapsed_pct > 80 %}#b45309{% else %}#2563eb{% endif %};"></div>
             </div>
             {% else %}
             <!-- Closed summary row -->
-            <div style="padding:6px 12px; display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; flex-wrap:wrap; border-top:1px solid #1a1e26;">
+            <div style="padding:6px 12px; display:flex; align-items:center; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; flex-wrap:wrap; border-top:1px solid #d8dce4;">
                 <span>{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</span>
                 {% if pos.dollar_pnl is not none %}
                 <span class="ticker-box {% if pos.dollar_pnl > 0 %}badge-win{% else %}badge-loss{% endif %}" style="font-size:9px;">
@@ -499,7 +502,7 @@
         {% endfor %}
         </div>
         {% else %}
-        <div style="background:#13161b; border:1px solid #2a2f3a; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+        <div style="background:#ffffff; border:1px solid #c2c8d3; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">
             NO POSITIONS — FUND POPULATES AFTER NEXT SCAN
         </div>
         {% endif %}
@@ -508,25 +511,25 @@
     <!-- ── TAB: Today's Picks ─────────────────────────────────────────────── -->
     <div id="tab-picks" class="hidden">
         {% if last_pick_date %}
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
-            PICKS FROM SCAN: <span style="color:#7a8494;">{{ last_pick_date }}</span>&nbsp;&nbsp;|&nbsp;&nbsp;RANKED BY MODEL CONFIDENCE
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
+            PICKS FROM SCAN: <span style="color:#454e60;">{{ last_pick_date }}</span>&nbsp;&nbsp;|&nbsp;&nbsp;RANKED BY MODEL CONFIDENCE
         </div>
         {% endif %}
 
         <!-- 5-day -->
         <div style="margin-bottom:12px;">
-            <div style="background:#13161b; border:1px solid #2a2f3a; padding:5px 12px; display:flex; align-items:center; gap:10px;">
+            <div style="background:#ffffff; border:1px solid #c2c8d3; padding:5px 12px; display:flex; align-items:center; gap:10px;">
                 <span class="ticker-box badge-5d" style="font-size:9px;">5D</span>
-                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">5-DAY HORIZON</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6376;">5-DAY HORIZON</span>
             </div>
             {% for s in top_5d %}
-            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                 <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#0d0f12; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#7a8494;">${{ "%.2f"|format(s.price) }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#454e60;">${{ "%.2f"|format(s.price) }}</span>
                     <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {{ "%.0f"|format(s.score*100) }}%
                     </span>
@@ -536,24 +539,24 @@
                 </div>
             </div>
             {% else %}
-            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
+            <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
             {% endfor %}
         </div>
 
         <!-- 30-day -->
         <div>
-            <div style="background:#13161b; border:1px solid #2a2f3a; padding:5px 12px; display:flex; align-items:center; gap:10px;">
+            <div style="background:#ffffff; border:1px solid #c2c8d3; padding:5px 12px; display:flex; align-items:center; gap:10px;">
                 <span class="ticker-box badge-30d" style="font-size:9px;">30D</span>
-                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">30-DAY HORIZON</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6376;">30-DAY HORIZON</span>
             </div>
             {% for s in top_30d %}
-            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                 <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#0d0f12; width:52px; flex-shrink:0;">{{ s.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ s.sector }}</div>
                 </div>
                 <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#7a8494;">${{ "%.2f"|format(s.price) }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#454e60;">${{ "%.2f"|format(s.price) }}</span>
                     <span class="ticker-box {% if s.score >= 0.35 %}badge-rec{% elif s.score >= 0.30 %}badge-con{% else %}badge-no{% endif %}" style="font-size:9px;">
                         {{ "%.0f"|format(s.score*100) }}%
                     </span>
@@ -563,7 +566,7 @@
                 </div>
             </div>
             {% else %}
-            <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
+            <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:12px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; text-align:center;">NO PICKS — RUN A SCAN FIRST</div>
             {% endfor %}
         </div>
     </div>
@@ -571,42 +574,42 @@
     <!-- ── TAB: History ───────────────────────────────────────────────────── -->
     <div id="tab-history" class="hidden">
         {% if closed %}
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
             EXIT RULES: SL −{{ stop_loss_pct }}% / TP +{{ take_profit_pct }}% / CONF DROP &gt;{{ conf_drop_pct }}pp / TIME LIMIT
         </div>
 
         <!-- Cumulative realized P&L ticker -->
         {% set total_usd = stats.get('realized_pnl_usd', 0) %}
-        <div style="background:#13161b; border:1px solid #2a2f3a; padding:8px 14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
-            <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6070;">CUMULATIVE REALIZED P&amp;L</span>
+        <div style="background:#ffffff; border:1px solid #c2c8d3; padding:8px 14px; display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+            <span style="font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:600; letter-spacing:0.1em; color:#5a6376;">CUMULATIVE REALIZED P&amp;L</span>
             <span style="font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;
-                {% if total_usd > 0 %}color:#00c48c;{% elif total_usd < 0 %}color:#e84545;{% else %}color:#5a6070;{% endif %}">
+                {% if total_usd > 0 %}color:#047857;{% elif total_usd < 0 %}color:#dc2626;{% else %}color:#5a6376;{% endif %}">
                 {{ "+" if total_usd > 0 else "" }}${{ "%.2f"|format(total_usd) }}
             </span>
         </div>
 
         {% for pos in closed|sort(attribute='exit_date',reverse=True) %}
-        <div style="background:#13161b; border:1px solid #2a2f3a; border-top:none; padding:8px 12px; display:flex; align-items:center; gap:10px; justify-content:space-between; flex-wrap:wrap;">
+        <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:8px 12px; display:flex; align-items:center; gap:10px; justify-content:space-between; flex-wrap:wrap;">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span class="ticker-box {% if pos.horizon=='5d' %}badge-5d{% else %}badge-30d{% endif %}" style="font-size:9px;">
                     {{ pos.horizon|upper }}
                 </span>
                 <div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#e8ecf4;">{{ pos.symbol }}</div>
-                    <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:#5a6070;">{{ (pos.exit_reason or '—')|upper }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#0d0f12;">{{ pos.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:#5a6376;">{{ (pos.exit_reason or '—')|upper }}</div>
                 </div>
             </div>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#7a8494;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">{{ pos.entry_date }} → {{ pos.exit_date or '—' }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#454e60;">
                 ${{ "%.2f"|format(pos.entry_price) }} → ${{ "%.2f"|format(pos.exit_price) if pos.exit_price else '—' }}
             </div>
             <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;
-                {% if pos.dollar_pnl is not none and pos.dollar_pnl > 0 %}color:#00c48c;
-                {% elif pos.dollar_pnl is not none and pos.dollar_pnl < 0 %}color:#e84545;
-                {% else %}color:#5a6070;{% endif %}">
+                {% if pos.dollar_pnl is not none and pos.dollar_pnl > 0 %}color:#047857;
+                {% elif pos.dollar_pnl is not none and pos.dollar_pnl < 0 %}color:#dc2626;
+                {% else %}color:#5a6376;{% endif %}">
                 {% if pos.dollar_pnl is not none %}
                     {{ "+" if pos.dollar_pnl > 0 else "" }}${{ "%.2f"|format(pos.dollar_pnl) }}
-                    <span style="font-size:10px; font-weight:400; color:#5a6070;">
+                    <span style="font-size:10px; font-weight:400; color:#5a6376;">
                         ({{ "+" if pos.pnl > 0 else "" }}{{ "%.1f"|format(pos.pnl*100) }}%)
                     </span>
                 {% else %}—{% endif %}
@@ -614,7 +617,7 @@
         </div>
         {% endfor %}
         {% else %}
-        <div style="background:#13161b; border:1px solid #2a2f3a; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6070;">
+        <div style="background:#ffffff; border:1px solid #c2c8d3; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">
             NO CLOSED POSITIONS — EXITS PROCESSED ON EACH SCAN
         </div>
         {% endif %}
@@ -623,8 +626,8 @@
     {% endif %}{# end no_data #}
 
     <!-- Footer -->
-    <div style="margin-top:20px; padding-top:12px; border-top:1px solid #2a2f3a; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#3a3f4a; letter-spacing:0.04em;">
-        DATA UPDATED BY: <code style="color:#5a6070;">python stock_ai/predict_single_stock.py --scan</code>
+    <div style="margin-top:20px; padding-top:12px; border-top:1px solid #c2c8d3; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#a8aebc; letter-spacing:0.04em;">
+        DATA UPDATED BY: <code style="color:#5a6376;">python stock_ai/predict_single_stock.py --scan</code>
     </div>
 
 </div><!-- /container -->
@@ -681,11 +684,11 @@ const STARTING_BALANCE = {{ portfolio.get('starting_balance', 10000) }};
     const yOf    = v => H - ((v - minV) / range) * H;
 
     const isPositive = vals[vals.length - 1] >= STARTING_BALANCE;
-    const color      = isPositive ? '#00c48c' : '#e84545';
+    const color      = isPositive ? '#047857' : '#dc2626';
 
     // Gradient fill
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0,   isPositive ? 'rgba(0,196,140,0.35)' : 'rgba(232,69,69,0.35)');
+    grad.addColorStop(0,   isPositive ? 'rgba(4,120,87,0.35)' : 'rgba(220,38,38,0.35)');
     grad.addColorStop(1,   'rgba(0,0,0,0)');
 
     ctx.beginPath();
