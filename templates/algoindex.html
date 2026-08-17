@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Algo Index Fund — LitlGuy</title>
+    <title>Remington Index Algorithm</title>
     <meta name="theme-color" content="#e4e7ed">
     <link rel="manifest" href="/static/manifest.json">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
@@ -205,7 +205,7 @@
 
 <div style="background:#ffffff; border-bottom:2px solid #b45309; box-shadow: 0 1px 3px rgba(18,20,26,0.07), 0 4px 12px rgba(18,20,26,0.04); padding:0 16px;">
     <div style="max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:38px;">
-        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#b45309; font-weight:600; letter-spacing:0.08em;">LITLGUY TERMINAL</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:#b45309; font-weight:600; letter-spacing:0.08em;">REMINGTON TERMINAL</div>
         <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; letter-spacing:0.05em;">ALGO INDEX FUND &nbsp;|&nbsp; LIVE</div>
     </div>
 </div>
@@ -365,6 +365,9 @@
         </button>
         <button class="tab-btn" onclick="switchTab('history',this)">
             HISTORY [{{ closed|length }}]
+        </button>
+        <button class="tab-btn" onclick="switchTab('activity',this)">
+            ACTIVITY [{{ changes_log|length }}]
         </button>
     </div>
 
@@ -623,6 +626,56 @@
         {% endif %}
     </div>
 
+    <!-- ── TAB: Activity (buy/sell change log) ───────────────────────────── -->
+    <div id="tab-activity" class="hidden">
+        {% if changes_log %}
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376; padding:8px 0; margin-bottom:2px; letter-spacing:0.04em;">
+            MOST RECENT FIRST &nbsp;|&nbsp; EMAILED TO THE RECIPIENT GROUP AFTER EACH SCAN
+        </div>
+        {% for c in changes_log %}
+        <div style="background:#ffffff; border:1px solid #c2c8d3; border-top:none; padding:8px 12px; display:flex; align-items:center; gap:10px; justify-content:space-between; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="ticker-box {% if c.type == 'BUY' %}badge-act{% else %}badge-cls{% endif %}" style="font-size:9px;">
+                    {{ c.type }}
+                </span>
+                <span class="ticker-box {% if c.horizon=='5d' %}badge-5d{% else %}badge-30d{% endif %}" style="font-size:9px;">
+                    {{ c.horizon|upper }}
+                </span>
+                <div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#0d0f12;">{{ c.symbol }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; color:#5a6376;">{{ (c.reason or '—')|upper }}</div>
+                </div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">{{ c.date }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#454e60;">
+                {% if c.type == 'SELL' %}
+                    ${{ "%.2f"|format(c.entry_price) }} → ${{ "%.2f"|format(c.price) }}
+                {% else %}
+                    ${{ "%.2f"|format(c.price) }} × {{ "%.4f"|format(c.shares) }} sh
+                {% endif %}
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;
+                {% if c.type == 'SELL' and c.dollar_pnl is not none %}
+                    {% if c.dollar_pnl > 0 %}color:#047857;{% elif c.dollar_pnl < 0 %}color:#dc2626;{% else %}color:#5a6376;{% endif %}
+                {% else %}color:#454e60;{% endif %}">
+                {% if c.type == 'SELL' and c.dollar_pnl is not none %}
+                    {{ "+" if c.dollar_pnl > 0 else "" }}${{ "%.2f"|format(c.dollar_pnl) }}
+                    <span style="font-size:10px; font-weight:400; color:#5a6376;">
+                        ({{ "+" if c.pnl_pct > 0 else "" }}{{ "%.1f"|format(c.pnl_pct*100) }}%)
+                    </span>
+                {% else %}
+                    ${{ "%.2f"|format(c.amount) }}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div style="background:#ffffff; border:1px solid #c2c8d3; padding:24px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10px; color:#5a6376;">
+            NO CHANGES LOGGED YET — BUYS/SELLS APPEAR HERE AFTER THE NEXT SCAN
+        </div>
+        {% endif %}
+    </div>
+
     {% endif %}{# end no_data #}
 
     <!-- Footer -->
@@ -635,7 +688,7 @@
 <script>
 // ── Tab switching ────────────────────────────────────────────────────────────
 function switchTab(name, btn) {
-    ['portfolio','picks','history'].forEach(t => {
+    ['portfolio','picks','history','activity'].forEach(t => {
         document.getElementById('tab-' + t).classList.add('hidden');
     });
     document.getElementById('tab-' + name).classList.remove('hidden');

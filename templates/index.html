@@ -708,9 +708,9 @@
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">REMINGTON</div>
-        <a href="/" class="nav-link active-dash"><i class="fas fa-search-dollar" style="width:14px;"></i> DASHBOARD</a>
-        <a href="/sp500" class="nav-link"><i class="fas fa-layer-group" style="width:14px;"></i> TOP S&P 500</a>
-        <a href="/about" class="nav-link"><i class="fas fa-laptop-code" style="width:14px;"></i> CREATOR'S NOTES</a>
+        <a href="/" class="nav-link active-dash"></i> DASHBOARD</a>
+        <a href="/sp500" class="nav-link"></i> TOP S&P 500</a>
+        <a href="/about" class="nav-link"></i> CREATOR'S NOTES</a>
 
         <!-- Algo widget -->
         {% if algo_widget %}
@@ -1141,16 +1141,17 @@ function showWelcomePopup() {
                 <p style="margin-bottom:6px;"><strong style="color:#0d0f12;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.08em;">4. DATA COLLECTION</strong><br>
                         We do not sell your data. Here's what we collect:</p>
                         <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;">
-                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Access logs</strong> — your IP address, timestamp, page requested, referring page, and browser/device info, on every visit. Used for security, bot-blocking, and abuse prevention.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Rate limiting</strong> — your IP address is used transiently, in memory only, to apply basic rate limits (e.g. login attempts) and block known bad request paths. It is not logged, stored, or written to disk.</li>
                             <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Account data</strong> (if you register) — your username and a securely hashed password (we never store or see it in plain text), plus the date you accepted these terms.</li>
                             <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Watchlist data</strong> (if you're logged in) — any stock symbols you save and the price at which you saved them.</li>
                             <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Session cookie</strong> — a single cookie that keeps you logged in. Not used for advertising or cross-site tracking.</li>
                             <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Donations</strong> (optional) — handled entirely by Stripe. We never receive or store your card details.</li>
-                            <li style="margin-bottom:0;"><strong style="color:#0d0f12;">Third-party resources</strong> — fonts, icons, and charting libraries load from external CDNs, which see your IP address directly when your browser requests them.</li>
+                            <li style="margin-bottom:4px;"><strong style="color:#0d0f12;">Third-party resources</strong> — fonts, icons, and charting libraries load from external CDNs, which see your IP address directly when your browser requests them.</li>
+                            <li style="margin-bottom:0;"><strong style="color:#0d0f12;">Hosting &amp; search infrastructure</strong> — this site runs behind Cloudflare (security/performance) and is indexed by Google Search. Both see standard request data like your IP address as part of normal web routing and crawling, governed by their own privacy policies, not something we store or control.</li>
                         </ul>
                 <div style="background:rgba(180,83,9,0.08);border:1px solid rgba(180,83,9,0.2);padding:10px 12px;font-size:11px;color:#12141a;">
                     <i class="fas fa-exclamation-triangle" style="color:var(--accent);margin-right:6px;"></i>
-                    Never invest money you cannot afford to lose. We log visitor IPs for security. We do not sell your data.
+                    Never invest money you cannot afford to lose. We do not sell your data.
                 </div>
             </div>
             <div style="position:sticky;bottom:0;background:var(--bg2);padding-top:8px;">
