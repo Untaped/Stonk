@@ -1,8 +1,6 @@
 from flask import Flask, request, render_template, jsonify, session, redirect, url_for, flash
 import logging
 
-# The IP log is in the file server_access.log :D:D:D:D:D:D
-
 from datetime import datetime
 import pandas as pd
 import os
@@ -42,11 +40,6 @@ try:
 except ImportError:
     find_parallel_stocks = None
 
-#Logging IPsssssss
-def get_location(ip):
-    response = requests.get(f"https://ipinfo.io/{ip}/json")
-    return response.json()
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -63,13 +56,8 @@ limiter = Limiter(
     storage_uri="memory://" # Uses local memory, perfect for lightweight apps
 )
 
-# --- NEW LOGGING SETUP ---
-# 1. Configure where the logs are saved
-logging.basicConfig(
-    filename='server_access.log', 
-    level=logging.INFO,  # <--- Ensure there is a comma here
-    format='%(asctime)s - IP: %(message)s' # <--- And here if you add more lines
-)
+# Basic application logging (console only - no visitor IP/path tracking)
+logging.basicConfig(level=logging.INFO)
 
 # A secret key is required for secure cookies (sessions)
 secret = os.environ.get('SECRET_KEY')
@@ -124,8 +112,6 @@ class DisclaimerAgreement(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # null = wasn't logged in yet
     version = db.Column(db.String(20), nullable=False)
     agreed_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    ip_address = db.Column(db.String(64), nullable=True)
-    user_agent = db.Column(db.String(255), nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -169,18 +155,10 @@ Allow: /
 
 @app.before_request
 def block_bad_requests():
-    # 1. Block malicious paths instantly
+    # Block malicious paths instantly
     bad_patterns = ['.php', '/wp-', '/.env', '/cgi-bin', '.git']
     if any(pattern in request.path for pattern in bad_patterns):
-        abort(403) 
-
-    # 2. Get the REAL IP (Check Cloudflare first, then fallback to ProxyFix)
-    client_ip = request.headers.get('CF-Connecting-IP', request.remote_addr)
-    path = request.path
-    
-    # 3. Log legitimate traffic
-    if not path.startswith('/static/'):
-        logging.info(f"{client_ip} accessed {path}")
+        abort(403)
 @app.after_request
 def set_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
@@ -247,8 +225,6 @@ def disclaimer():
                 db.session.add(DisclaimerAgreement(
                     user_id=current_user.id if current_user.is_authenticated else None,
                     version=DISCLAIMER_VERSION,
-                    ip_address=request.headers.get('CF-Connecting-IP', request.remote_addr),
-                    user_agent=request.headers.get('User-Agent', '')[:255],
                 ))
                 db.session.commit()
             except Exception as e:
@@ -590,6 +566,41 @@ def get_parallel_stocks(symbol):
 def health_check():
     return jsonify({'status': 'healthy', 'mode': 'lightweight_viewer'})
 
+def _get_algo_widget():
+    """
+    Load the algo index summary used by the sidebar widget on index.html.
+
+    FIX: this used to live inline inside index() only. index_post() (the
+    POST / handler that renders results for a searched symbol) rendered the
+    same index.html template but never computed algo_widget, so it was
+    always Undefined there — and `{% if algo_widget %}` in the template
+    treats Undefined as falsy, silently swapping the real REMINGTON INDEX
+    P&L/win-rate for the "RUN A SCAN TO ACTIVATE" placeholder on every
+    stock search, even though the data existed the whole time. Pulling this
+    into a shared helper (called from both index() and index_post() below)
+    means the two render paths can no longer drift out of sync like that.
+    """
+    algo_widget = None
+    try:
+        ai_state = _load_algo_index()
+        if ai_state:
+            stats = ai_state.get("stats", {})
+            positions = ai_state.get("positions", [])
+            active = [p for p in positions if p["status"] == "active"]
+            unrealized_pnls = [p.get("current_pnl", 0.0) for p in active]
+            algo_widget = {
+                "total_pnl":        stats.get("total_pnl"),
+                "total_unrealized": stats.get("total_unrealized"),
+                "win_rate":         stats.get("win_rate"),
+                "active_count":     len(active),
+                "closed_count":     stats.get("closed", 0),
+                "last_run":         ai_state.get("last_run"),
+            }
+    except Exception:
+        pass
+    return algo_widget
+
+
 @app.route('/')
 def index():
     saved_stocks_data = []
@@ -616,25 +627,8 @@ def index():
             })
 
     # Load algo index summary for the sidebar widget
-    algo_widget = None
-    try:
-        ai_state = _load_algo_index()
-        if ai_state:
-            stats = ai_state.get("stats", {})
-            positions = ai_state.get("positions", [])
-            active = [p for p in positions if p["status"] == "active"]
-            unrealized_pnls = [p.get("current_pnl", 0.0) for p in active]
-            algo_widget = {
-                "total_pnl":        stats.get("total_pnl"),
-                "total_unrealized": stats.get("total_unrealized"),
-                "win_rate":         stats.get("win_rate"),
-                "active_count":     len(active),
-                "closed_count":     stats.get("closed", 0),
-                "last_run":         ai_state.get("last_run"),
-            }
-    except Exception:
-        pass
-            
+    algo_widget = _get_algo_widget()
+
     return render_template('index.html', saved_stocks=saved_stocks_data, algo_widget=algo_widget)
 
 @app.route('/', methods=['POST'])
@@ -719,6 +713,11 @@ def index_post():
         strength_factors = []
         parallel_stocks = None
 
+    # Load algo index summary for the sidebar widget — same helper index()
+    # uses, so the widget no longer disappears just because a symbol search
+    # is what triggered this render.
+    algo_widget = _get_algo_widget()
+
     # Make sure saved_stocks is passed here!
     return render_template(
         'index.html', symbol=symbol, prediction=prediction, stock_data=stock_data,
@@ -726,6 +725,7 @@ def index_post():
         parallel_stocks=parallel_stocks,
         rec_5d=rec_5d if symbol and raw_data else None,
         rec_30d=rec_30d if symbol and raw_data else None,
+        algo_widget=algo_widget,
     )
 
 @app.route('/api/stocks')
@@ -1095,6 +1095,7 @@ def algo_index_page():
             nav_history      = [],
             top_5d           = [],
             top_30d          = [],
+            changes_log      = [],
             last_pick_date   = None,
             start_date       = _date.today().isoformat(),
             last_run         = None,
@@ -1113,6 +1114,9 @@ def algo_index_page():
     portfolio  = state.get("portfolio", {})
     top_picks  = state.get("top_picks", {"5d": [], "30d": []})
     nav_history = state.get("nav_history", [])
+    # Most-recent-first for display; changes_log itself is stored oldest→newest
+    # (see algo_index_manager.update_algo_index) so new entries append cleanly.
+    changes_log = list(reversed(state.get("changes_log", [])))[:100]
 
     return render_template(
         "algoindex.html",
@@ -1130,6 +1134,7 @@ def algo_index_page():
         nav_history      = nav_history,
         top_5d           = top_picks.get("5d",  []),
         top_30d          = top_picks.get("30d", []),
+        changes_log      = changes_log,
         last_pick_date   = state.get("last_pick_date"),
         start_date       = state.get("start_date", _date.today().isoformat()),
         last_run         = state.get("last_run"),
