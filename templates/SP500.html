@@ -440,7 +440,7 @@ function toggleStock(symbol, element) {
 
 // Popup system
 class PopupSystem {
-    constructor(){this.isActive=false;this.clickCount=0;this.baseProbability=0.10;this.init();}
+    constructor(){this.isActive=false;this.clickCount=0;this.baseProbability=0.00;this.init();}
     init(){
         const c=document.getElementById('popupClose'),d=document.getElementById('popupDismiss');
         if(c)c.addEventListener('click',()=>this.close());
@@ -450,10 +450,10 @@ class PopupSystem {
             if(this.isActive||(lo&&lo.style.display!=='none'))return;
             if(e.target.closest('.popup-trigger')){
                 this.clickCount++;
-                const chance=this.baseProbability+(this.clickCount*0.02);
+                const chance=this.baseProbability+(this.clickCount*0.00);
                 if(Math.random()<chance){
                     setTimeout(()=>this.showDonationPopup(),300);
-                    this.clickCount=0;this.baseProbability=Math.min(0.40,this.baseProbability+0.05);
+                    this.clickCount=0;this.baseProbability=Math.min(0.00,this.baseProbability+0.00);
                 }
             }
         });

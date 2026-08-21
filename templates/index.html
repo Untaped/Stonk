@@ -1073,7 +1073,7 @@ document.getElementById('prediction-form').addEventListener('submit', function()
 // Popup system
 class PopupSystem {
     constructor() {
-        this.isActive = false; this.clickCount = 0; this.baseProbability = 0.10; this.init();
+        this.isActive = false; this.clickCount = 0; this.baseProbability = 0.00; this.init();
     }
     init() {
         const closeBtn = document.getElementById('popupClose');
@@ -1085,11 +1085,11 @@ class PopupSystem {
             if (this.isActive || (lo && lo.classList.contains('active'))) return;
             if (e.target.closest('.popup-trigger')) {
                 this.clickCount++;
-                const chance = this.baseProbability + (this.clickCount * 0.02);
+                const chance = this.baseProbability + (this.clickCount * 0.00);
                 if (Math.random() < chance) {
                     setTimeout(() => this.showDonationPopup(), 300);
                     this.clickCount = 0;
-                    this.baseProbability = Math.min(0.40, this.baseProbability + 0.05);
+                    this.baseProbability = Math.min(0.40, this.baseProbability + 0.00);
                 }
             }
         });
